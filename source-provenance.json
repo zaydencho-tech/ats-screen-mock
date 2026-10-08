@@ -1,0 +1,45 @@
+{
+  "archive": "ats-f12-poc-main.zip",
+  "archiveSha256": "f8adab7c70cb4766050443c990e6f4eed89337e9cf15c971f1f2398b161a8dfc",
+  "originalRoot": "ats-f12-poc-main/itcen-ats-frontend",
+  "screens": [
+    {
+      "path": "src/app/pages/admin/AdminDashboard.tsx",
+      "originalSha256": "0e042db66eec22a981440bcef71790d31efdae07ce92bec4494cff75ee3cd467",
+      "extractedSha256": "0e042db66eec22a981440bcef71790d31efdae07ce92bec4494cff75ee3cd467",
+      "unchanged": true
+    },
+    {
+      "path": "src/app/pages/admin/JobPostingManagement.tsx",
+      "originalSha256": "127e5efb1f9f61292407c69514d17cea3fcf2d2daa4aa10e3aaa71c89e23b406",
+      "extractedSha256": "127e5efb1f9f61292407c69514d17cea3fcf2d2daa4aa10e3aaa71c89e23b406",
+      "unchanged": true
+    },
+    {
+      "path": "src/app/pages/Apply.tsx",
+      "originalSha256": "a630324cc65d7787b2a5885b259ca047ce52a8048921d40c26f78827f22f2301",
+      "extractedSha256": "a630324cc65d7787b2a5885b259ca047ce52a8048921d40c26f78827f22f2301",
+      "unchanged": true
+    },
+    {
+      "path": "src/app/pages/admin/InterviewManagementV2.tsx",
+      "originalSha256": "4cbd8cdd9dfc694ca9b5aa232ad4b3057588e071dd1338e168568ba81f4be0fb",
+      "extractedSha256": "4cbd8cdd9dfc694ca9b5aa232ad4b3057588e071dd1338e168568ba81f4be0fb",
+      "unchanged": true
+    },
+    {
+      "path": "src/app/pages/admin/OfferManagement.tsx",
+      "originalSha256": "c9ec723b5124e6efb764043ac26f2494a8ab16fec195e90c30e4ccb6c659ba7e",
+      "extractedSha256": "c9ec723b5124e6efb764043ac26f2494a8ab16fec195e90c30e4ccb6c659ba7e",
+      "unchanged": true
+    }
+  ],
+  "runtimeAdaptations": [
+    "API transport replaced with local fixtures; external connections disabled",
+    "Routes restricted to the five selected screens",
+    "AgentGo provider and floating chat disabled",
+    "External postcode widget replaced with local choices using the original completion callback",
+    "External font imports and remote applicant avatar replaced",
+    "Vite build instrumentation exposes source-backed state presets without modifying screen source files"
+  ]
+}

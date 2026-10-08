@@ -1,0 +1,60 @@
+import type { ChangeEvent, FormEvent } from "react";
+import type { ApplyFormData, PhotoFile, PortfolioFile } from "./types";
+import type { ApplyFormCodeOptions } from "../../../utils/codes/applyFormCodeOptions";
+
+export interface ApplyFormStepProps {
+  formData: ApplyFormData;
+  codeOptions: ApplyFormCodeOptions;
+  isCodeOptionsLoading?: boolean;
+  jobSubtitle?: string;
+  isJobDetailLoading?: boolean;
+  isApplicationLoading?: boolean;
+  isApplicationSaving?: boolean;
+  isApplicationSubmitting?: boolean;
+  /** 이력서 자동 입력 UI — AgentGo 연동 전 기본 숨김 */
+  showResumeAgentSection?: boolean;
+  portfolioFiles: PortfolioFile[];
+  photoFile: PhotoFile | null;
+  resumeFile: File | null;
+  resumeAttachment?: PortfolioFile | null;
+  parsedResume: boolean;
+  isResumeParsing: boolean;
+  resumeUploadError?: string;
+  portfolioUploadError?: string;
+  photoUploadError?: string;
+  portfolioUrlError?: string;
+  formActionError?: string;
+  onDismissResumeUploadError?: () => void;
+  onDismissPortfolioUploadError?: () => void;
+  onDismissPhotoUploadError?: () => void;
+  onDismissPortfolioUrlError?: () => void;
+  onDismissFormActionError?: () => void;
+  onFormDataChange: (updater: (prev: ApplyFormData) => ApplyFormData) => void;
+  onResumeUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  onPortfolioFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  onPhotoFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  onRemovePhotoFile: () => void;
+  onRemovePortfolioFile: (index: number) => void;
+  onSaveDraft: () => void;
+  onSubmit: (e: FormEvent) => void;
+  onPostalSearch: () => void;
+  onAddEducation: () => void;
+  onRemoveEducation: (index: number) => void;
+  onUpdateEducation: (index: number, field: string, value: unknown) => void;
+  onAddCareer: () => void;
+  onRemoveCareer: (index: number) => void;
+  onUpdateCareer: (index: number, field: string, value: unknown) => void;
+  onAddCertificate: () => void;
+  onRemoveCertificate: (index: number) => void;
+  onUpdateCertificate: (index: number, field: string, value: string) => void;
+  onAddLanguage: () => void;
+  onRemoveLanguage: (index: number) => void;
+  onUpdateLanguage: (index: number, field: string, value: string) => void;
+  onAddActivity: () => void;
+  onRemoveActivity: (index: number) => void;
+  onUpdateActivity: (index: number, field: string, value: unknown) => void;
+  /** [DEV] PDF 미리보기·다운로드 테스트 */
+  onDevFillSample?: () => void;
+  onDevDownloadPdf?: () => void;
+  isDevPdfDownloading?: boolean;
+}

@@ -1,0 +1,12 @@
+/* API 에러 Toaster — X 닫기 버튼을 오른쪽 상단으로 */
+[data-sonner-toaster].api-error-toaster[dir='ltr'] {
+  --toast-close-button-start: unset;
+  --toast-close-button-end: 0;
+  --toast-close-button-transform: translate(35%, -35%);
+}
+
+[data-sonner-toaster].api-error-toaster[dir='rtl'] {
+  --toast-close-button-start: 0;
+  --toast-close-button-end: unset;
+  --toast-close-button-transform: translate(-35%, -35%);
+}

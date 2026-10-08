@@ -1,0 +1,177 @@
+[
+  {
+    "slug": "dashboard",
+    "title": "채용 대시보드",
+    "component": "AdminDashboard",
+    "route": "/admin",
+    "role": "채용 담당자",
+    "complexity": "중간",
+    "reason": "채용 현황 카드, 월별 지원자 차트, 전형별 통계와 최근 지원자를 한 화면에서 비교하는 집계 화면입니다.",
+    "presets": [
+      {
+        "id": "initial",
+        "label": "채용 현황",
+        "stateId": "ats:state:3dcce7671ecdd209",
+        "description": "가상 공고와 지원자 데이터로 채용 지표와 차트를 확인합니다."
+      },
+      {
+        "id": "activity",
+        "label": "에이전트 실행 이력",
+        "stateId": "ats:state:6fadf6aeef5eed4a",
+        "description": "예시 실행 이력이 담긴 상세 패널을 확인합니다."
+      }
+    ]
+  },
+  {
+    "slug": "job-postings",
+    "title": "채용공고 관리",
+    "component": "JobPostingManagement",
+    "route": "/admin/job-postings",
+    "role": "채용 담당자",
+    "complexity": "높음",
+    "reason": "공고 목록에서 상세, 등록과 편집으로 이어지며 채용 조건, 평가 담당자, 전형과 지원자 정보를 함께 다룹니다.",
+    "presets": [
+      {
+        "id": "initial",
+        "label": "공고 목록",
+        "stateId": "ats:state:08fb427918b03bca",
+        "description": "법인별 채용공고와 전형별 지원자 수를 확인합니다."
+      },
+      {
+        "id": "detail",
+        "label": "공고별 지원자",
+        "stateId": "ats:state:539a24d605e5b27c",
+        "description": "선택한 공고의 지원자 목록과 지원서 원문 진입을 확인합니다."
+      },
+      {
+        "id": "edit",
+        "label": "공고 편집",
+        "stateId": "ats:state:1fe314ce130f8cd1",
+        "description": "기존 공고가 채워진 편집 화면에서 입력 항목과 담당자 선택을 확인합니다."
+      },
+      {
+        "id": "create",
+        "label": "직접 등록",
+        "stateId": "ats:state:1c2e8601fc508d37",
+        "description": "공고를 직접 작성하는 등록 화면을 확인합니다."
+      }
+    ]
+  },
+  {
+    "slug": "apply",
+    "title": "입사지원서",
+    "component": "Apply",
+    "route": "/apply/11",
+    "role": "지원자",
+    "complexity": "높음",
+    "reason": "개인정보 동의와 본인 확인을 거쳐 학력, 경력과 자기소개를 작성하고 제출하는 지원자용 다단계 폼입니다.",
+    "presets": [
+      {
+        "id": "initial",
+        "label": "지원 시작",
+        "stateId": "ats:state:78a78048efd1f13d",
+        "description": "지원 절차의 첫 화면과 개인정보 동의 항목을 확인합니다."
+      },
+      {
+        "id": "auth",
+        "label": "본인 확인",
+        "stateId": "ats:state:f28b6e2f06be9a8b",
+        "description": "이름과 이메일을 입력하는 본인 확인 단계를 확인합니다."
+      },
+      {
+        "id": "form",
+        "label": "지원서 작성",
+        "stateId": "ats:state:c372e232ab37405f",
+        "description": "가상 지원자의 학력과 경력이 채워진 지원서를 편집합니다."
+      },
+      {
+        "id": "address",
+        "label": "주소 검색",
+        "stateId": "ats:state:33a4212892eea7a0",
+        "description": "로컬 예시 주소를 선택해 원본 지원서에 반영하는 모달을 확인합니다."
+      },
+      {
+        "id": "submitted",
+        "label": "지원 완료",
+        "stateId": "ats:state:04d395a99a588c1e",
+        "description": "지원서 제출 이후 표시되는 완료 안내를 확인합니다."
+      }
+    ]
+  },
+  {
+    "slug": "interviews",
+    "title": "면접 관리",
+    "component": "InterviewManagementV2",
+    "route": "/admin-v2/interviews",
+    "role": "채용 담당자 · 평가자",
+    "complexity": "매우 높음",
+    "reason": "지원자 목록, 지원서와 평가를 3열로 연결하고 면접 일정 조율, 이전 평가, 분석 결과와 다음 전형을 함께 다룹니다.",
+    "presets": [
+      {
+        "id": "initial",
+        "label": "면접 현황",
+        "stateId": "ats:state:a0709e55e88e650d",
+        "description": "지원자별 면접 일정과 상세 정보를 확인합니다."
+      },
+      {
+        "id": "evaluation",
+        "label": "전형별 평가",
+        "stateId": "ats:state:7c7931a069d70889",
+        "description": "선택한 지원자의 이전 서류평가와 면접평가를 확인합니다."
+      },
+      {
+        "id": "schedule-candidates",
+        "label": "면접 일정 후보",
+        "stateId": "ats:state:693f52ac68b80074",
+        "description": "날짜와 장소가 채워진 예시 일정 후보를 확인합니다."
+      },
+      {
+        "id": "recording-analysis",
+        "label": "녹음 분석 결과",
+        "stateId": "ats:state:17c26cd31eca440e",
+        "description": "가상 면접의 종합 평가, 강점과 확인할 사항을 모달에서 확인합니다."
+      },
+      {
+        "id": "next-stage",
+        "label": "다음 전형 선택",
+        "stateId": "ats:state:6eb20fa82ef0eba0",
+        "description": "면접 평가 이후 진행할 전형을 선택하는 화면을 확인합니다."
+      }
+    ]
+  },
+  {
+    "slug": "offers",
+    "title": "처우 협의",
+    "component": "OfferManagement",
+    "route": "/admin/offers",
+    "role": "채용 담당자",
+    "complexity": "높음",
+    "reason": "채용 후반의 처우 조건과 지원자 정보를 연결하며 연봉, 입사일과 복리후생의 동적 입력 폼 및 레퍼런스 분석을 다룹니다.",
+    "presets": [
+      {
+        "id": "initial",
+        "label": "처우 협의 현황",
+        "stateId": "ats:state:2dd372080937c768",
+        "description": "가상 지원자의 현재 처우 조건과 진행 상태를 확인합니다."
+      },
+      {
+        "id": "edit",
+        "label": "처우 조건 수정",
+        "stateId": "ats:state:a20dbc5efd5c5a5f",
+        "description": "연봉, 입사 예정일, 근무지와 복리후생을 수정하는 폼을 확인합니다."
+      },
+      {
+        "id": "reference-analysis",
+        "label": "레퍼런스 분석 결과",
+        "stateId": "ats:state:1d6606ab20c8ebbb",
+        "description": "점수와 강점, 확인할 사항이 채워진 가상 레퍼런스 결과를 확인합니다."
+      },
+      {
+        "id": "application",
+        "label": "지원서 원문",
+        "stateId": "ats:state:5d91ec43d8df208a",
+        "description": "처우 협의 대상자의 원본 지원서를 상세 패널에서 확인합니다."
+      }
+    ]
+  }
+]

@@ -1,0 +1,775 @@
+/* Shared admin body theme. Header, sidebar and public application stay outside this scope. */
+main:has(> .ats-admin-content) {
+  background: #f8f9fa;
+}
+
+.ats-admin-content {
+  --foreground: #283038;
+  --card-foreground: #283038;
+  --muted-foreground: #858d96;
+  --muted: #f5f6f7;
+  --border: #e4e6e8;
+  --input: #e4e6e8;
+  --primary: #283038;
+  --primary-foreground: #fff;
+  --secondary: #525b64;
+  --secondary-foreground: #fff;
+  --accent: #686868;
+  --accent-foreground: #fff;
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  color: #283038;
+}
+
+.ats-admin-content .ats-page-heading {
+  flex-shrink: 0;
+  margin: 0 0 20px !important;
+  gap: 16px;
+}
+
+.ats-admin-content .ats-page-heading > div:first-child {
+  align-items: flex-end !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px !important;
+}
+
+.ats-admin-content h1 {
+  font-size: 24px !important;
+  font-weight: 700;
+  color: #283038 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.3;
+}
+
+.ats-admin-content h2,
+.ats-admin-content h3 {
+  font-size: 18px !important;
+  font-weight: 600;
+  color: #283038;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+.ats-admin-content h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #283038;
+}
+
+.ats-admin-content .ats-page-heading p,
+.ats-admin-content .text-muted-foreground {
+  color: #858d96 !important;
+}
+
+.ats-admin-content .ats-page-heading p {
+  font-size: 13px !important;
+  line-height: 1.5;
+}
+
+.ats-admin-content .rounded-lg {
+  border-radius: 12px;
+}
+
+.ats-admin-content .ats-panel,
+.ats-admin-content .fixed > .bg-card {
+  border: 1px solid #efeff0;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.ats-admin-content .ats-detail-panel {
+  padding: 20px;
+}
+
+/* Offer detail follows the interview center panel's typography hierarchy. */
+.ats-admin-content .ats-offer-detail {
+  color: #283038;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-offer-detail .ats-offer-applicant-name {
+  font-size: 18px !important;
+  font-weight: 600;
+}
+
+.ats-admin-content .ats-offer-detail .ats-offer-applicant-position {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-offer-detail h3 {
+  font-size: 16px !important;
+  font-weight: 600;
+}
+
+.ats-admin-content .ats-offer-detail :is(
+  .ats-offer-applicant-contact, .ats-offer-field-value,
+  .ats-offer-fields input:not([type="checkbox"]):not([type="radio"]),
+  .ats-offer-fields textarea, .ats-offer-fields .ats-custom-select-trigger,
+  p.text-xs
+) {
+  font-size: 13px !important;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-offer-detail .ats-offer-field-value {
+  color: #283038 !important;
+  font-weight: 400 !important;
+}
+
+.ats-admin-content .ats-offer-detail :is(
+  .ats-offer-applicant-contact .text-muted-foreground,
+  .ats-offer-field-label, .ats-offer-fields label, .ats-offer-fields p.text-xs
+) {
+  color: #858d96 !important;
+  font-size: 12px !important;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-list-card {
+  padding: 16px !important;
+  border-radius: 12px;
+  background-color: #fff;
+  font-weight: 400;
+  box-shadow: 0 1px 2px rgb(40 48 56 / 3%);
+}
+
+.ats-admin-content .ats-list-card.border-primary {
+  background-color: #f1f3f5;
+  border-color: #7b838d;
+}
+
+.ats-admin-content .ats-list-card:hover {
+  border-color: #bbc1c7;
+}
+
+.ats-admin-content .ats-list-card .font-medium:not(.text-xs),
+.ats-admin-content .ats-list-title {
+  color: #283038;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-list-card .text-xs {
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-management-columns {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
+}
+
+.ats-admin-content .ats-management-columns > * {
+  min-width: 0;
+}
+
+.ats-admin-content .ats-management-columns .ats-summary-stages {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ats-admin-content .ats-management-columns .ats-summary-stages > div {
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ats-admin-content .ats-management-columns .ats-summary-stages span {
+  white-space: nowrap;
+}
+
+.ats-admin-content .ats-summary-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.ats-admin-content .ats-summary-list > * {
+  min-width: 0;
+  margin-block: 0 !important;
+}
+
+.ats-admin-content .ats-list-card.ats-summary-card {
+  padding: 5px !important;
+  border: 1px solid #e8e9eb;
+  border-radius: 16px !important;
+  background-color: #f7f7f8;
+  background-image: repeating-linear-gradient(
+    120deg, transparent 0 10px, rgb(40 48 56 / 2%) 10px 11px
+  );
+  box-shadow: none;
+}
+
+.ats-admin-content .ats-summary-card[aria-pressed="true"] {
+  border-color: #7b838d;
+  background-color: #f1f3f5;
+  box-shadow: 0 2px 6px rgb(40 48 56 / 5%);
+}
+
+.ats-admin-content .ats-summary-card:hover {
+  border-color: #bbc1c7;
+  box-shadow: 0 3px 10px rgb(40 48 56 / 5%);
+}
+
+.ats-admin-content .ats-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 8px 12px;
+}
+
+.ats-admin-content .ats-summary-header-title {
+  min-width: 0;
+  color: #525b64;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-summary-header > :last-child:not(:first-child) {
+  flex-shrink: 0;
+}
+
+.ats-admin-content .ats-summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 18px 12px 14px;
+  border: 1px solid #e8e9eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(40 48 56 / 3%);
+}
+
+.ats-admin-content .ats-summary-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ats-admin-content .ats-summary-value {
+  margin-top: 6px;
+  color: #283038;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ats-admin-content .ats-summary-value > span {
+  margin-left: 6px;
+  color: #858d96;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.ats-admin-content .ats-summary-icon {
+  width: 24px;
+  height: 24px;
+  color: #727b85;
+  stroke-width: 1.6;
+}
+
+.ats-admin-content .ats-summary-caption,
+.ats-admin-content .ats-summary-stages span,
+.ats-admin-content .ats-summary-contact > div > span:first-child {
+  color: #858d96;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-summary-stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ats-admin-content .ats-summary-stages > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ats-admin-content .ats-summary-stages strong {
+  color: #283038;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ats-admin-content .ats-summary-position {
+  color: #283038;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-summary-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ats-admin-content .ats-summary-contact > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  color: #283038;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-summary-contact > div > span:first-child {
+  flex-shrink: 0;
+  min-width: 40px;
+}
+
+.ats-admin-content .ats-summary-contact > div > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-application-detail h3 {
+  color: #283038 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.ats-admin-content .ats-detail-field {
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-detail-field .ats-field-label {
+  color: #858d96 !important;
+  font-size: 13px !important;
+}
+
+.ats-admin-content .ats-detail-field .ats-field-value {
+  color: #283038 !important;
+  font-size: 13px !important;
+}
+
+.ats-admin-content .ats-application-two-column {
+  padding: 0 !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 6px 16px;
+  min-width: 0;
+  margin-bottom: 12px !important;
+  padding: 14px !important;
+  border: 1px solid #e4e6e8 !important;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-section > h3 {
+  grid-column: 1 / -1;
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-detail-field {
+  min-width: 0;
+  flex-direction: row;
+  gap: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-field-label {
+  min-width: 64px !important;
+  font-size: 12px !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-field-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-section > p,
+.ats-admin-content .ats-application-two-column .ats-application-section > pre,
+.ats-admin-content .ats-application-two-column .ats-application-address-title,
+.ats-admin-content .ats-application-two-column .ats-application-address,
+.ats-admin-content .ats-application-two-column .ats-application-attachments,
+.ats-admin-content .ats-application-two-column .ats-application-text-columns {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-address {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 16px;
+  padding-left: 0 !important;
+  border-left: none !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-address > .ats-detail-field:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-text-columns {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px !important;
+}
+
+.ats-admin-content .ats-application-two-column .ats-application-text-columns > div {
+  min-width: 0;
+}
+
+.ats-admin-content .ats-job-section {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #e4e6e8;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.ats-admin-content .ats-job-information > .space-y-2,
+.ats-admin-content .ats-job-applicant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ats-admin-content .ats-job-information > .space-y-2 > *,
+.ats-admin-content .ats-job-applicant-list > * {
+  margin-block: 0;
+}
+
+.ats-admin-content .ats-job-section-title,
+.ats-admin-content .ats-job-applicants h3,
+.ats-admin-content .ats-job-applicant-card h4 {
+  color: #283038;
+  font-size: 16px !important;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ats-admin-content .ats-job-section label.block,
+.ats-admin-content .ats-job-applicant-fields .text-muted-foreground {
+  color: #858d96 !important;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ats-admin-content .ats-job-section li,
+.ats-admin-content .ats-job-section li > span,
+.ats-admin-content .ats-job-fields div.font-medium.text-xs,
+.ats-admin-content .ats-job-applicant-fields span:not(.text-muted-foreground) {
+  color: #283038 !important;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ats-admin-content .ats-job-fields,
+.ats-admin-content .ats-job-dates,
+.ats-admin-content .ats-job-text-fields,
+.ats-admin-content .ats-job-applicant-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 16px;
+  min-width: 0;
+}
+
+.ats-admin-content :is(.ats-job-fields, .ats-job-text-fields) > * {
+  min-width: 0;
+  margin-block: 0;
+}
+
+.ats-admin-content .ats-job-dates {
+  grid-column: 1 / -1;
+}
+
+.ats-admin-content .ats-job-applicant-fields {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-fields > div:not(.ats-job-dates),
+.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-dates > div,
+.ats-admin-content .ats-job-applicant-fields > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-fields label,
+.ats-admin-content .ats-job-applicant-fields .text-muted-foreground {
+  flex-shrink: 0;
+  min-width: 64px;
+  margin-bottom: 0;
+}
+
+.ats-admin-content .ats-job-applicant-body {
+  min-width: 0;
+  gap: 16px;
+}
+
+.ats-admin-content .ats-job-applicant-body > .flex-1,
+.ats-admin-content .ats-job-applicant-fields span:not(.text-muted-foreground) {
+  min-width: 0;
+}
+
+.ats-admin-content .ats-job-applicant-body > button {
+  flex-shrink: 0;
+}
+
+.ats-admin-content .ats-job-applicant-card.border-primary {
+  border-color: #7b838d;
+  background: #f1f3f5;
+}
+
+.ats-admin-content .ats-job-applicant-selection {
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border: 1px solid #e4e6e8;
+  font-size: 12px;
+}
+
+.ats-admin-content .ats-offer-four-column {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.ats-admin-content .ats-offer-four-column > div {
+  min-width: 0;
+}
+
+.ats-admin-content .ats-offer-four-column textarea {
+  min-height: 64px;
+}
+
+.ats-admin-content .ats-list-card .text-sm.text-muted-foreground {
+  font-size: 13px;
+}
+
+.ats-admin-content .ats-list-card + .ats-list-card {
+  margin-top: 10px;
+}
+
+.ats-admin-content .ats-interview-columns {
+  gap: 20px !important;
+}
+
+.ats-admin-content .ats-interview-applicant-header {
+  flex-wrap: wrap;
+  padding: 16px !important;
+}
+
+.ats-admin-content .ats-interview-applicant-header h2,
+.ats-admin-content .ats-interview-applicant-header > span {
+  white-space: nowrap;
+}
+
+.ats-admin-content .ats-interview-applicant-header > div {
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  margin-left: 0 !important;
+}
+
+.ats-admin-content .ats-interview-applicant-header > div span {
+  white-space: nowrap;
+}
+
+.ats-admin-content .ats-segment-bar {
+  flex-shrink: 0;
+  padding: 12px 14px;
+}
+
+.ats-admin-content .ats-segment-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f1f1f1;
+}
+
+.ats-admin-content .ats-segment-option {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #686868;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.ats-admin-content .ats-segment-option:hover {
+  background: rgb(255 255 255 / 60%);
+  color: #283038;
+}
+
+.ats-admin-content .ats-segment-option[aria-pressed="true"] {
+  border-radius: 8px;
+  border-color: transparent;
+  background: #fff;
+  color: #283038;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgb(40 48 56 / 8%);
+}
+
+.ats-admin-content .ats-segment-compact .ats-segment-control {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px;
+}
+
+.ats-admin-content .ats-segment-compact .ats-segment-option {
+  flex: 0 0 auto;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 13px;
+}
+
+.ats-admin-content .ats-filter-bar {
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: 10px !important;
+  margin-bottom: 20px;
+}
+
+.ats-admin-content .ats-filter-stack {
+  flex-wrap: nowrap;
+  padding: 14px !important;
+  margin-bottom: 0;
+}
+
+.ats-admin-content .ats-job-heading {
+  flex-wrap: wrap;
+}
+
+.ats-admin-content .ats-offer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.ats-admin-content .ats-job-heading-controls,
+.ats-admin-content .ats-offer-heading-controls {
+  justify-content: flex-end;
+  margin-left: auto;
+  margin-bottom: 0;
+}
+
+.ats-admin-content .ats-filter-bar select,
+.ats-admin-content .ats-filter-bar .ats-custom-select-trigger {
+  height: 44px !important;
+  min-width: 160px;
+  max-width: 280px;
+  padding: 0 40px !important;
+  border: 1px solid #e4e6e8 !important;
+  border-radius: 12px !important;
+  background-color: #fff;
+  color: #283038 !important;
+  font-size: 14px !important;
+  font-weight: 400;
+  appearance: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%237b838d' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M3 5h14M5 10h10M8 15h4'/%3E%3C/svg%3E") !important;
+  background-position: left 14px center !important;
+  background-repeat: no-repeat !important;
+  background-size: 17px 17px !important;
+  box-shadow: 0 1px 2px rgb(40 48 56 / 4%);
+  cursor: pointer;
+}
+
+.ats-admin-content .ats-filter-stack select,
+.ats-admin-content .ats-filter-stack .ats-custom-select,
+.ats-admin-content .ats-filter-stack .ats-custom-select-trigger {
+  width: 100%;
+  max-width: none;
+}
+
+.ats-admin-content .ats-filter-bar select:disabled,
+.ats-admin-content .ats-filter-bar select[aria-disabled="true"],
+.ats-admin-content .ats-filter-bar .ats-custom-select-trigger[aria-disabled="true"] {
+  cursor: default;
+}
+
+.ats-admin-content .ats-filter-bar select:hover:not(:disabled),
+.ats-admin-content .ats-filter-bar .ats-custom-select-trigger:hover:not([aria-disabled="true"]):not([aria-expanded="true"]) {
+  border-color: #bbc1c7 !important;
+}
+
+.ats-admin-content .ats-primary-action {
+  height: 44px !important;
+  padding: 0 20px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+}
+
+.ats-admin-content input:not([type="checkbox"]):not([type="radio"]),
+.ats-admin-content textarea,
+.ats-admin-content select:not(.ats-filter-bar select) {
+  border-radius: 8px !important;
+}
+
+.ats-admin-content button:not(.ats-segment-option) {
+  border-radius: 8px !important;
+}
+
+.ats-admin-dialog button,
+.ats-admin-dialog input:not([type="checkbox"]):not([type="radio"]),
+.ats-admin-dialog textarea,
+.ats-admin-dialog select {
+  border-radius: 8px !important;
+}
+
+.ats-admin-content th {
+  color: #858d96;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.ats-admin-content td {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ats-admin-content .rounded-full {
+  border-radius: 8px;
+}
+
+.ats-admin-content button:focus-visible,
+.ats-admin-content a:focus-visible,
+.ats-admin-content input:focus-visible,
+.ats-admin-content select:focus-visible,
+.ats-admin-content textarea:focus-visible {
+  outline: 2px solid #7b838d !important;
+  outline-offset: 3px;
+}

@@ -1,0 +1,204 @@
+/* Section spacing only: header/sidebar and the controls themselves keep their existing styles. */
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) {
+  --ats-section-space: 20px;
+}
+
+/* One page-level gap keeps the title and the first content boxes 20px apart. */
+.ats-spacing:is(div):is(.ats-admin-content) .ats-page-layout {
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.ats-admin-content) .ats-page-layout > .ats-page-heading {
+  margin: 0 !important;
+  align-items: flex-end;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .dashboard-panel, .dashboard-process, .dashboard-list-item, .dashboard-metric,
+  .dashboard-stat-body, .ats-detail-panel, .ats-list-card, .ats-job-section,
+  .ats-application-section, .ats-summary-body, .ats-filter-stack,
+  .ats-segment-bar, .ats-interview-applicant-header,
+  div[style*="padding:"], div.p-2, div.p-3, div.p-4, div.p-5, div.p-6
+):not(:where(
+  .ats-application-detail, .ats-custom-select *, .ats-segment-control *,
+  button:not(.ats-list-card) *, .recharts-wrapper *, .recharts-responsive-container *
+)) {
+  padding: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .flex, .grid, [class*="gap-"], [style*="gap:"],
+  .dashboard-process-grid, .dashboard-stat-body, .dashboard-stat-info,
+  .dashboard-stat-caption, .dashboard-period-inputs,
+  .ats-summary-list, .ats-summary-header, .ats-summary-body,
+  .ats-summary-metric-row, .ats-summary-stages, .ats-summary-stages > div,
+  .ats-summary-contact, .ats-summary-contact > div,
+  .ats-application-section, .ats-application-address, .ats-application-text-columns,
+  .ats-job-fields, .ats-job-dates, .ats-job-text-fields, .ats-job-applicant-fields,
+  .ats-job-applicant-fields > div, .ats-job-applicant-body, .ats-offer-fields
+):not(:where(
+  .ats-segment-control, .ats-segment-control *, .ats-custom-select, .ats-custom-select *,
+  button:not(.ats-list-card), button:not(.ats-list-card) *,
+  .dashboard-stat-bars, .dashboard-stat-bars *, .recharts-wrapper, .recharts-wrapper *,
+  .recharts-responsive-container, .recharts-responsive-container *, svg, svg *
+)) {
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) [class*="space-y-"] > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) [class*="space-y-"] > * + * {
+  margin-block-start: var(--ats-section-space) !important;
+}
+
+/* Existing grids and flex stacks use gap rather than adding a second margin. */
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .grid, .flex, [style*="display: flex"], [style*="display: grid"],
+  .ats-summary-list, .ats-job-information > .space-y-2, .ats-job-applicant-list,
+  .ats-job-fields, .ats-job-dates, .ats-job-text-fields, .ats-application-section,
+  .ats-application-address, .ats-application-text-columns
+) > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .ats-job-information > .space-y-2, .ats-job-applicant-list
+) {
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .dashboard-panel, .ats-detail-panel, .ats-job-section, .ats-application-detail,
+  .ats-offer-editor, .ats-detail-panel > .border-t
+) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .dashboard-panel, .ats-detail-panel, .ats-job-section, .ats-application-detail,
+  .ats-offer-editor, .ats-detail-panel > .border-t
+) > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-detail-panel > .border-t {
+  padding-top: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-interview-columns > .ats-panel {
+  padding: var(--ats-section-space) !important;
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-interview-columns > .ats-panel > :is(
+  .ats-segment-bar, .ats-filter-stack, .ats-interview-applicant-header,
+  div[style*="overflow-y: auto"]
+) {
+  padding: 0 !important;
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-interview-columns > .ats-panel > div[style*="overflow-y: auto"] > :is(
+  .ats-segment-bar, div[style*="padding:"]
+) {
+  padding: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .ats-interview-agent-sections, .ats-interview-agent-sections > div
+) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-interview-agent-sections > div > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .dashboard-stat, .ats-summary-list > .ats-summary-card
+) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ats-section-space) !important;
+  padding: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .dashboard-stat-header, .ats-summary-header
+) {
+  gap: var(--ats-section-space) !important;
+  padding: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-stat-body {
+  flex-wrap: wrap;
+  flex: 1;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-stat-link {
+  display: flex;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-stat {
+  width: 100%;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-metric {
+  height: auto !important;
+  min-height: 100px;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .ats-application-two-column .ats-application-section,
+  .ats-application-two-column .ats-detail-field
+) {
+  gap: var(--ats-section-space) !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .ats-application-section {
+  margin-bottom: var(--ats-section-space) !important;
+}
+
+/* Remove section and table-row dividers; closed card/input borders and chart lines remain. */
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) :is(
+  .border-b, .border-t, [style*="border-bottom:"], [style*="border-top:"]
+):not(.animate-spin):not(:where(.ats-application-two-column .ats-application-section)) {
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .divide-y > * {
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) hr {
+  display: none;
+}
+
+/* Compact job list cards keep the column width and spacing between cards. */
+.ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list > .ats-summary-card {
+  --ats-section-space: 12px;
+}
+
+.ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list .ats-summary-metric-row > div {
+  display: flex;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list .ats-summary-value {
+  margin-top: 0 !important;
+}
+
+.ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list .ats-summary-stages > div {
+  gap: 4px !important;
+}
