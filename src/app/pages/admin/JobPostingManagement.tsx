@@ -1,6 +1,7 @@
 import "./admin-spacing.css";
 import CustomSelect from "../../components/admin/CustomSelect";
 import "./admin-content.css";
+import "./admin-palette.css";
 import SegmentedControl from "../../components/admin/SegmentedControl";
 import {
   useState,
@@ -101,7 +102,7 @@ function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
 
 function handleFilterSelectFocus(e: FocusEvent<HTMLSelectElement>) {
   if (e.currentTarget.disabled) return;
-  e.target.style.borderColor = "#3182F6";
+  e.target.style.borderColor = "#2277FF";
   e.target.style.boxShadow = "0 0 0 3px rgba(49, 130, 246, 0.12)";
 }
 
@@ -1835,7 +1836,7 @@ export default function JobPostingManagement() {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        paddingTop: "24px",
+        paddingTop: "20px",
         paddingBottom: "24px",
         boxSizing: "border-box",
       }}
@@ -2000,7 +2001,7 @@ export default function JobPostingManagement() {
                   <div className="mb-2 text-xs text-destructive">{detailError}</div>
                 )}
                 {!isEditing && (
-                  <div className="ats-segment-compact mb-4">
+                  <div className="ats-job-view-tabs mb-4">
                     <SegmentedControl
                       label="채용공고 상세 보기"
                       options={["list", "detail"] as const}
@@ -2158,49 +2159,49 @@ export default function JobPostingManagement() {
                             )}
                             <div className="ats-job-applicant-body flex-1 flex items-start justify-between">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="ats-job-applicant-heading flex items-center gap-2 mb-1">
                                   <h4 className="font-medium text-base">{applicant.name}</h4>
                                   <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getStatusColor(applicant.stageStatus)}`}>
                                     {getApplicantStatusLabel(applicant)}
                                   </span>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedApplicant(applicant);
+                                      setShowApplicationPanel(true);
+                                    }}
+                                    className="bg-accent/20 text-accent hover:bg-accent/30 transition-colors flex items-center"
+                                    style={{
+                                      height: '28px',
+                                      padding: '0 12px',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 500,
+                                      borderRadius: '5px',
+                                      gap: '4px'
+                                    }}
+                                  >
+                                    <FileText className="w-3.5 h-3.5" />
+                                    이력서 보기
+                                  </button>
                                 </div>
                                 <div className="ats-job-applicant-fields grid grid-cols-2 gap-x-3 gap-y-1 text-xs mb-1.5">
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">이메일:</span>
+                                    <span className="text-muted-foreground">이메일</span>
                                     <span>{applicant.email}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">연락처:</span>
+                                    <span className="text-muted-foreground">연락처</span>
                                     <span>{applicant.phone}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">지원일:</span>
+                                    <span className="text-muted-foreground">지원일</span>
                                     <span>{applicant.appliedDate}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">전형 단계:</span>
+                                    <span className="text-muted-foreground">전형 단계</span>
                                     <span className="font-medium">{getApplicantStageLabel(applicant)}</span>
                                   </div>
                                 </div>
                               </div>
-                              <button
-                                onClick={() => {
-                                  setSelectedApplicant(applicant);
-                                  setShowApplicationPanel(true);
-                                }}
-                                className="bg-accent/20 text-accent hover:bg-accent/30 transition-colors flex items-center"
-                                style={{
-                                  height: '28px',
-                                  padding: '0 12px',
-                                  fontSize: '0.75rem',
-                                  fontWeight: 500,
-                                  borderRadius: '5px',
-                                  gap: '4px'
-                                }}
-                              >
-                                <FileText className="w-3.5 h-3.5" />
-                                이력서 보기
-                              </button>
                             </div>
                           </div>
                         </div>
@@ -2247,7 +2248,7 @@ export default function JobPostingManagement() {
                               boxSizing: 'border-box'
                             }}
                             onFocus={(e) => {
-                              e.target.style.borderColor = '#3182F6';
+                              e.target.style.borderColor = '#2277FF';
                               e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
                             }}
                             onBlur={(e) => {
@@ -2422,7 +2423,7 @@ export default function JobPostingManagement() {
                               outline: 'none'
                             }}
                             onFocus={(e) => {
-                              e.target.style.borderColor = '#3182F6';
+                              e.target.style.borderColor = '#2277FF';
                               e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
                             }}
                             onBlur={(e) => {
@@ -2542,7 +2543,7 @@ export default function JobPostingManagement() {
                                 outline: 'none'
                               }}
                               onFocus={(e) => {
-                                e.target.style.borderColor = '#3182F6';
+                                e.target.style.borderColor = '#2277FF';
                                 e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
                               }}
                               onBlur={(e) => {
@@ -2659,7 +2660,7 @@ export default function JobPostingManagement() {
                               outline: 'none'
                             }}
                             onFocus={(e) => {
-                              e.target.style.borderColor = '#3182F6';
+                              e.target.style.borderColor = '#2277FF';
                               e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
                             }}
                             onBlur={(e) => {
@@ -2747,7 +2748,7 @@ export default function JobPostingManagement() {
                   </div>
 
                   {/* 직무 상세 */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
+                  <div className="ats-job-section ats-job-description-section p-3 bg-muted/20 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="ats-job-section-title">직무 상세</h3>
                       {isEditing && isJdGenerationAgentEnabled && (
@@ -2755,7 +2756,7 @@ export default function JobPostingManagement() {
                           onClick={() => setShowAIModal(true)}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#4F39F6",
+                            color: "#333333",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -2936,7 +2937,7 @@ export default function JobPostingManagement() {
                           onClick={() => openTemplatePicker("benefits")}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#4F39F6",
+                            color: "#333333",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -2993,7 +2994,7 @@ export default function JobPostingManagement() {
                           onClick={() => openTemplatePicker("notes")}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#4F39F6",
+                            color: "#333333",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -3061,7 +3062,7 @@ export default function JobPostingManagement() {
                   </div>
 
                   {/* 전형절차 */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
+                  <div className="ats-job-section ats-job-process-section p-3 bg-muted/20 border border-border rounded-lg">
                     <h3 className="ats-job-section-title block mb-2">전형절차</h3>
                     <div className="ats-job-reviewer-fields space-y-2">
                       {/* 서류검토 담당자 */}

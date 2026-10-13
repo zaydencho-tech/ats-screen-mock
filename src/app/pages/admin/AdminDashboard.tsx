@@ -1,5 +1,6 @@
 import "./admin-spacing.css";
 import "./dashboard.css";
+import "./admin-palette.css";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
 import { FileText, Calendar, CheckCircle, Briefcase, Sparkles, Bell, ExternalLink, MessageSquare, HelpCircle, Loader2 } from "lucide-react";
@@ -620,9 +621,12 @@ export default function AdminDashboard() {
 
   const pieChartData = useMemo(
     () =>
-      applicationsByStatus.filter(
-        (item) => !item.name.includes("불합격"),
-      ),
+      applicationsByStatus
+        .filter((item) => !item.name.includes("불합격"))
+        .map((item, index) => ({
+          ...item,
+          color: ["#0066FF", "#2277FF", "#63AAFF", "#88DDFF"][index % 4],
+        })),
     [applicationsByStatus],
   );
 
@@ -666,7 +670,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="dashboard-content ats-spacing py-1.5">
+    <div className="dashboard-content ats-spacing" style={{ paddingTop: "20px", paddingBottom: "24px" }}>
       <AnimatePresence>
         {showAgentGoDrawer && (
           <AgentGoHistoryDrawer
@@ -682,10 +686,10 @@ export default function AdminDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div style={{ margin: '8px 0' }}>
+        <div>
 
           <div
-            className={`dashboard-title-row flex items-center ${isInterviewer ? "justify-end" : "justify-between"}`}
+            className={`dashboard-title-row flex items-end ${isInterviewer ? "justify-end" : "justify-between"}`}
             style={{ marginBottom: '20px', gap: '8px', minWidth: 0 }}
           >
             {!isInterviewer && (
@@ -906,6 +910,12 @@ export default function AdminDashboard() {
                 ) : (
                 <ResponsiveContainer width="100%" height={220} key={`bar-resp-${selectedCompany}`}>
                   <BarChart data={applicationsByMonth} key={`bar-chart-${selectedCompany}`}>
+                    <defs>
+                      <linearGradient id="ats-monthly-blue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#88DDFF" />
+                        <stop offset="100%" stopColor="#0066FF" />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e7e7" />
                     <XAxis dataKey="month" stroke="#616161" style={{ fontSize: '12px' }} tick={{ fontSize: 12 }} />
                     <YAxis stroke="#616161" style={{ fontSize: '12px' }} tick={{ fontSize: 12 }} />
@@ -917,7 +927,7 @@ export default function AdminDashboard() {
                         fontSize: "12px"
                       }}
                     />
-                    <Bar dataKey="count" fill="#2b7fff" radius={[8, 8, 0, 0]} isAnimationActive={false} barSize={32}>
+                    <Bar dataKey="count" fill="url(#ats-monthly-blue)" radius={[8, 8, 0, 0]} isAnimationActive={false} barSize={32}>
                       {applicationsByMonth.map((entry, index) => (
                         <Cell key={`cell-${entry.id || index}`} />
                       ))}
@@ -957,7 +967,7 @@ export default function AdminDashboard() {
                       cy="50%"
                       labelLine={false}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="#2277FF"
                       dataKey="value"
                       nameKey="name"
                       isAnimationActive={false}
@@ -1050,7 +1060,7 @@ export default function AdminDashboard() {
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                               ...(isRecentApplicantInterviewStage(application.currentStage)
-                                ? { color: "#4F39F6" }
+                                ? { color: "#333333" }
                                 : {}),
                             }}
                           >

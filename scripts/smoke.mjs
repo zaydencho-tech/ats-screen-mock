@@ -87,7 +87,7 @@ try {
     const menu = page.getByRole('listbox');
     await menu.waitFor();
     assert.equal(await menu.locator('[aria-selected="true"] svg').count(), 1);
-    await expect(trigger).toHaveCSS('border-color', 'rgb(75, 116, 255)');
+    await expect(trigger).toHaveCSS('border-color', 'rgb(34, 119, 255)');
     const nextLabel = await menu.getByRole('option').nth(1).textContent();
     await trigger.press('ArrowDown');
     await trigger.press('Enter');

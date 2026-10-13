@@ -1,7 +1,9 @@
 import "./admin-spacing.css";
 import CustomSelect from "../../components/admin/CustomSelect";
+import CandidateCardContent from "../../components/admin/CandidateCardContent";
 import SegmentedControl from "../../components/admin/SegmentedControl";
 import "./admin-content.css";
+import "./admin-palette.css";
 import {
   useState,
   useEffect,
@@ -2660,7 +2662,7 @@ export default function InterviewManagementV2() {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        paddingTop: "24px",
+        paddingTop: "20px",
         paddingBottom: "24px",
         boxSizing: "border-box",
       }}
@@ -2861,32 +2863,26 @@ export default function InterviewManagementV2() {
                       key={interview.id}
                       type="button"
                       data-list-item-id={interview.id}
+                      aria-pressed={selectedInterview?.id === interview.id}
                       onClick={() => handleSelectInterview(interview)}
-                      className={`ats-list-card w-full text-left border rounded-lg transition-all ${
+                      className={`ats-list-card ats-candidate-list-card w-full text-left border rounded-lg transition-all ${
                         selectedInterview?.id === interview.id
                           ? "border-primary bg-primary/5"
                           : "border-border bg-card hover:bg-muted/30"
                       }`}
                       style={{ padding: "8px 10px" }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          marginBottom: "3px",
-                          gap: "6px",
-                        }}
-                      >
-                        <span
-                          className="ats-list-title"
-                          style={{ fontWeight: 500, fontSize: "0.8125rem" }}
-                        >
-                          {interview.name}
-                        </span>
-                        <div
-                          style={{ display: "flex", gap: "3px", flexShrink: 0 }}
-                        >
+                      <CandidateCardContent
+                        name={interview.name}
+                        fields={[
+                          { label: "직무", value: interview.position },
+                          ...(interview.date ? [{
+                            label: "면접 일정",
+                            value: `${interview.date} ${interview.time}`,
+                          }] : []),
+                          { label: "평가 현황", value: `${submittedCount}/${totalCount} 완료` },
+                        ]}
+                        badges={<>
                           {statusLabel ? (
                             <span
                               className={`px-1.5 py-0.5 rounded text-xs font-medium ${getInterviewStatusColor(interview)}`}
@@ -2901,46 +2897,8 @@ export default function InterviewManagementV2() {
                               {interview.scheduleStatusName}
                             </span>
                           ) : null}
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "#6B7280",
-                          marginBottom: "2px",
-                        }}
-                      >
-                        {interview.position}
-                      </div>
-                      {interview.date ? (
-                        <div
-                          style={{
-                            fontSize: "0.6875rem",
-                            color: "#9CA3AF",
-                            marginBottom: "2px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "3px",
-                          }}
-                        >
-                          <Calendar style={{ width: "10px", height: "10px" }} />
-                          {interview.date} {interview.time}
-                        </div>
-                      ) : null}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          fontSize: "0.6875rem",
-                          color: "#9CA3AF",
-                        }}
-                      >
-                        <Clock style={{ width: "11px", height: "11px" }} />
-                        <span>
-                          {submittedCount}/{totalCount} 평가 완료
-                        </span>
-                      </div>
+                        </>}
+                      />
                     </button>
                   );
                 })}
@@ -3433,6 +3391,7 @@ export default function InterviewManagementV2() {
                                 setShowScheduleModal(true);
                               }}
                               disabled={!canPerformScheduleCoordinationActions}
+                              className="ats-agent-action"
                               style={{
                                 height: "28px",
                                 width: "100%",
@@ -4046,7 +4005,7 @@ export default function InterviewManagementV2() {
                                       isSendingSchedule ||
                                       scheduleCandidates.length === 0
                                     }
-                                    className="flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="ats-primary-button flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{
                                       flex: 2,
                                       height: "36px",
@@ -4134,7 +4093,7 @@ export default function InterviewManagementV2() {
                                       !scheduleSettings.location.trim() ||
                                       !scheduleSettings.responseDeadline
                                     }
-                                    className="flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="ats-primary-button flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{
                                       flex: 2,
                                       height: "36px",
@@ -4177,6 +4136,7 @@ export default function InterviewManagementV2() {
                         {/* 면접 정보 */}
                         {selectedInterview?.date ? (
                           <div
+                            className="ats-interview-schedule-info"
                             style={{
                               display: "flex",
                               alignItems: "center",
@@ -4228,6 +4188,7 @@ export default function InterviewManagementV2() {
                         {/* AgentGO 면접 질문 추천 */}
                         {showInterviewQuestionPanel && (
                           <div
+                            className="ats-agent-card"
                             style={{
                               border: "1px solid rgba(40,48,56,0.2)",
                               borderRadius: "8px",
@@ -4235,6 +4196,7 @@ export default function InterviewManagementV2() {
                             }}
                           >
                             <div
+                              className="ats-agent-card-heading"
                               style={{
                                 padding: "8px 10px",
                                 backgroundColor: "rgba(40,48,56,0.05)",
@@ -4288,6 +4250,7 @@ export default function InterviewManagementV2() {
                                 )}
                                 <button
                                   type="button"
+                                  className="ats-agent-action"
                                   onClick={() => void handleGenerateQuestions()}
                                   disabled={
                                     !canPerformInterviewAgentActions ||
@@ -4345,6 +4308,7 @@ export default function InterviewManagementV2() {
                         {/* AgentGO 녹음 분석 */}
                         {showInterviewRecordingAnalysisSection && (
                           <div
+                            className="ats-agent-card"
                             style={{
                               border: "1px solid rgba(40,48,56,0.2)",
                               borderRadius: "8px",
@@ -4352,6 +4316,7 @@ export default function InterviewManagementV2() {
                             }}
                           >
                             <div
+                              className="ats-agent-card-heading"
                               style={{
                                 padding: "8px 10px",
                                 backgroundColor: "rgba(40,48,56,0.05)",
@@ -4803,7 +4768,8 @@ export default function InterviewManagementV2() {
                                 isEvalDisabledByScheduleUnset ||
                                 isEvalRsltOptionsLoading
                               }
-                              className="w-full text-white transition-colors flex items-center justify-center"
+                              className="ats-primary-button w-full text-white transition-colors flex items-center justify-center"
+                              data-save-state={saveStatus}
                               style={{
                                 height: "34px",
                                 padding: "0 16px",
@@ -5066,7 +5032,7 @@ export default function InterviewManagementV2() {
                                     !decisionCd.trim() ||
                                     !comment.trim()
                                   }
-                                  className="flex-1 text-white hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="ats-primary-button flex-1 text-white hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                   style={{
                                     height: "34px",
                                     padding: "0 16px",
@@ -5319,6 +5285,7 @@ export default function InterviewManagementV2() {
                         />
                         <button
                           type="button"
+                          className="ats-primary-button"
                           disabled={!currentMemoText.trim()}
                           style={{
                             marginTop: "6px",
@@ -5338,7 +5305,7 @@ export default function InterviewManagementV2() {
                           }}
                           onMouseEnter={(e) => {
                             if (currentMemoText.trim())
-                              e.currentTarget.style.backgroundColor = "#1D6FE8";
+                              e.currentTarget.style.backgroundColor = "#0066FF";
                           }}
                           onMouseLeave={(e) => {
                             if (currentMemoText.trim())

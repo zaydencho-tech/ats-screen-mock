@@ -137,10 +137,21 @@
 }
 
 .ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-stat-body {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
   flex: 1;
-  align-items: flex-start;
-  align-content: flex-start;
+  min-height: 0;
+  align-items: center;
+  align-content: start;
+}
+
+.ats-spacing:is(div).dashboard-content .dashboard-stat .dashboard-stat-body {
+  padding: 0 !important;
+}
+
+.ats-spacing:is(div):is(.dashboard-content) .dashboard-stat-bars {
+  justify-self: end;
+  align-self: center;
 }
 
 .ats-spacing:is(div):is(.dashboard-content, .ats-admin-content) .dashboard-stat-link {
@@ -199,6 +210,13 @@
   margin-top: 0 !important;
 }
 
+.ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list .ats-summary-stages {
+  column-gap: 8px !important;
+}
+
 .ats-spacing:is(div):is(.ats-admin-content) .ats-job-summary-list .ats-summary-stages > div {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 4px !important;
 }

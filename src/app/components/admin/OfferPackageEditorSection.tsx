@@ -134,6 +134,7 @@ export default function OfferPackageEditorSection({
       />
       <button
         type="button"
+        className="ats-primary-button"
         onClick={() => void handleSave()}
         disabled={isSaving}
         style={{
@@ -143,7 +144,7 @@ export default function OfferPackageEditorSection({
           fontSize: "0.75rem",
           fontWeight: 500,
           borderRadius: "6px",
-          backgroundColor: isSaving ? "#93C5FD" : "#3182F6",
+          backgroundColor: isSaving ? "#93C5FD" : "#2277FF",
           color: "#FFF",
           border: "none",
           display: "flex",
@@ -154,10 +155,10 @@ export default function OfferPackageEditorSection({
           transition: "all 0.2s",
         }}
         onMouseEnter={(e) => {
-          if (!isSaving) e.currentTarget.style.backgroundColor = "#1D6FE8";
+          if (!isSaving) e.currentTarget.style.backgroundColor = "#0066FF";
         }}
         onMouseLeave={(e) => {
-          if (!isSaving) e.currentTarget.style.backgroundColor = "#3182F6";
+          if (!isSaving) e.currentTarget.style.backgroundColor = "#2277FF";
         }}
       >
         {isSaving ? (

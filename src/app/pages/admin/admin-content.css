@@ -346,6 +346,94 @@ main:has(> .ats-admin-content) {
   overflow-wrap: anywhere;
 }
 
+/* Candidate list cards: identity above, explicit labels and right-aligned values below. */
+.ats-spacing.ats-admin-content .ats-candidate-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px !important;
+  min-width: 0;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-content.ats-summary-body {
+  padding: 12px !important;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-name {
+  flex: 1;
+  min-width: 0;
+  color: var(--ats-color-text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 65%;
+  gap: 6px;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-badges:empty {
+  display: none;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-badges > span {
+  border-radius: 999px;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-fields > div {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-fields :is(dt, dd) {
+  margin: 0;
+  min-width: 0;
+  line-height: 20px;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-fields dt {
+  color: var(--ats-color-muted);
+  font-size: 12px;
+  word-break: keep-all;
+}
+
+.ats-spacing.ats-admin-content .ats-candidate-card-fields dd {
+  color: var(--ats-color-text);
+  font-size: 13px;
+  font-weight: 400;
+  text-align: right;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.ats-spacing.ats-admin-content .ats-list-card.ats-candidate-list-card.border-primary {
+  background-color: #fff;
+}
+
 .ats-admin-content .ats-application-detail h3 {
   color: #283038 !important;
   font-size: 16px !important;
@@ -552,6 +640,174 @@ main:has(> .ats-admin-content) {
   font-size: 12px;
 }
 
+/* Compact read-only cards keep long descriptions readable and short fields side by side. */
+.ats-spacing.ats-admin-content :is(.ats-job-information:not(.is-editing), .ats-job-applicants) {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ats-spacing.ats-admin-content :is(.ats-job-information:not(.is-editing), .ats-job-applicants) > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) > .space-y-2,
+.ats-spacing.ats-admin-content .ats-job-applicant-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) :is(
+  .ats-job-fields, .ats-job-dates, .ats-job-text-fields, .ats-job-reviewer-fields
+),
+.ats-spacing.ats-admin-content .ats-job-applicant-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px !important;
+}
+
+.ats-spacing:is(div):is(.ats-admin-content) :is(
+  .ats-job-information:not(.is-editing), .ats-job-applicants
+) .ats-job-section {
+  --ats-section-space: 8px;
+  padding: 12px !important;
+  gap: 12px !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) :is(.ats-job-fields, .ats-job-dates),
+.ats-spacing.ats-admin-content .ats-job-applicant-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-description-section {
+  grid-row: 2 / span 2;
+  grid-column: 1;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-process-section {
+  grid-column: 1 / -1;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-process-section .ats-job-reviewer-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-reviewer-fields > div:has(input[type="checkbox"]) {
+  grid-column: 1 / -1;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) :is(
+  .ats-job-fields, .ats-job-dates, .ats-job-text-fields, .ats-job-reviewer-fields
+) > div:has(> label.block),
+.ats-spacing.ats-admin-content .ats-job-applicant-fields > div {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px !important;
+  min-width: 0;
+  margin-block: 0 !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-section label.block,
+.ats-spacing.ats-admin-content .ats-job-applicant-fields .text-muted-foreground {
+  margin: 0 !important;
+  min-width: 0;
+  line-height: 20px !important;
+  word-break: keep-all;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-section :is(
+  .font-medium.text-xs, li, li > span, .ats-job-text-fields > div > div,
+  .ats-job-reviewer-fields > div > div
+),
+.ats-spacing.ats-admin-content .ats-job-applicant-fields span:not(.text-muted-foreground) {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px !important;
+  overflow-wrap: anywhere;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) :is(
+  .ats-job-fields, .ats-job-dates, .ats-job-text-fields, .ats-job-reviewer-fields
+) > div:has(> label.block) > :not(label) {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px !important;
+  overflow-wrap: anywhere;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-section ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px !important;
+  min-width: 0;
+}
+
+.ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-section li {
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr);
+  gap: 8px !important;
+  margin-block: 0 !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-body {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-body > .flex-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-body > .flex-1 > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-heading {
+  flex-wrap: wrap;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-heading > button {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-fields > div {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+
+.ats-spacing.ats-admin-content .ats-job-applicant-list > :not(.ats-job-applicant-card) {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1000px) {
+  .ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) > .space-y-2,
+  .ats-spacing.ats-admin-content .ats-job-applicant-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-description-section {
+    grid-row: auto;
+    grid-column: auto;
+  }
+
+  .ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) .ats-job-process-section .ats-job-reviewer-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .ats-spacing.ats-admin-content .ats-job-information:not(.is-editing) :is(.ats-job-fields, .ats-job-dates),
+  .ats-spacing.ats-admin-content .ats-job-applicant-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .ats-admin-content .ats-offer-four-column {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px 12px;
@@ -653,6 +909,12 @@ main:has(> .ats-admin-content) {
   height: 28px;
   padding: 0 20px;
   font-size: 13px;
+}
+
+/* Match the standard round selector inside the 320px interview list panel. */
+.ats-admin-content .ats-job-view-tabs {
+  width: 278px;
+  max-width: 100%;
 }
 
 .ats-admin-content .ats-filter-bar {

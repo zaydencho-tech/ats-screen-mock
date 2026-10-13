@@ -67,9 +67,9 @@
 .ats-admin-content .ats-custom-select .ats-custom-select-trigger[aria-expanded="true"],
 .ats-admin-content .ats-custom-select .ats-custom-select-trigger:focus-visible,
 .ats-custom-select .ats-custom-select-trigger:focus-visible {
-  border-color: #4b74ff !important;
+  border-color: #2277ff !important;
   outline: none !important;
-  box-shadow: 0 0 0 1px rgb(75 116 255 / 8%);
+  box-shadow: 0 0 0 3px rgb(34 119 255 / 10%);
 }
 
 .ats-custom-select-trigger:disabled,
@@ -84,11 +84,11 @@
   overscroll-behavior: contain;
   box-sizing: border-box;
   padding: 4px;
-  border: 1px solid #e4e6e8;
+  border: 1px solid #dddddd;
   border-radius: 8px;
   background: #fff;
-  color: #283038;
-  box-shadow: 0 4px 14px rgb(40 48 56 / 10%);
+  color: #333333;
+  box-shadow: 0 8px 24px rgb(51 51 51 / 10%);
   font-family: inherit;
   font-size: 13px;
   line-height: 1.5;
@@ -113,12 +113,12 @@
 }
 
 .ats-custom-select-option[data-active="true"] {
-  background: #f4f6f8;
+  background: #f5f5f5;
 }
 
 .ats-custom-select-option[aria-selected="true"] {
-  background: #f7f9fc;
-  color: #4b74ff;
+  background: #f1f1f1;
+  color: #2277ff;
   font-weight: 600;
 }
 

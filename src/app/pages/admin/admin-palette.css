@@ -1,0 +1,329 @@
+/* Shared visual tokens, scoped to the four admin bodies and their own dialogs. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content),
+.ats-admin-dialog {
+  --ats-color-blue: #2277ff;
+  --ats-color-blue-strong: #0066ff;
+  --ats-color-text: #333333;
+  --ats-color-muted: #737373;
+  --ats-color-border: #dddddd;
+  --ats-color-border-soft: #e7e7e7;
+  --ats-color-tint: #f1f1f1;
+  --ats-color-surface: #f8f9fa;
+  --ats-radius-panel: 20px;
+  --ats-radius-card: 16px;
+  --ats-radius-inner: 12px;
+  --ats-radius-control: 8px;
+  --ats-shadow-panel: 0 2px 8px rgb(51 51 51 / 3%);
+  --foreground: var(--ats-color-text);
+  --card-foreground: var(--ats-color-text);
+  --muted-foreground: var(--ats-color-muted);
+  --muted: #f3f3f3;
+  --border: var(--ats-color-border);
+  --input: var(--ats-color-border);
+  --primary: var(--ats-color-text);
+  --primary-foreground: #fff;
+  --secondary: #1f1f1f;
+  --accent: #666666;
+  color: var(--ats-color-text);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(h1, h2, h3, h4) {
+  color: var(--ats-color-text) !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .text-muted-foreground, .recharts-legend-item-text, .ats-summary-header-title,
+  .ats-summary-caption, .ats-summary-stages span, .ats-interview-list-meta,
+  .dashboard-stat-header, .dashboard-stat-caption, .dashboard-stat-total
+) {
+  color: var(--ats-color-muted) !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) th {
+  color: var(--ats-color-muted);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-application-two-column .ats-field-label, .ats-job-field-label,
+  .ats-summary-contact > div > span:first-child,
+  .ats-offer-detail .ats-offer-field-label, .ats-offer-detail .ats-offer-fields label,
+  .ats-offer-detail .ats-offer-fields p.text-xs
+) {
+  color: var(--ats-color-muted) !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-application-two-column .ats-field-value, .ats-job-field-value,
+  .ats-offer-detail .ats-offer-field-value, .ats-summary-value,
+  .ats-summary-position, .ats-list-title, .dashboard-stat-value,
+  .dashboard-metric .font-display
+) {
+  color: var(--ats-color-text) !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .text-primary, .text-blue-500, .text-blue-600, .text-blue-700, .text-sky-400, .text-sky-600,
+  .text-indigo-600, .text-indigo-700, .dashboard-stat-accent
+) {
+  color: var(--ats-color-text) !important;
+}
+
+/* Informational badges and chips use neutral contrast rather than accent blue. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is([class*="bg-blue-"], [class*="bg-indigo-"], [class*="bg-sky-"]),
+.ats-admin-dialog :is([class*="bg-blue-"], [class*="bg-indigo-"]) {
+  background-color: var(--ats-color-tint) !important;
+  color: var(--ats-color-text) !important;
+  border-color: var(--ats-color-border-soft) !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-panel, .dashboard-panel, .dashboard-process
+) {
+  border-color: var(--ats-color-border-soft);
+  border-radius: var(--ats-radius-panel);
+  background: #fff;
+  box-shadow: var(--ats-shadow-panel);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-application-two-column .ats-application-section, .ats-job-section,
+  .ats-job-applicant-card, .dashboard-list-item
+) {
+  border-color: var(--ats-color-border-soft) !important;
+  border-radius: var(--ats-radius-inner) !important;
+  background: var(--ats-color-surface);
+}
+
+/* Selection is expressed with a charcoal edge and a quiet gray surface. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-summary-card {
+  --ats-section-space: 12px;
+  border-color: var(--ats-color-border-soft);
+  border-radius: var(--ats-radius-card) !important;
+  background-color: var(--ats-color-surface);
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-summary-body {
+  border-color: var(--ats-color-border-soft);
+  border-radius: var(--ats-radius-inner);
+  box-shadow: 0 1px 3px rgb(51 51 51 / 3%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(.ats-summary-header-title, .ats-summary-position) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-list-card:not(.ats-summary-card) {
+  padding: 12px !important;
+  border-color: var(--ats-color-border-soft);
+  box-shadow: none;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-summary-card[aria-pressed="true"], .ats-list-card.border-primary
+) {
+  border-color: #999999;
+  background-color: var(--ats-color-tint);
+  box-shadow: inset 3px 0 0 var(--ats-color-text), 0 3px 10px rgb(51 51 51 / 5%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-list-card:hover:not([aria-pressed="true"]):not(.border-primary) {
+  border-color: #bbbbbb;
+  box-shadow: 0 3px 10px rgb(51 51 51 / 5%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-detail-panel > * {
+  flex-shrink: 0;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-offer-detail .border-t:not(.grid) {
+  display: flex;
+  flex-direction: column;
+  gap: 20px !important;
+  padding-top: 0 !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-offer-detail .border-t:not(.grid) > * {
+  margin-block: 0 !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-summary-icon {
+  color: #666666;
+}
+
+/* Controls keep their existing geometry; palette and interaction states are shared. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  input:not([type="checkbox"]):not([type="radio"]), textarea,
+  .ats-filter-bar .ats-custom-select-trigger, .dashboard-filter-pill,
+  .ats-custom-select-trigger
+) {
+  border-color: var(--ats-color-border) !important;
+  color: var(--ats-color-text) !important;
+  background-color: #fff;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(input, textarea)::placeholder {
+  color: #969696;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-filter-bar .ats-custom-select-trigger, .dashboard-filter-pill
+):hover:not(:disabled):not([aria-disabled="true"]):not([aria-expanded="true"]) {
+  border-color: #999999 !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-primary-button:disabled:not([data-save-state="saved"]) {
+  opacity: 0.5;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(input, textarea):focus-visible,
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-custom-select .ats-custom-select-trigger:is(:focus-visible, [aria-expanded="true"]) {
+  border-color: var(--ats-color-blue) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgb(34 119 255 / 10%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(button, a, summary):focus-visible {
+  outline: 2px solid var(--ats-color-blue);
+  outline-offset: 3px;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-primary-action, .ats-primary-button:not([data-save-state="saved"]),
+  .dashboard-period-done, button.bg-primary
+) {
+  border-color: transparent;
+  background: var(--ats-color-blue) !important;
+  color: #fff !important;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgb(34 119 255 / 12%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-primary-action, .ats-primary-button:not([data-save-state="saved"]),
+  .dashboard-period-done, button.bg-primary
+):hover:not(:disabled) {
+  background: var(--ats-color-blue-strong) !important;
+  box-shadow: 0 3px 8px rgb(34 119 255 / 18%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-segment-control {
+  background: #f1f1f1;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-segment-option {
+  color: var(--ats-color-muted);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-segment-option[aria-pressed="true"] {
+  color: var(--ats-color-text);
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(51 51 51 / 7%);
+}
+
+/* Agent cards are informational surfaces; recording and result status colors stay semantic. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(.ats-agent-card, .ats-agent-callout) {
+  border-color: var(--ats-color-border-soft) !important;
+  border-radius: var(--ats-radius-inner) !important;
+  background: #fff;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-card-heading {
+  background: #f1f2f3 !important;
+  color: var(--ats-color-text);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) :is(
+  .ats-agent-card-heading > svg, .ats-agent-card-heading > div > svg,
+  .ats-agent-callout svg, .ats-interview-schedule-info svg
+) {
+  color: #666666 !important;
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-callout {
+  background: var(--ats-color-surface);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-callout label > span {
+  border-color: var(--ats-color-border);
+  background: #fff;
+  color: var(--ats-color-text);
+  border-radius: var(--ats-radius-control);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-callout label > span:hover {
+  border-color: #999999;
+  background: var(--ats-color-tint);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-interview-schedule-info {
+  border-radius: var(--ats-radius-inner) !important;
+  background: var(--ats-color-tint) !important;
+  color: var(--ats-color-text) !important;
+}
+
+/* Secondary actions stay charcoal so the blue primary action carries the emphasis. */
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-action {
+  border-color: transparent;
+  background: var(--ats-color-text) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 5px rgb(51 51 51 / 8%);
+}
+
+.ats-spacing:is(.dashboard-content, .ats-admin-content) .ats-agent-action:hover:not(:disabled) {
+  background: #1f1f1f !important;
+}
+
+/* Dashboard surfaces stay neutral; chart marks retain their blue palette. */
+.ats-spacing.dashboard-content .dashboard-stat {
+  border-color: var(--ats-color-border-soft);
+  border-radius: var(--ats-radius-card);
+  background-color: #fff;
+  background-image: none;
+}
+
+.ats-spacing.dashboard-content .dashboard-stat-body {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ats-spacing.dashboard-content .dashboard-stat-header svg {
+  color: #666666;
+}
+
+.ats-spacing.dashboard-content .dashboard-stat-link:hover .dashboard-stat {
+  border-color: #bbbbbb;
+  box-shadow: 0 4px 12px rgb(51 51 51 / 6%);
+}
+
+.ats-spacing.dashboard-content .dashboard-stat-bars span {
+  background: #e0e9f7;
+}
+
+.ats-spacing.dashboard-content .dashboard-stat-bars .is-current {
+  background: linear-gradient(to top, #0066ff, #88ddff);
+}
+
+.ats-spacing.dashboard-content .dashboard-metric {
+  border-color: var(--ats-color-border-soft);
+  background: var(--ats-color-surface);
+}
+
+.ats-spacing.dashboard-content .dashboard-metric svg {
+  color: #666666;
+}
+
+.ats-spacing.dashboard-content .dashboard-period-filter[open] summary {
+  border-color: var(--ats-color-blue) !important;
+  box-shadow: 0 0 0 3px rgb(34 119 255 / 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ats-spacing:is(.dashboard-content, .ats-admin-content) :is(button, input, textarea, .dashboard-stat) {
+    transition: none;
+  }
+}

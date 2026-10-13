@@ -30,6 +30,12 @@ npm start
 
 기본 주소는 `http://localhost:8003`입니다. 다른 포트는 `PORT=8010 npm start`로 지정합니다. `HOST` 기본값은 `0.0.0.0`입니다. `/healthz`로 서버 상태를 확인합니다. 소스를 변경하면 다시 빌드해야 합니다.
 
+## 외부 미리보기
+
+배포 주소: https://ats-screen-mock.backup17583.chatgpt.site
+
+`npm run build`는 정적 호스팅에서 화면별 주소를 직접 열 수 있도록 `dist/screens/*/index.html`도 생성합니다. Sites 배포 설정은 `.openai/hosting.json`에 있습니다. 외부 미리보기에도 가상 데이터와 로컬 목업만 사용하며 실제 ATS 서버에 연결하지 않습니다.
+
 ## 목업 동작 범위
 
 - 원본 탭·필터·선택·폼·모달을 사용합니다. 공고 등록·수정·삭제·공개 상태, 지원서 입력·임시저장·제출, 처우 수정과 평가 저장은 로컬 응답을 사용합니다.

@@ -1,6 +1,8 @@
 import "./admin-spacing.css";
 import CustomSelect from "../../components/admin/CustomSelect";
+import CandidateCardContent from "../../components/admin/CandidateCardContent";
 import "./admin-content.css";
+import "./admin-palette.css";
 import {
   useState,
   useEffect,
@@ -537,7 +539,7 @@ const getStatusStyle = (status: Offer["status"], statusName?: string) => {
   switch (label) {
     case "대기": return { className: "bg-muted text-muted-foreground", color: undefined };
     case "진행":
-    case "협의": return { className: "bg-accent/20", color: "#4F39F6" };
+    case "협의": return { className: "bg-accent/20", color: "#2277FF" };
     case "완료": return { className: "bg-primary/10 text-primary", color: undefined };
     default:     return { className: "bg-muted text-muted-foreground", color: undefined };
   }
@@ -645,7 +647,7 @@ function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
 
 function handleFilterSelectFocus(e: FocusEvent<HTMLSelectElement>) {
   if (e.currentTarget.disabled) return;
-  e.target.style.borderColor = "#3182F6";
+  e.target.style.borderColor = "#2277FF";
   e.target.style.boxShadow = "0 0 0 3px rgba(49, 130, 246, 0.12)";
 }
 
@@ -1971,9 +1973,15 @@ export default function OfferManagement() {
                     : "border-border bg-card hover:bg-muted/30"
                 }`}
               >
-                <div className="ats-summary-header">
-                  <span className="ats-summary-header-title">{offer.applicantName}</span>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px" }}>
+                <CandidateCardContent
+                  inset
+                  name={offer.applicantName}
+                  fields={[
+                    { label: "직무", value: offer.position },
+                    { label: "이메일", value: offer.email },
+                    { label: "연락처", value: offer.phone },
+                  ]}
+                  badges={<>
                     <span
                       className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusStyle(offer.status, offer.statusName).className}`}
                       style={getStatusStyle(offer.status, offer.statusName).color ? { color: getStatusStyle(offer.status, offer.statusName).color } : undefined}
@@ -1990,15 +1998,8 @@ export default function OfferManagement() {
                         </span>
                       ) : null;
                     })()}
-                  </div>
-                </div>
-                <div className="ats-summary-body">
-                  <div className="ats-summary-position">{offer.position}</div>
-                  <div className="ats-summary-contact">
-                    <div><span>이메일</span><span>{offer.email}</span></div>
-                    <div><span>연락처</span><span>{offer.phone}</span></div>
-                  </div>
-                </div>
+                  </>}
+                />
               </button>
             ))}
             </AdminListFetchState>
@@ -2082,7 +2083,7 @@ export default function OfferManagement() {
                       backgroundPosition: "right 6px center", backgroundRepeat: "no-repeat", backgroundSize: "10px 10px",
                       outline: "none", color: newCompleteStatusCd ? "#283038" : "#90A1B9",
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = "#3182F6"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
+                    onFocus={(e) => { e.target.style.borderColor = "#2277FF"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
                     onBlur={(e) => { e.target.style.borderColor = "#D1D5DB"; e.target.style.boxShadow = "none"; }}
                   >
                     <option value="">
@@ -2111,7 +2112,7 @@ export default function OfferManagement() {
                           padding: "5px 8px", fontSize: "0.75rem", outline: "none",
                           resize: "none", fontFamily: "inherit", boxSizing: "border-box",
                         }}
-                        onFocus={(e) => { e.target.style.borderColor = "#3182F6"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
+                        onFocus={(e) => { e.target.style.borderColor = "#2277FF"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
                         onBlur={(e) => { e.target.style.borderColor = statusChangeReason.trim() ? "#D1D5DB" : "#FCA5A5"; e.target.style.boxShadow = "none"; }}
                       />
                       {!statusChangeReason.trim() && (
@@ -2239,11 +2240,11 @@ export default function OfferManagement() {
                     {flagsOpen && <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
 
                       {hasResumeJdReview && (
-                      <div style={{ border: "1px solid #BFDBFE", borderRadius: "8px", backgroundColor: "#F0F7FF", padding: "10px 12px" }}>
+                      <div style={{ border: "1px solid #E7E7E7", borderRadius: "8px", backgroundColor: "#F8F9FA", padding: "10px 12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-                          <FileText style={{ width: "14px", height: "14px", color: "#2563EB" }} />
-                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#1D4ED8" }}>이력서 + JD</span>
-                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#4F39F6", backgroundColor: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: "4px", padding: "1px 5px", display: "flex", alignItems: "center", gap: "3px" }}>
+                          <FileText style={{ width: "14px", height: "14px", color: "#666666" }} />
+                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333333" }}>이력서 + JD</span>
+                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#333333", backgroundColor: "#F1F1F1", border: "1px solid #DDDDDD", borderRadius: "4px", padding: "1px 5px", display: "flex", alignItems: "center", gap: "3px" }}>
                             <Sparkles style={{ width: "9px", height: "9px" }} />AgentGO 서류 검토
                           </span>
                           {withFile && <span style={{ fontSize: "0.6875rem", color: "#D97706", fontWeight: 500 }}>+ 카운터오퍼 자료</span>}
@@ -2273,15 +2274,15 @@ export default function OfferManagement() {
                         )}
                       </div>
 
-                      <div style={{ border: "1px solid #C7D2FE", borderRadius: "8px", backgroundColor: "#EEF2FF", padding: "10px 12px" }}>
+                      <div style={{ border: "1px solid #DDDDDD", borderRadius: "8px", backgroundColor: "#F1F1F1", padding: "10px 12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                          <Sparkles style={{ width: "14px", height: "14px", color: "#4F39F6" }} />
-                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#4338CA" }}>면접</span>
+                          <Sparkles style={{ width: "14px", height: "14px", color: "#333333" }} />
+                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333333" }}>면접</span>
                         </div>
 
                         {hasInterviewAnalysis && (
-                        <div style={{ backgroundColor: "#ffffff", border: "1px solid #C7D2FE", borderRadius: "6px", padding: "8px 10px", marginBottom: "6px" }}>
-                          <div style={{ ...labelStyle, color: "#4F39F6" }}>
+                        <div style={{ backgroundColor: "#ffffff", border: "1px solid #DDDDDD", borderRadius: "6px", padding: "8px 10px", marginBottom: "6px" }}>
+                          <div style={{ ...labelStyle, color: "#333333" }}>
                             <Sparkles style={{ width: "10px", height: "10px" }} />AgentGO 면접 녹음 분석
                           </div>
                           <p style={bodyStyle}>{interviewAgentResult}</p>
@@ -2291,7 +2292,7 @@ export default function OfferManagement() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                           <span style={{ ...labelStyle, color: "#64748B" }}>평가자 코멘트 {interviewComments.length}건</span>
                           {interviewComments.map((c, i) => (
-                            <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #C7D2FE", borderRadius: "6px", padding: "8px 10px" }}>
+                            <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #DDDDDD", borderRadius: "6px", padding: "8px 10px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                                 <span style={commentorStyle}>{c.name}</span>
                                 <span style={orgStyle}>· {c.org}</span>
@@ -2312,7 +2313,7 @@ export default function OfferManagement() {
                       레퍼런스 체크
                     </h3>
                     <div>
-                      <div className="p-3 border rounded-lg border-orange-200 bg-orange-50">
+                      <div className="ats-agent-callout p-3 border rounded-lg border-orange-200 bg-orange-50">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <FileText className="w-4 h-4 text-orange-500" />
@@ -2374,7 +2375,7 @@ export default function OfferManagement() {
                                   fontSize: "0.7rem",
                                   fontWeight: 500,
                                   borderRadius: "4px",
-                                  backgroundColor: "#4F39F6",
+                                  backgroundColor: "#2277FF",
                                   color: "#FFF",
                                   border: "none",
                                   display: "flex",
@@ -2587,9 +2588,9 @@ export default function OfferManagement() {
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium text-foreground text-sm">처우 제안</h3>
                           <button onClick={handleOpenResendModal}
-                            style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#3182F6", color:"#FFF", border:"none", display:"flex", alignItems:"center", gap:"5px", cursor:"pointer", transition:"all 0.2s" }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1D6FE8")}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#3182F6")}>
+                            style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#2277FF", color:"#FFF", border:"none", display:"flex", alignItems:"center", gap:"5px", cursor:"pointer", transition:"all 0.2s" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0066FF")}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2277FF")}>
                             <Send className="w-3 h-3" />처우협의 재발송
                           </button>
                         </div>
@@ -2772,9 +2773,9 @@ export default function OfferManagement() {
                   type="button"
                   onClick={() => void handleConfirmSendMail()}
                   disabled={isSendingMail || !mailSubject.trim() || !mailBody.trim()}
-                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#3182F6', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 0.5 : 1 }}
-                  onMouseEnter={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#1D6FE8'; }}
-                  onMouseLeave={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#3182F6'; }}
+                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#2277FF', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 0.5 : 1 }}
+                  onMouseEnter={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#0066FF'; }}
+                  onMouseLeave={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#2277FF'; }}
                 >
                   {isSendingMail ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -2906,9 +2907,9 @@ export default function OfferManagement() {
                   type="button"
                   onClick={() => void handleConfirmResend()}
                   disabled={isResending}
-                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#3182F6', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isResending ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isResending ? 0.8 : 1 }}
-                  onMouseEnter={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#1D6FE8'; }}
-                  onMouseLeave={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#3182F6'; }}
+                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#2277FF', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isResending ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isResending ? 0.8 : 1 }}
+                  onMouseEnter={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#0066FF'; }}
+                  onMouseLeave={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#2277FF'; }}
                 >
                   {isResending ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -3021,7 +3022,7 @@ export default function OfferManagement() {
                       fontSize: "0.8125rem",
                       fontWeight: 500,
                       borderRadius: "6px",
-                      backgroundColor: "#3182F6",
+                      backgroundColor: "#2277FF",
                       color: "#FFF",
                       border: "none",
                       display: "flex",
@@ -3035,11 +3036,11 @@ export default function OfferManagement() {
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        "#1D6FE8")
+                        "#0066FF")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        "#3182F6")
+                        "#2277FF")
                     }
                   >
                     <Check className="w-5 h-5" />
