@@ -48,19 +48,19 @@ interface ApplicationDetailData {
   referrerName?: string;
 }
 
-function SectionTitle({ children, numbered = true }: { children: React.ReactNode; numbered?: boolean }) {
+function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3
+    <h3 className="application-section-heading"
       style={{
         fontSize: "0.75rem",
         fontWeight: 700,
-        color: "#020618",
+        color: "var(--int-text, #020618)",
         marginBottom: "10px",
         paddingBottom: "6px",
-        borderBottom: "1px solid #F1F5F9",
+        borderBottom: "1px solid var(--int-border-subtle, #F1F5F9)",
       }}
     >
-      {!numbered && typeof children === "string" ? children.replace(/^\d+\.\s*/, "") : children}
+      {children}
     </h3>
   );
 }
@@ -68,31 +68,29 @@ function SectionTitle({ children, numbered = true }: { children: React.ReactNode
 function Row({ label, value }: { label: string; value?: React.ReactNode }) {
   if (!value && value !== 0) return null;
   return (
-    <div className="ats-detail-field" style={{ display: "flex", gap: "12px", marginBottom: "6px" }}>
+    <div className="application-info-row" style={{ display: "flex", gap: "12px", marginBottom: "6px" }}>
       <span
-        className="ats-field-label"
         style={{
           fontSize: "0.75rem",
-          color: "#90A1B9",
+          color: "var(--int-text-muted, #90A1B9)",
           minWidth: "72px",
           flexShrink: 0,
         }}
       >
         {label}
       </span>
-      <span className="ats-field-value" style={{ fontSize: "0.75rem", color: "#334155", flex: 1 }}>{value}</span>
+      <span style={{ fontSize: "0.75rem", color: "var(--int-text-secondary, #334155)", flex: 1 }}>{value}</span>
     </div>
   );
 }
 
 function Section({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="ats-application-section"
+    <div className="application-section"
       style={{
         paddingBottom: "14px",
         marginBottom: "14px",
-        borderBottom: "1px solid #F1F5F9",
+        borderBottom: "1px solid var(--int-border-subtle, #F1F5F9)",
       }}
     >
       {children}
@@ -155,32 +153,52 @@ function AttachmentDownloadRow({ file }: { file: Attachment }) {
     >
       <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
         <FileText
-          style={{ width: "13px", height: "13px", color: "#90A1B9", flexShrink: 0 }}
+          style={{ width: "13px", height: "13px", color: "var(--int-text-muted, #90A1B9)", flexShrink: 0 }}
         />
-        <span style={{ fontSize: "0.75rem", color: "#334155" }}>{file.fileName}</span>
+        <span style={{ fontSize: "0.75rem", color: "var(--int-text-secondary, #334155)" }}>{file.fileName}</span>
       </div>
       {isDownloading ? (
         <Loader2
-          style={{ width: "12px", height: "12px", color: "#90A1B9", flexShrink: 0 }}
+          style={{ width: "12px", height: "12px", color: "var(--int-text-muted, #90A1B9)", flexShrink: 0 }}
           className="animate-spin"
         />
       ) : (
         <Download
-          style={{ width: "12px", height: "12px", color: "#90A1B9", flexShrink: 0 }}
+          style={{ width: "12px", height: "12px", color: "var(--int-text-muted, #90A1B9)", flexShrink: 0 }}
         />
       )}
     </button>
   );
 }
 
+function ApplicationTableSection({ title, rows, emptyMessage = "등록된 정보가 없습니다." }: {
+  title: string;
+  rows: { label: string; value?: React.ReactNode }[];
+  emptyMessage?: string;
+}) {
+  const visibleRows = rows.filter(({ value }) => value || value === 0);
+  return (
+    <section className="application-table-section">
+      <SectionTitle>{title}</SectionTitle>
+      <table className="application-detail-table" aria-label={title}>
+        <tbody>
+          {visibleRows.length ? visibleRows.map(({ label, value }) => (
+            <tr key={label}><th scope="row">{label}</th><td>{value}</td></tr>
+          )) : <tr><td colSpan={2} className="application-table-empty">{emptyMessage}</td></tr>}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 export default function ApplicationDetailContent({
   data,
-  columns = 1,
-  showSectionNumbers = true,
+  profileLayout = "default",
+  contentLayout = "default",
 }: {
   data: ApplicationDetailData;
-  columns?: 1 | 2;
-  showSectionNumbers?: boolean;
+  profileLayout?: "default" | "summary";
+  contentLayout?: "default" | "table";
 }) {
   const d = data;
   const militaryStatusLabel = d.militaryStatus?.trim() || undefined;
@@ -192,9 +210,59 @@ export default function ApplicationDetailContent({
     d.referrerName,
   );
 
+  if (contentLayout === "table") {
+    const background = d.background?.trim() || d.coverLetter?.trim();
+    const motivation = d.motivation?.trim();
+    return (
+      <div className="application-table-layout">
+        <ApplicantPhotoHeader layout={profileLayout} name={d.name} email={d.email} phone={d.phone}
+          birthdate={d.birthdate} photoUrl={d.photoUrl} photoFileDtlId={d.photoFileDtlId} />
+        <ApplicationTableSection title="1. 기본 정보" rows={[
+          { label: "이름", value: <strong>{d.name}</strong> },
+          { label: "생년월일", value: d.birthdate },
+          { label: "이메일", value: d.email },
+          { label: "전화번호", value: d.phone },
+          { label: "우편번호", value: d.zipcode },
+          { label: "주소", value: d.address },
+          { label: "상세주소", value: d.addressDetail },
+        ]} />
+        <ApplicationTableSection title="2. 병역 / 보훈 / 장애" rows={[
+          { label: "병역사항", value: militaryStatusLabel },
+          { label: "보훈 대상", value: d.veteransStatus },
+          { label: "장애 여부", value: d.disabilityStatus },
+        ]} />
+        <ApplicationTableSection title="3. 학력" emptyMessage="등록된 학력 정보가 없습니다."
+          rows={[{ label: "학력 사항", value: d.education }]} />
+        <ApplicationTableSection title="4. 경력" emptyMessage="등록된 경력 정보가 없습니다."
+          rows={[{ label: "경력 사항", value: d.experience }]} />
+        <ApplicationTableSection title="5. 자격증 및 어학" rows={[
+          { label: "자격증", value: d.certifications?.length ? <ul className="application-table-list">{d.certifications.map((c, i) => <li key={i}>{c}</li>)}</ul> : undefined },
+          { label: "어학", value: d.languages?.length ? <ul className="application-table-list">{d.languages.map((l, i) => <li key={i}><span className="application-language-name">{l.language}</span>{l.level}</li>)}</ul> : undefined },
+        ]} />
+        <ApplicationTableSection title="6. 사회활동 경험" emptyMessage="등록된 사회활동 경험이 없습니다."
+          rows={[{ label: "사회활동", value: d.activities?.length ? <ul className="application-table-list">{d.activities.map((activity, i) => <li key={i}>{activity}</li>)}</ul> : undefined }]} />
+        <ApplicationTableSection title="7. 자기소개" emptyMessage="등록된 자기소개가 없습니다."
+          rows={background || motivation ? [
+            { label: "성장 과정 및 가치관", value: <p className="application-table-prose">{background || "없음"}</p> },
+            { label: "지원 동기 및 입사 후 포부", value: <p className="application-table-prose">{motivation || "없음"}</p> },
+          ] : []} />
+        <ApplicationTableSection title="8. 포트폴리오 및 경력기술서" emptyMessage="등록된 포트폴리오가 없습니다." rows={[
+          { label: "포트폴리오 URL", value: d.portfolioUrl ? <a className="application-table-link" href={d.portfolioUrl} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" size={12} />{d.portfolioUrl}</a> : undefined },
+          { label: "첨부파일", value: d.attachments?.length ? <div className="application-table-attachments">{d.attachments.map((file, idx) => <AttachmentDownloadRow key={file.fileDtlId ?? `${file.fileName}-${idx}`} file={file} />)}</div> : undefined },
+        ]} />
+        <ApplicationTableSection title="9. 지원정보" rows={[
+          { label: "입사 가능일", value: d.availableDate },
+          { label: "희망 연봉", value: Utils.Mapper.application.formatDesiredSalaryDisplay(d.desiredSalary) },
+          { label: "지원 경로", value: applicationChannelLabel ? <>{applicationChannelLabel}{referrerDisplay ? <span className="application-table-referrer">{referrerDisplay}</span> : null}</> : undefined },
+        ]} />
+      </div>
+    );
+  }
+
   return (
-    <div className={`ats-application-detail${columns === 2 ? " ats-application-two-column" : ""}`} style={{ padding: "16px", display: "flex", flexDirection: "column" }}>
+    <div style={{ padding: "16px", display: "flex", flexDirection: "column" }}>
       <ApplicantPhotoHeader
+        layout={profileLayout}
         name={d.name}
         email={d.email}
         phone={d.phone}
@@ -203,15 +271,15 @@ export default function ApplicationDetailContent({
         photoFileDtlId={d.photoFileDtlId}
       />
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>1. 기본 정보</SectionTitle>
+        <SectionTitle>1. 기본 정보</SectionTitle>
         <Row label="이름" value={<strong>{d.name}</strong>} />
         <Row label="생년월일" value={d.birthdate} />
         <Row label="이메일" value={d.email} />
         <Row label="전화번호" value={d.phone} />
-        <div className="ats-application-address-title" style={{ marginTop: "8px", marginBottom: "4px" }}>
-          <span style={{ fontSize: "0.75rem", color: "#90A1B9" }}>주소</span>
+        <div style={{ marginTop: "8px", marginBottom: "4px" }}>
+          <span style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #90A1B9)" }}>주소</span>
         </div>
-        <div className="ats-application-address" style={{ paddingLeft: "12px", borderLeft: "2px solid #F1F5F9" }}>
+        <div style={{ paddingLeft: "12px", borderLeft: "2px solid var(--int-border-subtle, #F1F5F9)" }}>
           <Row label="우편번호" value={d.zipcode} />
           <Row label="주소" value={d.address} />
           <Row label="상세주소" value={d.addressDetail} />
@@ -219,19 +287,19 @@ export default function ApplicationDetailContent({
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>2. 병역 / 보훈 / 장애</SectionTitle>
+        <SectionTitle>2. 병역 / 보훈 / 장애</SectionTitle>
         <Row label="병역사항" value={militaryStatusLabel} />
         <Row label="보훈 대상" value={d.veteransStatus} />
         <Row label="장애 여부" value={d.disabilityStatus} />
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>3. 학력</SectionTitle>
+        <SectionTitle>3. 학력</SectionTitle>
         {d.education ? (
           <p
             style={{
               fontSize: "0.75rem",
-              color: "#334155",
+              color: "var(--int-text-secondary, #334155)",
               lineHeight: 1.65,
               margin: 0,
               whiteSpace: "pre-wrap",
@@ -240,19 +308,19 @@ export default function ApplicationDetailContent({
             {d.education}
           </p>
         ) : (
-          <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
             등록된 학력 정보가 없습니다.
           </p>
         )}
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>4. 경력</SectionTitle>
+        <SectionTitle>4. 경력</SectionTitle>
         {d.experience ? (
           <pre
             style={{
               fontSize: "0.75rem",
-              color: "#334155",
+              color: "var(--int-text-secondary, #334155)",
               lineHeight: 1.65,
               margin: 0,
               whiteSpace: "pre-wrap",
@@ -263,20 +331,20 @@ export default function ApplicationDetailContent({
             {d.experience}
           </pre>
         ) : (
-          <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
             등록된 경력 정보가 없습니다.
           </p>
         )}
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>5. 자격증 및 어학</SectionTitle>
+        <SectionTitle>5. 자격증 및 어학</SectionTitle>
         {d.certifications && d.certifications.length > 0 && (
           <div style={{ marginBottom: "8px" }}>
             <p
               style={{
                 fontSize: "0.6875rem",
-                color: "#90A1B9",
+                color: "var(--int-text-muted, #90A1B9)",
                 fontWeight: 600,
                 marginBottom: "4px",
               }}
@@ -286,7 +354,7 @@ export default function ApplicationDetailContent({
             {d.certifications.map((c, i) => (
               <div
                 key={i}
-                style={{ fontSize: "0.75rem", color: "#334155", marginBottom: "2px" }}
+                style={{ fontSize: "0.75rem", color: "var(--int-text-secondary, #334155)", marginBottom: "2px" }}
               >
                 • {c}
               </div>
@@ -298,7 +366,7 @@ export default function ApplicationDetailContent({
             <p
               style={{
                 fontSize: "0.6875rem",
-                color: "#90A1B9",
+                color: "var(--int-text-muted, #90A1B9)",
                 fontWeight: 600,
                 marginBottom: "4px",
               }}
@@ -312,32 +380,32 @@ export default function ApplicationDetailContent({
         )}
         {(!d.certifications || d.certifications.length === 0) &&
           (!d.languages || d.languages.length === 0) && (
-            <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+            <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
               등록된 정보가 없습니다.
             </p>
           )}
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>6. 사회활동 경험</SectionTitle>
+        <SectionTitle>6. 사회활동 경험</SectionTitle>
         {d.activities && d.activities.length > 0 ? (
           d.activities.map((a, i) => (
             <div
               key={i}
-              style={{ fontSize: "0.75rem", color: "#334155", marginBottom: "2px" }}
+              style={{ fontSize: "0.75rem", color: "var(--int-text-secondary, #334155)", marginBottom: "2px" }}
             >
               • {a}
             </div>
           ))
         ) : (
-          <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
             등록된 사회활동 경험이 없습니다.
           </p>
         )}
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>7. 자기소개</SectionTitle>
+        <SectionTitle>7. 자기소개</SectionTitle>
         {(() => {
           const background = d.background?.trim() || d.coverLetter?.trim();
           const motivation = d.motivation?.trim();
@@ -345,7 +413,7 @@ export default function ApplicationDetailContent({
 
           const textBlockStyle = {
             fontSize: "0.75rem" as const,
-            color: "#334155",
+            color: "var(--int-text-secondary, #334155)",
             lineHeight: 1.75,
             margin: 0,
             whiteSpace: "pre-wrap" as const,
@@ -355,20 +423,20 @@ export default function ApplicationDetailContent({
 
           if (!hasAny) {
             return (
-              <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+              <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
                 등록된 자기소개가 없습니다.
               </p>
             );
           }
 
           return (
-            <div className="ats-application-text-columns" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
                 <div
                   style={{
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    color: "#334155",
+                    color: "var(--int-text-secondary, #334155)",
                     marginBottom: "6px",
                   }}
                 >
@@ -377,7 +445,7 @@ export default function ApplicationDetailContent({
                 {background ? (
                   <pre style={textBlockStyle}>{background}</pre>
                 ) : (
-                  <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+                  <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
                     없음
                   </p>
                 )}
@@ -387,7 +455,7 @@ export default function ApplicationDetailContent({
                   style={{
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    color: "#334155",
+                    color: "var(--int-text-secondary, #334155)",
                     marginBottom: "6px",
                   }}
                 >
@@ -396,7 +464,7 @@ export default function ApplicationDetailContent({
                 {motivation ? (
                   <pre style={textBlockStyle}>{motivation}</pre>
                 ) : (
-                  <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+                  <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
                     없음
                   </p>
                 )}
@@ -407,13 +475,13 @@ export default function ApplicationDetailContent({
       </Section>
 
       <Section>
-        <SectionTitle numbered={showSectionNumbers}>8. 포트폴리오 및 경력기술서</SectionTitle>
+        <SectionTitle>8. 포트폴리오 및 경력기술서</SectionTitle>
         {d.portfolioUrl && (
           <div style={{ marginBottom: "8px" }}>
             <p
               style={{
                 fontSize: "0.6875rem",
-                color: "#90A1B9",
+                color: "var(--int-text-muted, #90A1B9)",
                 fontWeight: 600,
                 marginBottom: "4px",
               }}
@@ -440,11 +508,11 @@ export default function ApplicationDetailContent({
           </div>
         )}
         {d.attachments && d.attachments.length > 0 && (
-          <div className="ats-application-attachments">
+          <div>
             <p
               style={{
                 fontSize: "0.6875rem",
-                color: "#90A1B9",
+                color: "var(--int-text-muted, #90A1B9)",
                 fontWeight: 600,
                 marginBottom: "4px",
               }}
@@ -462,14 +530,14 @@ export default function ApplicationDetailContent({
           </div>
         )}
         {!d.portfolioUrl && (!d.attachments || d.attachments.length === 0) && (
-          <p style={{ fontSize: "0.75rem", color: "#CBD5E1", margin: 0 }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--int-text-muted, #CBD5E1)", margin: 0 }}>
             등록된 포트폴리오가 없습니다.
           </p>
         )}
       </Section>
 
-      <div className="ats-application-section">
-        <SectionTitle numbered={showSectionNumbers}>9. 지원정보</SectionTitle>
+      <div>
+        <SectionTitle>9. 지원정보</SectionTitle>
         <Row label="입사 가능일" value={d.availableDate} />
         <Row
           label="희망 연봉"
@@ -487,7 +555,7 @@ export default function ApplicationDetailContent({
                       marginLeft: "8px",
                       fontSize: "0.6875rem",
                       color: "#64748B",
-                      background: "#F1F5F9",
+                      background: "var(--int-border-subtle, #F1F5F9)",
                       borderRadius: "4px",
                       padding: "1px 7px",
                     }}

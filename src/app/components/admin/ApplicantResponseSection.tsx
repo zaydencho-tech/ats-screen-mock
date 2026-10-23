@@ -28,7 +28,7 @@ function ResponseCard({
   const outlookUrl = response.outlookUrl?.trim() ?? "";
 
   return (
-    <div
+    <div className="offer-response-card"
       style={{
         border: `1px solid ${isLatest ? "#BFDBFE" : "#E2E8F0"}`,
         borderRadius: "8px",

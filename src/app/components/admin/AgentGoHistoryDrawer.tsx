@@ -1,4 +1,3 @@
-import CustomSelect from "./CustomSelect";
 import { useState, useEffect } from "react";
 import { X, Bell, CalendarRange, Search, Filter } from "lucide-react";
 import { motion } from "motion/react";
@@ -7,12 +6,14 @@ import { useAgentGoActivityHistory } from "../../hooks";
 import { MOCK_AGENT_TYPES } from "../../mocks";
 import AdminListFetchState from "./AdminListFetchState";
 import ManagedCorpSelect from "./ManagedCorpSelect";
+import FilterSelect from "./InterviewFilterSelect";
 import {
   resolveAgentGoActivityColor,
   resolveAgentGoActivityIcon,
 } from "../../utils/agentGoActivityHistory";
 
 interface AgentGoHistoryDrawerProps {
+  designSystem?: boolean;
   onClose: () => void;
   /** 대시보드 법인 필터 연동 (corpId 또는 all/null) */
   initialCorpId?: string | null;
@@ -27,6 +28,7 @@ function resolveInitialCorpId(initialCorpId?: string | null): string | null {
 }
 
 export default function AgentGoHistoryDrawer({
+  designSystem = false,
   onClose,
   initialCorpId,
   initialDateFrom,
@@ -122,6 +124,7 @@ export default function AgentGoHistoryDrawer({
 
       <motion.div
         initial={{ x: "100%" }}
+        className={designSystem ? "dashboard-history-panel" : undefined}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{
@@ -167,6 +170,7 @@ export default function AgentGoHistoryDrawer({
             </span>
           </div>
           <button
+            aria-label="활동 이력 닫기"
             onClick={onClose}
             style={{
               background: "none",
@@ -201,7 +205,8 @@ export default function AgentGoHistoryDrawer({
             }}
           >
             <ManagedCorpSelect
-              custom
+              customUI={designSystem}
+              menuZIndex={9002}
               variant="filter"
               value={selectedCorpId}
               onChange={setSelectedCorpId}
@@ -243,8 +248,13 @@ export default function AgentGoHistoryDrawer({
 
             <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
               <Filter className="w-3 h-3 text-muted-foreground" />
-              <CustomSelect
-                aria-label="에이전트 종류"
+              {designSystem ? <FilterSelect
+                label="에이전트 유형"
+                value={selectedAgent}
+                onChange={setSelectedAgent}
+                menuZIndex={9002}
+                options={MOCK_AGENT_TYPES.map(agent => ({value: agent.id, label: agent.name}))}
+              /> : <select
                 style={{ ...selectStyle, minWidth: "110px" }}
                 value={selectedAgent}
                 onChange={(e) => setSelectedAgent(e.target.value)}
@@ -256,7 +266,7 @@ export default function AgentGoHistoryDrawer({
                     {a.name}
                   </option>
                 ))}
-              </CustomSelect>
+              </select>}
             </div>
           </div>
 

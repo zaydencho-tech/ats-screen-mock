@@ -1,0 +1,120 @@
+/* Offer screen extends the shared interview tokens and components.
+   All overrides remain scoped; business state and handlers are unchanged. */
+.offer-design { --accent: var(--int-secondary-text); --accent-foreground: white; --input-background: white; }
+.offer-design.container { padding-block: 16px !important; }
+.offer-design .offer-heading { margin: 0 0 16px !important; }
+.offer-design .offer-heading h1 { color: var(--int-text) !important; }
+.offer-design .offer-workspace { grid-template-columns: clamp(260px, 25cqw, 360px) minmax(0, 1fr) !important; gap: 12px; }
+.offer-design .offer-list-panel { grid-column: 1; display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--int-surface); border-radius: 8px; min-width: 0; }
+.offer-design .offer-list-panel > * { margin-block: 0 !important; }
+.offer-design .offer-detail-panel { grid-column: 2; border: 0 !important; border-radius: 8px; padding: 12px 16px; min-width: 0; overflow-wrap: anywhere; }
+.offer-design .offer-filters { display: grid; grid-template-columns: minmax(160px, 200px) minmax(220px, 1fr) minmax(160px, 220px); gap: 6px; margin-bottom: 12px; padding: 8px; border-radius: 8px; background: white; }
+.offer-design .offer-candidate { flex-shrink: 0; border-radius: 8px !important; padding: 10px 12px; border: 1px solid var(--int-border); background: white; }
+.offer-design .offer-candidate:hover { background: var(--int-candidate-hover); filter: none; }
+.offer-design .offer-candidate[aria-pressed='true'] { background: var(--int-secondary-soft); border-color: var(--int-secondary-border); box-shadow: inset 3px 0 var(--int-selection-indicator); }
+.offer-design .offer-candidate-contact { display: grid; gap: 8px; }
+.offer-design .offer-candidate-contact > div { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: baseline; gap: 6px; }
+.offer-design .offer-candidate .candidate-summary-value { margin-top: 2px; font-size: 12px; }
+.offer-design .offer-status { display: inline-flex; align-items: center; white-space: nowrap; font-size: 11px !important; font-weight: 500 !important; line-height: 1.5; padding: 2px 6px !important; border: 0 !important; border-radius: 4px !important; }
+.offer-design .offer-profile { gap: 16px; margin-bottom: 16px; }
+.offer-design .offer-profile > div:first-child { flex: 1; min-width: 0; }
+.offer-design .offer-profile h2 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+.offer-design .offer-profile-eyebrow { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 400; color: var(--int-text-muted); }
+.offer-design .offer-profile > div:first-child > p { font-size: 13px; margin-bottom: 12px; }
+.offer-design .offer-profile-contact { gap: 12px; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); font-size: 13px; }
+.offer-design .offer-profile-contact > div { display: flex; flex-direction: column; gap: 2px; }
+.offer-design .offer-profile-contact > div > span:first-child { color: var(--int-text-muted); font-size: 12px; }
+.offer-design .offer-status-controls { flex: 0 0 210px; min-width: 0 !important; }
+.offer-design h3 { font-size: 14px !important; font-weight: 600 !important; color: var(--int-text); line-height: 1.5; }
+.offer-design h4 { font-size: 14px; font-weight: 600; }
+.offer-design label { color: var(--int-text-secondary); font-weight: 400; font-size: 12px; }
+.offer-design .offer-package-form label { display: flex; align-items: center; gap: 4px; }
+.offer-design .offer-proposal-editor > h3 {
+  margin-bottom: 16px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--int-text);
+}
+.offer-design .offer-proposal-editor .offer-package-form label {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--int-text-secondary);
+}
+.offer-design .offer-required-mark { display: inline-block; flex-shrink: 0; width: 3px; height: 3px; border-radius: 50%; background: #c9372c; font-size: 0 !important; }
+.offer-design input:not([type='checkbox']):not([type='file']),
+.offer-design select { min-height: 32px; padding: 6px 10px !important; }
+.offer-design textarea { min-height: 64px; }
+.offer-design input[type='checkbox'] { border-radius: 4px; accent-color: var(--int-action-primary); }
+.offer-design button[data-intent='secondary'], .offer-design button[data-intent='primary'] { min-height: 32px; }
+.offer-design button[data-intent='quiet'] { filter: none; }
+.offer-design .offer-detail-panel .border-t { border-top: 0; padding-top: 12px; }
+.offer-design .offer-detail-panel .space-y-4 { --tw-space-y-reverse: 0; }
+.offer-design .offer-detail-panel .space-y-4 > :not(:last-child) { margin-bottom: 12px; }
+.offer-design .offer-detail-panel > button { margin-bottom: 12px; }
+.offer-design .offer-package-form { gap: 10px 12px; }
+.offer-design .offer-package-form :is(input, textarea, select) { font-size: 13px; }
+.offer-design .offer-package-form input:not([type='checkbox']) { min-height: 32px !important; font-size: 13px !important; }
+.offer-design .offer-package-form .interview-filter-trigger { font-weight: 400; }
+.offer-design .offer-status-controls textarea[aria-invalid='true']:not(:focus) { border-color: var(--int-status-danger-text) !important; }
+.offer-design .offer-package-summary { min-width: 0; }
+.offer-design .offer-salary-summary { padding: 12px; border: 1px solid var(--int-border); background: var(--int-background); border-radius: 8px; gap: 8px; }
+.offer-design .offer-salary-summary .text-primary { color: var(--int-text); font-size: 16px; font-weight: 600; }
+.offer-design .offer-salary-summary > span { color: var(--int-text-secondary) !important; background: white !important; border: 1px solid var(--int-border) !important; border-radius: 4px !important; }
+.offer-design .offer-detail-table { margin-top: 12px; }
+.offer-design .bg-orange-50 { background: var(--int-secondary-soft); }
+.offer-design :is(.border-orange-200, .border-orange-300, .border-sky-100) { border-color: var(--int-border); }
+.offer-design :is(.text-orange-700, .text-orange-600, .text-orange-500, .text-accent, .text-sky-700) { color: var(--int-secondary-text); }
+.offer-design .bg-sky-50 { background: var(--int-background); }
+.offer-design .text-foreground\/80 { color: var(--int-text-secondary); }
+.offer-design .fixed > :is(.bg-card, .bg-white) { border-radius: 12px !important; }
+.offer-design .fixed h2 { font-size: 16px !important; font-weight: 600 !important; }
+.offer-design .fixed :is(.p-6, .p-5) { padding: 16px; }
+.offer-design .fixed [class*='max-w-'] { max-width: min(768px, calc(100vw - 32px)); }
+.offer-design .fixed label { font-size: 12px !important; color: var(--int-text-secondary); }
+.offer-design .fixed .application-table-layout { padding: 12px 16px; }
+.offer-design .fixed .application-table-section h3 { color: var(--int-text) !important; }
+.offer-design .offer-verification { padding-bottom: 0; border-bottom: 1px solid var(--int-border); }
+.offer-design .offer-verification > button[data-intent='quiet'] {
+  padding: 10px 8px !important;
+  background: transparent !important;
+  transition: background-color 160ms ease;
+}
+.offer-design .offer-verification > button[data-intent='quiet']:hover:not(:disabled) {
+  background: var(--int-secondary) !important;
+}
+.offer-design .offer-verification-cards > div { background: var(--int-secondary-soft) !important; border-color: var(--int-border) !important; }
+.offer-design .offer-verification-cards > div > div:first-child { flex-wrap: wrap; }
+.offer-design .offer-verification-cards > div > div:first-child > :is(span, svg) { color: var(--int-text-secondary) !important; }
+.offer-design .offer-verification-cards p { font-size: 13px !important; color: var(--int-text-secondary) !important; }
+.offer-design .offer-response-card { border-color: var(--int-border) !important; background: white !important; border-radius: 8px !important; }
+.offer-design .offer-response-card > div:first-child { background: var(--int-background) !important; border-color: var(--int-border) !important; flex-wrap: wrap; gap: 6px; }
+.offer-design .offer-response-card > div:first-child span { background: transparent !important; color: var(--int-text-secondary) !important; border-color: var(--int-border) !important; border-radius: 4px !important; }
+.offer-design .offer-response-card p { font-size: 13px !important; color: var(--int-text-secondary) !important; line-height: 1.65 !important; }
+@container interview-area (max-width: 1080px) {
+  .offer-design.container { height: auto !important; min-height: calc(100dvh - 54px); overflow: visible !important; }
+  .offer-design .offer-workspace { overflow: visible !important; flex: none !important; grid-template-columns: minmax(240px, .7fr) minmax(0, 1.3fr) !important; align-items: start; }
+  .offer-design .offer-list-panel { position: sticky; top: 16px; height: clamp(440px, calc(100dvh - 150px), 840px) !important; }
+  .offer-design .offer-detail-panel { height: auto !important; }
+  .offer-design .offer-profile { flex-direction: column; gap: 12px; }
+  .offer-design .offer-profile-contact { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .offer-design .offer-status-controls { flex: auto; width: 100%; align-items: flex-start; }
+  .offer-design .offer-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container interview-area (max-width: 720px) {
+  .offer-design .offer-workspace { grid-template-columns: minmax(0, 1fr) !important; }
+  .offer-design .offer-list-panel { grid-column: 1; position: static; height: 420px !important; }
+  .offer-design .offer-detail-panel { grid-column: 1; }
+  .offer-design .offer-filters { grid-template-columns: minmax(0, 1fr); }
+  .offer-design .offer-heading > div { flex-wrap: wrap; }
+  .offer-design .offer-heading p { flex-basis: 100%; }
+  .offer-design .offer-filters .interview-filter-trigger { height: 36px; }
+  .offer-design .offer-package-form.grid { grid-template-columns: minmax(0, 1fr); }
+  .offer-design .offer-package-form > div { grid-column: 1 !important; }
+  .offer-design .offer-detail-panel input:not([type='checkbox']), .offer-design select { min-height: 36px; }
+  .offer-design .offer-package-form input:not([type='checkbox']) { min-height: 36px !important; }
+  .offer-design button[data-intent='primary'], .offer-design button[data-intent='secondary'] { min-height: 36px; }
+  .offer-design .fixed { padding: 8px; }
+  .offer-design .fixed [class*='max-w-'] { max-width: calc(100vw - 16px); }
+  .offer-design .offer-detail-panel .grid-cols-2:not(.offer-profile-contact) { grid-template-columns: minmax(0, 1fr); }
+}

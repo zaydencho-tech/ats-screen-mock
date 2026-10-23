@@ -1,8 +1,3 @@
-import "./admin-spacing.css";
-import CustomSelect from "../../components/admin/CustomSelect";
-import CandidateCardContent from "../../components/admin/CandidateCardContent";
-import "./admin-content.css";
-import "./admin-palette.css";
 import {
   useState,
   useEffect,
@@ -10,8 +5,6 @@ import {
   useMemo,
   useCallback,
   useRef,
-  type CSSProperties,
-  type FocusEvent,
 } from "react";
 import { useLocation } from "react-router";
 import {
@@ -43,7 +36,7 @@ import SendHistorySection from "../../components/admin/SendHistorySection";
 import ApplicationDetailContent from "../../components/admin/ApplicationDetailContent";
 import ApplicationOriginalModal from "../../components/admin/ApplicationOriginalModal";
 import ApplicationStageEvalSection from "../../components/admin/ApplicationStageEvalSection";
-import ManagedCorpSelect from "../../components/admin/ManagedCorpSelect";
+import FilterSelect from "../../components/admin/InterviewFilterSelect";
 import AdminListFetchState from "../../components/admin/AdminListFetchState";
 import { scrollAdminListItemIntoView } from "../../utils/adminListFetchState";
 import OfferPackageEditorSection from "../../components/admin/OfferPackageEditorSection";
@@ -155,391 +148,15 @@ interface Offer {
   interviewReviews?: ReviewerEvaluation[];
 }
 
-const mockOffers = [
-  {
-    id: "OFF-001",
-    applicantName: "강태희",
-    applicantId: "APP-2026-151",
-    position: "백엔드 개발자",
-    interviewScore: 95,
-    status: "협의",
-    offer: {
-      baseSalary: 85000000,
-      stockOptions: 1000,
-      startDate: "2026-05-15",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-        "자기계발비 월 50만원",
-        "점심 식사 제공",
-      ],
-      notes: "협의 중인 연봉은 경력과 면접 평가를 고려하여 책정되었습니다.",
-    },
-    sentDate: "2026-06-10",
-    responseDeadline: "2026-06-24",
-    email: "kang@example.com",
-    phone: "010-1234-5678",
-    appliedDate: "2026-03-05",
-    education: "서울대학교 컴퓨터공학과 졸업",
-    experience: "네이버 3년, 카카오 2년",
-    skills: ["Node.js", "PostgreSQL", "AWS", "Docker", "Kubernetes"],
-    introduction: "안녕하세요. 5년차 백엔드 개발자 강태희입니다. 확장 가능한 시스템 아키텍처 설계와 대용량 트래픽 처리에 관심이 많습니다.",
-    portfolioUrl: "https://kangtaehee-portfolio.com",
-    attachments: [
-      { fileName: "경력기술서.pdf", fileSize: 1024000, fileType: "application/pdf", url: "#" },
-      { fileName: "프로젝트_문서.zip", fileSize: 3145728, fileType: "application/zip", url: "#" }
-    ],
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-02", baseSalary: 80000000, stockOptions: 800, startDate: "2026-05-15", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 50만원"], notes: "수습 3개월 동일 연봉 적용", responseDeadline: "2026-04-09", result: "카운터오퍼", counterOfferSalary: 90000000, counterOfferText: "현재 재직 중인 회사의 연봉이 9,000만원 수준이며, 이직 시 동일 수준 이상을 기대합니다. 추가로 최근 완료한 프로젝트 포트폴리오를 첨부합니다.", hasCounterOfferFile: true },
-      { round: 2, sentDate: "2026-04-10", baseSalary: 83000000, stockOptions: 900, startDate: "2026-05-15", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 50만원"], notes: "1차 역제안 반영, 스톡옵션 100주 추가", responseDeadline: "2026-04-17", result: "카운터오퍼", counterOfferSalary: 88000000, counterOfferText: "8,800만원으로 최종 조율을 요청드립니다. 검토 부탁드립니다.", hasCounterOfferFile: false },
-      { round: 3, sentDate: "2026-06-10", baseSalary: 85000000, stockOptions: 1000, startDate: "2026-07-01", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 50만원", "점심 식사 제공"], notes: "최종 조율안, 스톡옵션 추가 반영", responseDeadline: "2026-06-24", result: "협의중" },
-    ],
-  },
-  {
-    id: "OFF-002",
-    applicantName: "최민수",
-    applicantId: "APP-2026-153",
-    position: "데이터 엔지니어",
-    interviewScore: 92,
-    status: "완료",
-    endReason: "수락",
-    offer: {
-      baseSalary: 80000000,
-      stockOptions: 800,
-      startDate: "2026-05-01",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-        "자기계발비 월 50만원",
-      ],
-      notes: "입사 후 3개월 수습 기간이 있으며, 수습 기간 중에도 동일한 연봉이 적용됩니다.",
-    },
-    sentDate: "2026-04-10",
-    responseDeadline: "2026-04-17",
-    acceptedDate: "2026-04-15",
-    finalJoinDate: "2026-05-01",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-10", baseSalary: 80000000, stockOptions: 800, startDate: "2026-05-01", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 50만원"], notes: "수습 3개월 동일 연봉 적용", responseDeadline: "2026-04-17", result: "수락", applicantResponseText: "제안해 주신 처우 조건을 검토하였으며 수락 의사를 전달드립니다. 5월 1일 입사 예정으로 준비하겠습니다." },
-    ],
-    email: "choi@example.com",
-    phone: "010-2345-6789",
-    appliedDate: "2026-03-08",
-    education: "KAIST 전산학부 졸업",
-    experience: "쿠팡 데이터팀 3년",
-    skills: ["Python", "Spark", "Airflow", "Kafka", "SQL"],
-    introduction: "데이터 파이프라인 구축과 최적화에 경험이 많은 데이터 엔지니어입니다. 대용량 데이터 처리와 실시간 스트리밍에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-003",
-    applicantName: "송민지",
-    applicantId: "APP-2026-148",
-    position: "프론트엔드 개발자",
-    interviewScore: 88,
-    status: "대기",
-    offer: null,
-    email: "song@example.com",
-    phone: "010-3456-7890",
-    appliedDate: "2026-03-12",
-    education: "연세대학교 정보대학원 석사",
-    experience: "토스 프론트엔드팀 2년",
-    skills: ["React", "TypeScript", "Next.js", "TailwindCSS"],
-    introduction: "사용자 경험을 최우선으로 생각하는 프론트엔드 개발자입니다. 성능 최적화와 접근성에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-004",
-    applicantName: "김영수",
-    applicantId: "APP-2026-165",
-    position: "풀스택 개발자",
-    interviewScore: 90,
-    status: "완료",
-    endReason: "수락",
-    offer: {
-      baseSalary: 78000000,
-      stockOptions: 700,
-      startDate: "2026-06-01",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 3회",
-        "자기계발비 월 30만원",
-      ],
-      notes: "협의 완료",
-    },
-    sentDate: "2026-04-18",
-    responseDeadline: "2026-04-25",
-    acceptedDate: "2026-04-22",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-18", baseSalary: 78000000, stockOptions: 700, startDate: "2026-06-01", benefits: ["4대 보험", "연차 15일", "재택근무 주 3회", "자기계발비 월 30만원"], responseDeadline: "2026-04-25", result: "수락", applicantResponseText: "제안 조건 모두 확인하였습니다. 수락 의사를 전달드리며 입사를 기대하겠습니다." },
-    ],
-    email: "kim@example.com",
-    phone: "010-4567-8901",
-    appliedDate: "2026-03-15",
-    education: "고려대학교 컴퓨터학과 졸업",
-    experience: "라인 4년",
-    skills: ["React", "Node.js", "TypeScript", "MongoDB"],
-    introduction: "풀스택 개발자로 프론트엔드와 백엔드 모두 경험이 풍부합니다.",
-  },
-  {
-    id: "OFF-005",
-    applicantName: "이서연",
-    applicantId: "APP-2026-172",
-    position: "DevOps 엔지니어",
-    interviewScore: 87,
-    status: "완료",
-    endReason: "입사포기",
-    offer: {
-      baseSalary: 75000000,
-      stockOptions: 600,
-      startDate: "2026-05-20",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-      ],
-      notes: "인프라 관리 경험 우수",
-    },
-    sentDate: "2026-04-12",
-    responseDeadline: "2026-04-19",
-    rejectedDate: "2026-04-18",
-    rejectedReason: "타사 오퍼 수락",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-05", baseSalary: 72000000, stockOptions: 500, startDate: "2026-05-20", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회"], responseDeadline: "2026-04-12", result: "카운터오퍼", counterOfferSalary: 80000000 },
-      { round: 2, sentDate: "2026-04-12", baseSalary: 75000000, stockOptions: 600, startDate: "2026-05-20", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회"], notes: "1차 역제안 일부 반영", responseDeadline: "2026-04-19", result: "거절", applicantResponseText: "검토 결과 타사의 오퍼를 수락하게 되어 이번 기회는 정중히 거절드립니다. 좋은 기회 주셔서 감사합니다." },
-    ],
-    email: "lee@example.com",
-    phone: "010-5678-9012",
-    appliedDate: "2026-03-20",
-    education: "성균관대학교 소프트웨어학과 졸업",
-    experience: "우아한형제들 3년",
-    skills: ["AWS", "Kubernetes", "Terraform", "Jenkins"],
-    introduction: "클라우드 인프라 자동화와 CI/CD 구축에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-006",
-    applicantName: "박준혁",
-    applicantId: "APP-2026-180",
-    position: "AI 엔지니어",
-    interviewScore: 94,
-    status: "완료",
-    endReason: "무응답만료",
-    offer: {
-      baseSalary: 90000000,
-      stockOptions: 1200,
-      startDate: "2026-05-25",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-        "자기계발비 월 100만원",
-      ],
-      notes: "AI 연구 경력 우수",
-    },
-    sentDate: "2026-04-05",
-    responseDeadline: "2026-04-12",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-05", baseSalary: 90000000, stockOptions: 1200, startDate: "2026-05-25", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 100만원"], responseDeadline: "2026-04-12", result: "무응답만료" },
-    ],
-    email: "park@example.com",
-    phone: "010-6789-0123",
-    appliedDate: "2026-03-10",
-    education: "서울대학교 인공지능대학원 석사",
-    experience: "삼성전자 AI Lab 2년",
-    skills: ["PyTorch", "TensorFlow", "Python", "MLOps"],
-    introduction: "딥러닝 모델 최적화와 배포에 경험이 많습니다.",
-  },
-  {
-    id: "OFF-007",
-    applicantName: "정하은",
-    applicantId: "APP-2026-188",
-    position: "모바일 개발자",
-    interviewScore: 89,
-    status: "완료",
-    endReason: "입사포기",
-    offer: {
-      baseSalary: 77000000,
-      stockOptions: 650,
-      startDate: "2026-05-10",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 1회",
-      ],
-      notes: "모바일 앱 개발 경험 우수",
-    },
-    sentDate: "2026-04-08",
-    responseDeadline: "2026-04-15",
-    acceptedDate: "2026-04-14",
-    rejectedDate: "2026-04-20",
-    rejectedReason: "개인 사유",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-08", baseSalary: 77000000, stockOptions: 650, startDate: "2026-05-10", benefits: ["4대 보험", "연차 15일", "재택근무 주 1회"], responseDeadline: "2026-04-15", result: "수락", applicantResponseText: "제안 주신 처우 조건 검토하였으며 수락 의사를 전달드립니다. 입사를 기대하겠습니다." },
-      { round: 2, sentDate: "2026-04-20", baseSalary: 77000000, stockOptions: 650, startDate: "2026-05-10", benefits: ["4대 보험", "연차 15일", "재택근무 주 1회"], responseDeadline: "2026-04-27", result: "입사포기", applicantResponseText: "개인 사정으로 인해 부득이하게 입사를 포기하게 되었습니다. 기회를 주셔서 감사합니다." },
-    ],
-    email: "jung@example.com",
-    phone: "010-7890-1234",
-    appliedDate: "2026-03-18",
-    education: "한양대학교 전자공학과 졸업",
-    experience: "배달의민족 앱팀 3년",
-    skills: ["React Native", "iOS", "Android", "Flutter"],
-    introduction: "크로스 플랫폼 모바일 앱 개발에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-008",
-    applicantName: "윤서준",
-    applicantId: "APP-2026-195",
-    position: "보안 엔지니어",
-    interviewScore: 91,
-    status: "완료",
-    endReason: "회사철회",
-    offer: {
-      baseSalary: 82000000,
-      stockOptions: 750,
-      startDate: "2026-05-18",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-      ],
-      notes: "보안 전문성 우수",
-    },
-    sentDate: "2026-04-14",
-    responseDeadline: "2026-04-21",
-    withdrawalReason: "조직 개편으로 인한 채용 취소",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-14", baseSalary: 82000000, stockOptions: 750, startDate: "2026-05-18", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회"], responseDeadline: "2026-04-21", result: "회사 철회", note: "조직 개편으로 인한 채용 취소" },
-    ],
-    email: "yoon@example.com",
-    phone: "010-8901-2345",
-    appliedDate: "2026-03-22",
-    education: "KAIST 정보보호대학원 석사",
-    experience: "네이버 보안팀 4년",
-    skills: ["보안 아키텍처", "침투 테스트", "암호화", "방화벽"],
-    introduction: "시스템 보안과 네트워크 보안에 전문성을 가지고 있습니다.",
-  },
-  {
-    id: "OFF-009",
-    applicantName: "조민재",
-    applicantId: "APP-2026-201",
-    position: "프로덕트 매니저",
-    interviewScore: 86,
-    status: "협의",
-    offer: {
-      baseSalary: 72000000,
-      stockOptions: 500,
-      startDate: "2026-06-05",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 2회",
-        "자기계발비 월 40만원",
-      ],
-      notes: "PM 경험 우수",
-    },
-    sentDate: "2026-06-12",
-    responseDeadline: "2026-06-26",
-    sendHistory: [
-      { round: 1, sentDate: "2026-06-12", baseSalary: 72000000, stockOptions: 500, startDate: "2026-07-15", benefits: ["4대 보험", "연차 15일", "재택근무 주 2회", "자기계발비 월 40만원"], responseDeadline: "2026-06-26", result: "협의중" },
-    ],
-    email: "jo@example.com",
-    phone: "010-9012-3456",
-    appliedDate: "2026-03-25",
-    education: "서강대학교 경영학과 졸업",
-    experience: "쿠팡 PM 2년",
-    skills: ["제품 기획", "데이터 분석", "A/B 테스트", "사용자 리서치"],
-    introduction: "데이터 기반 의사결정과 사용자 중심 제품 개발에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-010",
-    applicantName: "한지민",
-    applicantId: "APP-2026-208",
-    position: "UX 디자이너",
-    interviewScore: 88,
-    status: "대기",
-    offer: null,
-    email: "han@example.com",
-    phone: "010-0123-4567",
-    appliedDate: "2026-03-28",
-    education: "홍익대학교 디자인학부 졸업",
-    experience: "당근마켓 UX팀 3년",
-    skills: ["Figma", "사용자 리서치", "프로토타이핑", "디자인 시스템"],
-    introduction: "사용자 경험 개선과 디자인 시스템 구축에 경험이 많습니다.",
-  },
-  {
-    id: "OFF-011",
-    applicantName: "신동욱",
-    applicantId: "APP-2026-215",
-    position: "데이터 분석가",
-    interviewScore: 85,
-    status: "완료",
-    endReason: "수락",
-    offer: {
-      baseSalary: 68000000,
-      stockOptions: 400,
-      startDate: "2026-05-22",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-        "재택근무 주 3회",
-      ],
-      notes: "데이터 분석 역량 우수",
-    },
-    sentDate: "2026-04-15",
-    responseDeadline: "2026-04-22",
-    acceptedDate: "2026-04-21",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-15", baseSalary: 68000000, stockOptions: 400, startDate: "2026-05-22", benefits: ["4대 보험", "연차 15일", "재택근무 주 3회"], responseDeadline: "2026-04-22", result: "수락", applicantResponseText: "제안해 주신 처우 조건 검토하였으며 수락합니다. 입사 일정에 맞춰 준비하겠습니다." },
-    ],
-    email: "shin@example.com",
-    phone: "010-1357-2468",
-    appliedDate: "2026-03-30",
-    education: "서울시립대학교 통계학과 졸업",
-    experience: "11번가 데이터분석팀 2년",
-    skills: ["SQL", "Python", "Tableau", "통계 분석"],
-    introduction: "비즈니스 인사이트 도출과 데이터 시각화에 관심이 많습니다.",
-  },
-  {
-    id: "OFF-012",
-    applicantName: "오세영",
-    applicantId: "APP-2026-222",
-    position: "QA 엔지니어",
-    interviewScore: 83,
-    status: "완료",
-    endReason: "입사포기",
-    offer: {
-      baseSalary: 65000000,
-      stockOptions: 350,
-      startDate: "2026-05-28",
-      benefits: [
-        "4대 보험",
-        "연차 15일",
-      ],
-      notes: "QA 자동화 경험 우수",
-    },
-    sentDate: "2026-04-10",
-    responseDeadline: "2026-04-17",
-    rejectedDate: "2026-04-16",
-    rejectedReason: "연봉 협의 불발",
-    sendHistory: [
-      { round: 1, sentDate: "2026-04-10", baseSalary: 65000000, stockOptions: 350, startDate: "2026-05-28", benefits: ["4대 보험", "연차 15일"], responseDeadline: "2026-04-17", result: "거절", applicantResponseText: "제안해 주신 연봉 조건이 기대 수준에 미치지 못해 이번 기회는 거절드립니다. 검토해 주셔서 감사합니다." },
-    ],
-    email: "oh@example.com",
-    phone: "010-2468-1357",
-    appliedDate: "2026-04-01",
-    education: "중앙대학교 소프트웨어학과 졸업",
-    experience: "야놀자 QA팀 3년",
-    skills: ["Selenium", "TestNG", "Jira", "Jenkins"],
-    introduction: "테스트 자동화와 품질 보증에 경험이 많습니다.",
-  },
-] as Offer[];
+// Demo records are supplied by src/preview/fixtures.mjs through the local API.
+
 
 const getStatusStyle = (status: Offer["status"], statusName?: string) => {
-  const label = statusName?.trim() || status;
+  const label = status;
   switch (label) {
     case "대기": return { className: "bg-muted text-muted-foreground", color: undefined };
     case "진행":
-    case "협의": return { className: "bg-accent/20", color: "#2277FF" };
+    case "협의": return { className: "bg-blue-100 text-blue-700", color: undefined };
     case "완료": return { className: "bg-primary/10 text-primary", color: undefined };
     default:     return { className: "bg-muted text-muted-foreground", color: undefined };
   }
@@ -582,17 +199,17 @@ function resolvePosGradeName(
 const getEndReasonStyleByCd = (completeStatusCd?: string | null) => {
   switch (completeStatusCd?.trim().toUpperCase()) {
     case COMP_CMPL_ST_CD.ACCEPT:
-      return { bg: "#EFF6FF", color: "#2563EB", border: "#BFDBFE" };
+      return { bg: "#EFFFD6", color: "#4C6B1F", border: "#EEF0F4" };
     case COMP_CMPL_ST_CD.REJECT:
-      return { bg: "#FEF2F2", color: "#DC2626", border: "#FECACA" };
+      return { bg: "#FFECEB", color: "#AE2E24", border: "#EEF0F4" };
     case COMP_CMPL_ST_CD.GIVE_UP:
-      return { bg: "#FEF9C3", color: "#A16207", border: "#FDE68A" };
+      return { bg: "#FFF5DB", color: "#9E4C00", border: "#EEF0F4" };
     case COMP_CMPL_ST_CD.NO_RESPONSE:
-      return { bg: "#F3F4F6", color: "#4B5563", border: "#D1D5DB" };
+      return { bg: "#0515240F", color: "#505258", border: "#EEF0F4" };
     case COMP_CMPL_ST_CD.WITHDRAW:
-      return { bg: "#FFF7ED", color: "#C2410C", border: "#FED7AA" };
+      return { bg: "#FFF5DB", color: "#9E4C00", border: "#EEF0F4" };
     case COMP_CMPL_ST_CD.CANCEL:
-      return { bg: "#FAF5FF", color: "#7C3AED", border: "#DDD6FE" };
+      return { bg: "#F8EEFE", color: "#803FA5", border: "#EEF0F4" };
     default:
       return null;
   }
@@ -612,49 +229,6 @@ const resolveOfferEndReasonLabel = (
   resolveOfferCompCmplStLabel(offer.completeStatusCd) ||
   offer.endReason?.trim() ||
   "";
-
-const FILTER_SELECT_STYLE: CSSProperties = {
-  height: "34px",
-  borderRadius: "6px",
-  border: "1px solid #D1D5DB",
-  padding: "0 28px 0 10px",
-  fontSize: "0.8125rem",
-  appearance: "none",
-  backgroundImage:
-    "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e\")",
-  backgroundPosition: "right 8px center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "12px 12px",
-  outline: "none",
-  backgroundColor: "#ffffff",
-  color: "#283038",
-  minWidth: "120px",
-};
-
-function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
-  return {
-    ...FILTER_SELECT_STYLE,
-    ...(disabled
-      ? {
-          backgroundColor: "#EBF0F5",
-          color: "#90a1b9",
-          opacity: 0.5,
-          cursor: "not-allowed",
-        }
-      : {}),
-  };
-}
-
-function handleFilterSelectFocus(e: FocusEvent<HTMLSelectElement>) {
-  if (e.currentTarget.disabled) return;
-  e.target.style.borderColor = "#2277FF";
-  e.target.style.boxShadow = "0 0 0 3px rgba(49, 130, 246, 0.12)";
-}
-
-function handleFilterSelectBlur(e: FocusEvent<HTMLSelectElement>) {
-  e.target.style.borderColor = "#D1D5DB";
-  e.target.style.boxShadow = "none";
-}
 
 export default function OfferManagement() {
   const location = useLocation();
@@ -1848,15 +1422,14 @@ export default function OfferManagement() {
   };
 
   return (
-    <div className="ats-admin-content ats-spacing container mx-auto px-6" style={{ height: 'calc(100vh - 54px)', overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingTop: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+    <div className="interview-design offer-design container mx-auto px-6" style={{ height: 'calc(100vh - 54px)', overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingTop: '24px', paddingBottom: '24px', boxSizing: 'border-box' }}>
       <motion.div
-        className="ats-page-layout"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
       >
-        <div className="ats-page-heading ats-offer-heading">
+        <div className="offer-heading interview-heading" style={{ margin: "6px 0" }}>
           <div
             style={{
               display: "flex",
@@ -1871,81 +1444,40 @@ export default function OfferManagement() {
                 fontWeight: 700,
                 lineHeight: 1.3,
                 letterSpacing: "-0.01em",
-                color: "#283038",
+                color: "#020618",
               }}
             >
               처우 협의
             </h1>
-            <p style={{ fontSize: "14px", color: "#858d96" }}>
+            <p style={{ fontSize: "14px", color: "#314158" }}>
               최종 합격자의 처우를 협의하고 관리하세요
             </p>
           </div>
-
-          {/* 필터 */}
-          <div className="ats-offer-heading-controls ats-filter-bar flex items-center" style={{ gap: "6px" }}>
-            <ManagedCorpSelect
-              custom
-              value={selectedCorpId}
-              onChange={handleCorpChange}
-              showLabel={false}
-              selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
-              className="flex items-center"
-            />
-
-            <CustomSelect
-              aria-label="공고 필터"
-              value={selectedJobPostId}
-              onChange={(e) => setSelectedJobPostId(e.target.value)}
-              disabled={isJobOptionsLoading}
-              className={`bg-card focus:outline-none ${isJobOptionsLoading ? "cursor-not-allowed" : ""}`}
-              style={resolveFilterSelectStyle(isJobOptionsLoading)}
-              onFocus={handleFilterSelectFocus}
-              onBlur={handleFilterSelectBlur}
-            >
-              <option value="all">전체 공고</option>
-              {isJobOptionsLoading ? (
-                <option value="" disabled>
-                  불러오는 중...
-                </option>
-              ) : (
-                jobOptions.map((job) => (
-                  <option key={job.jobPostId} value={job.jobPostId}>
-                    {job.jobTitle}
-                  </option>
-                ))
-              )}
-            </CustomSelect>
-
-            <CustomSelect
-              aria-label="상태 필터"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              disabled={isStatusOptionsLoading}
-              className={`bg-card focus:outline-none ${isStatusOptionsLoading ? "cursor-not-allowed" : ""}`}
-              style={resolveFilterSelectStyle(isStatusOptionsLoading)}
-              onFocus={handleFilterSelectFocus}
-              onBlur={handleFilterSelectBlur}
-            >
-              <option value="all">전체 상태</option>
-              {isStatusOptionsLoading ? (
-                <option value="" disabled>
-                  불러오는 중...
-                </option>
-              ) : (
-                statusFilterOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))
-              )}
-            </CustomSelect>
-          </div>
         </div>
 
-        <div className="ats-management-columns grid gap-4" style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        {/* 기존 옵션·변경 핸들러를 사용하는 공통 커스텀 필터 */}
+        <div className="offer-filters">
+          {corpSelect.selectOptions.length > 0 && <FilterSelect
+            label="계열사"
+            value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(selectedCorpId)}
+            onChange={(value) => handleCorpChange(Utils.Mapper.managedCorpSelect.parseManagedCorpSelectValue(value))}
+            disabled={isSelectDisabled}
+            options={corpSelect.selectOptions.map(corp => ({value: corp.corpId, label: corp.corpName}))}
+          />}
+          <FilterSelect label="공고" value={selectedJobPostId} onChange={setSelectedJobPostId}
+            disabled={isJobOptionsLoading}
+            options={[{value: "all", label: "전체 공고"}, ...jobOptions.map(job => ({value: job.jobPostId, label: job.jobTitle}))]}
+          />
+          <FilterSelect label="협의 상태" value={statusFilter} onChange={setStatusFilter}
+            disabled={isStatusOptionsLoading}
+            options={[{value: "all", label: "전체 상태"}, ...statusFilterOptions]}
+          />
+        </div>
+
+        <div className="offer-workspace grid grid-cols-3 gap-4" style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <div
             ref={listScrollRef}
-            className="ats-summary-list space-y-2 overflow-y-auto"
+            className="offer-list-panel col-span-1 space-y-2 overflow-y-auto"
             style={{ height: '100%', boxSizing: 'border-box' }}
           >
             <AdminListFetchState
@@ -1967,25 +1499,19 @@ export default function OfferManagement() {
                 data-list-item-id={offer.id}
                 aria-pressed={selectedOffer?.id === offer.id}
                 onClick={() => setSelectedOffer(offer)}
-                className={`ats-list-card ats-summary-card w-full text-left p-3 border rounded-lg transition-all ${
+                className={`offer-candidate w-full text-left p-3 border rounded-lg transition-all ${
                   selectedOffer?.id === offer.id
                     ? "border-primary bg-primary/5"
                     : "border-border bg-card hover:bg-muted/30"
                 }`}
               >
-                <CandidateCardContent
-                  inset
-                  name={offer.applicantName}
-                  fields={[
-                    { label: "직무", value: offer.position },
-                    { label: "이메일", value: offer.email },
-                    { label: "연락처", value: offer.phone },
-                  ]}
-                  badges={<>
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusStyle(offer.status, offer.statusName).className}`}
-                      style={getStatusStyle(offer.status, offer.statusName).color ? { color: getStatusStyle(offer.status, offer.statusName).color } : undefined}
-                    >
+                <div className="candidate-summary-header">
+                  <div className="candidate-summary-identity">
+                    <span className="candidate-summary-label">지원자</span>
+                    <span className="candidate-summary-name">{offer.applicantName}</span>
+                  </div>
+                  <div className="candidate-summary-statuses">
+                    <span className={`offer-status ${getStatusStyle(offer.status, offer.statusName).className}`}>
                       {getOfferStatusLabel(offer)}
                     </span>
                     {(() => {
@@ -1993,35 +1519,39 @@ export default function OfferManagement() {
                       const endReasonLabel = resolveOfferEndReasonLabel(offer);
                       const rs = getEndReasonStyleByCd(endReasonCd);
                       return endReasonLabel && rs ? (
-                        <span style={{ fontSize: "0.6rem", fontWeight: 600, padding: "1px 5px", borderRadius: "6px", backgroundColor: rs.bg, color: rs.color, border: `1px solid ${rs.border}`, whiteSpace: "nowrap" }}>
-                          {endReasonLabel}
-                        </span>
+                        <span className="offer-status" style={{backgroundColor: rs.bg, color: rs.color}}>{endReasonLabel}</span>
                       ) : null;
                     })()}
-                  </>}
-                />
+                  </div>
+                </div>
+                <span className="candidate-summary-position">{offer.position}</span>
+                <div className="offer-candidate-contact">
+                  <div><span className="candidate-summary-label">이메일</span><span className="candidate-summary-value">{offer.email}</span></div>
+                  <div><span className="candidate-summary-label">연락처</span><span className="candidate-summary-value">{offer.phone}</span></div>
+                </div>
               </button>
             ))}
             </AdminListFetchState>
           </div>
 
           {selectedOffer ? (
-          <div className="ats-panel ats-detail-panel ats-offer-detail border border-border rounded-lg p-5 bg-card overflow-y-auto relative" style={{ height: '100%', boxSizing: 'border-box' }}>
+          <div className="offer-detail-panel col-span-2 border border-border rounded-lg p-5 bg-card overflow-y-auto relative" style={{ height: '100%', boxSizing: 'border-box' }}>
             {isDetailLoading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-card/80 text-muted-foreground">
                 <Loader2 className="h-5 w-5 animate-spin" />
                 <span style={{ fontSize: "0.8125rem" }}>상세 정보를 불러오는 중...</span>
               </div>
             )}
-            <div className="flex items-start justify-between mb-5 mx-[0px] mt-[0px] mb-[20px]">
+            <div className="offer-profile flex items-start justify-between mb-5 mx-[0px] mt-[0px] mb-[20px]">
               <div>
-                <h2 className="ats-offer-applicant-name font-display mb-2">
+                <h2 className="font-display mb-2 text-[24px]">
+                  <span className="offer-profile-eyebrow">지원자</span>
                   {selectedOffer.applicantName}
                 </h2>
-                <p className="ats-offer-applicant-position text-muted-foreground mb-2">
+                <p className="text-lg text-muted-foreground mb-2">
                   {selectedOffer.position}
                 </p>
-                <div className="ats-offer-applicant-contact grid grid-cols-2 gap-3">
+                <div className="offer-profile-contact grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-muted-foreground">이메일: </span>
                     <span>{selectedOffer.email}</span>
@@ -2032,10 +1562,10 @@ export default function OfferManagement() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-2" style={{ minWidth: "200px" }}>
+              <div className="offer-status-controls flex flex-col items-end gap-2" style={{ minWidth: "200px" }}>
                 {/* 상태 배지 */}
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span className={`ats-offer-status px-3 py-1 rounded-lg text-xs font-medium ${getStatusStyle(selectedOffer.status, selectedOffer.statusName).className}`}
+                  <span className={`offer-status px-3 py-1 rounded-lg text-sm font-medium ${getStatusStyle(selectedOffer.status, selectedOffer.statusName).className}`}
                     style={getStatusStyle(selectedOffer.status, selectedOffer.statusName).color ? { color: getStatusStyle(selectedOffer.status, selectedOffer.statusName).color } : undefined}>
                     {getOfferStatusLabel(selectedOffer)}
                   </span>
@@ -2067,42 +1597,20 @@ export default function OfferManagement() {
                 {/* 수동 종료 처리 — 상태 무관 항상 노출 (완료건도 재변경 가능) */}
                 <div style={{ width: "100%" }}>
                   {/* 드롭다운 */}
-                  <CustomSelect
-                    aria-label="종료 처리"
+                  <FilterSelect
+                    label="종료 처리"
                     value={newCompleteStatusCd ?? ""}
-                    onChange={(e) => {
-                      setNewCompleteStatusCd(e.target.value || undefined);
-                      setStatusChangeReason("");
-                    }}
+                    onChange={(value) => { setNewCompleteStatusCd(value || undefined); setStatusChangeReason(""); }}
                     disabled={isCompleteStatusOptionsLoading || isClosingOffer}
-                    style={{
-                      width: "100%", height: "28px", borderRadius: "5px",
-                      border: "1px solid #D1D5DB", padding: "0 24px 0 8px",
-                      fontSize: "0.75rem", appearance: "none",
-                      backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2390a1b9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m4 6 4 4 4-4'/%3e%3c/svg%3e\")",
-                      backgroundPosition: "right 6px center", backgroundRepeat: "no-repeat", backgroundSize: "10px 10px",
-                      outline: "none", color: newCompleteStatusCd ? "#283038" : "#90A1B9",
-                    }}
-                    onFocus={(e) => { e.target.style.borderColor = "#2277FF"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
-                    onBlur={(e) => { e.target.style.borderColor = "#D1D5DB"; e.target.style.boxShadow = "none"; }}
-                  >
-                    <option value="">
-                      {isCompleteStatusOptionsLoading
-                        ? "불러오는 중..."
-                        : "종료 처리 선택..."}
-                    </option>
-                    {offerCloseStatusOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </CustomSelect>
+                    options={[{value: "", label: isCompleteStatusOptionsLoading ? "불러오는 중..." : "종료 처리 선택..."}, ...offerCloseStatusOptions]}
+                  />
 
                   {/* 사유 입력 + 저장/취소 */}
                   {newCompleteStatusCd && (
                     <div style={{ marginTop: "6px" }}>
                       <textarea
                         value={statusChangeReason}
+                        aria-invalid={!statusChangeReason.trim()}
                         onChange={(e) => setStatusChangeReason(e.target.value)}
                         placeholder="변경 사유 입력 (필수)"
                         rows={2}
@@ -2112,14 +1620,14 @@ export default function OfferManagement() {
                           padding: "5px 8px", fontSize: "0.75rem", outline: "none",
                           resize: "none", fontFamily: "inherit", boxSizing: "border-box",
                         }}
-                        onFocus={(e) => { e.target.style.borderColor = "#2277FF"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
+                        onFocus={(e) => { e.target.style.borderColor = "#3182F6"; e.target.style.boxShadow = "0 0 0 3px rgba(49,130,246,0.1)"; }}
                         onBlur={(e) => { e.target.style.borderColor = statusChangeReason.trim() ? "#D1D5DB" : "#FCA5A5"; e.target.style.boxShadow = "none"; }}
                       />
                       {!statusChangeReason.trim() && (
                         <p style={{ fontSize: "0.6875rem", color: "#EF4444", marginTop: "2px", marginBottom: "2px" }}>사유를 입력해주세요</p>
                       )}
                       <div style={{ display: "flex", gap: "4px", marginTop: "4px" }}>
-                        <button
+                        <button data-intent="secondary"
                           onClick={() => {
                             setNewCompleteStatusCd(undefined);
                             setStatusChangeReason("");
@@ -2127,7 +1635,7 @@ export default function OfferManagement() {
                           disabled={isClosingOffer}
                           style={{ flex: 1, height: "28px", fontSize: "0.75rem", fontWeight: 500, borderRadius: "5px", border: "1px solid #D1D5DB", backgroundColor: "#fff", color: "#374151", cursor: "pointer" }}
                         >취소</button>
-                        <button
+                        <button data-intent="primary"
                           onClick={() => void handleConfirmStatusChange()}
                           disabled={!statusChangeReason.trim() || isClosingOffer}
                           style={{ flex: 1, height: "28px", fontSize: "0.75rem", fontWeight: 500, borderRadius: "5px", border: "none", backgroundColor: statusChangeReason.trim() ? "#EF4444" : "#FCA5A5", color: "#fff", cursor: statusChangeReason.trim() && !isClosingOffer ? "pointer" : "not-allowed", opacity: isClosingOffer ? 0.6 : 1 }}
@@ -2140,7 +1648,7 @@ export default function OfferManagement() {
             </div>
 
             {selectedOffer.applicationForm && (
-              <button
+              <button data-intent="secondary"
                 onClick={() => setShowApplicationPanel(true)}
                 className="mb-4 w-full border hover:bg-muted/50 transition-colors flex items-center justify-center"
                 style={{
@@ -2215,17 +1723,18 @@ export default function OfferManagement() {
               // 검증 플래그 + 레퍼런스 체크 통합 영역
               const VerificationFlags = ({ withFile }: { withFile: boolean }) => {
                 const [flagsOpen, setFlagsOpen] = useState(false);
-                const labelStyle: React.CSSProperties = { fontSize: "12px", fontWeight: 400, color: "#858d96", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" };
-                const bodyStyle: React.CSSProperties = { fontSize: "13px", color: "#283038", lineHeight: 1.5 };
+                const labelStyle: React.CSSProperties = { fontSize: "0.6875rem", fontWeight: 700, color: "#64748B", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" };
+                const bodyStyle: React.CSSProperties = { fontSize: "0.75rem", color: "#334155", lineHeight: 1.65 };
                 const commentBodyStyle: React.CSSProperties = { ...bodyStyle, whiteSpace: "pre-line" };
-                const commentorStyle: React.CSSProperties = { fontSize: "13px", fontWeight: 600, color: "#283038" };
-                const orgStyle: React.CSSProperties = { fontSize: "12px", color: "#858d96" };
+                const commentorStyle: React.CSSProperties = { fontSize: "0.6875rem", fontWeight: 600, color: "#475569" };
+                const orgStyle: React.CSSProperties = { fontSize: "0.6875rem", color: "#90A1B9" };
 
                 return (
                   <>
-                  <div className="border-t border-border pt-4">
+                  <div className="offer-verification border-t border-border pt-4">
                     {/* 헤더 + 토글 */}
-                    <button
+                    <button data-intent="quiet"
+                      aria-expanded={flagsOpen}
                       onClick={() => setFlagsOpen(o => !o)}
                       style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, marginBottom: flagsOpen ? "10px" : 0 }}
                     >
@@ -2237,14 +1746,14 @@ export default function OfferManagement() {
                         : <ChevronDown style={{ width: "14px", height: "14px", color: "#90A1B9" }} />
                       }
                     </button>
-                    {flagsOpen && <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {flagsOpen && <div className="offer-verification-cards" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
 
                       {hasResumeJdReview && (
-                      <div style={{ border: "1px solid #E7E7E7", borderRadius: "8px", backgroundColor: "#F8F9FA", padding: "10px 12px" }}>
+                      <div style={{ border: "1px solid #BFDBFE", borderRadius: "8px", backgroundColor: "#F0F7FF", padding: "10px 12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-                          <FileText style={{ width: "14px", height: "14px", color: "#666666" }} />
-                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333333" }}>이력서 + JD</span>
-                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#333333", backgroundColor: "#F1F1F1", border: "1px solid #DDDDDD", borderRadius: "4px", padding: "1px 5px", display: "flex", alignItems: "center", gap: "3px" }}>
+                          <FileText style={{ width: "14px", height: "14px", color: "#2563EB" }} />
+                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#1D4ED8" }}>이력서 + JD</span>
+                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#4F39F6", backgroundColor: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: "4px", padding: "1px 5px", display: "flex", alignItems: "center", gap: "3px" }}>
                             <Sparkles style={{ width: "9px", height: "9px" }} />AgentGO 서류 검토
                           </span>
                           {withFile && <span style={{ fontSize: "0.6875rem", color: "#D97706", fontWeight: 500 }}>+ 카운터오퍼 자료</span>}
@@ -2274,15 +1783,15 @@ export default function OfferManagement() {
                         )}
                       </div>
 
-                      <div style={{ border: "1px solid #DDDDDD", borderRadius: "8px", backgroundColor: "#F1F1F1", padding: "10px 12px" }}>
+                      <div style={{ border: "1px solid #C7D2FE", borderRadius: "8px", backgroundColor: "#EEF2FF", padding: "10px 12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
-                          <Sparkles style={{ width: "14px", height: "14px", color: "#333333" }} />
-                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#333333" }}>면접</span>
+                          <Sparkles style={{ width: "14px", height: "14px", color: "#4F39F6" }} />
+                          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "#4338CA" }}>면접</span>
                         </div>
 
                         {hasInterviewAnalysis && (
-                        <div style={{ backgroundColor: "#ffffff", border: "1px solid #DDDDDD", borderRadius: "6px", padding: "8px 10px", marginBottom: "6px" }}>
-                          <div style={{ ...labelStyle, color: "#333333" }}>
+                        <div style={{ backgroundColor: "#ffffff", border: "1px solid #C7D2FE", borderRadius: "6px", padding: "8px 10px", marginBottom: "6px" }}>
+                          <div style={{ ...labelStyle, color: "#4F39F6" }}>
                             <Sparkles style={{ width: "10px", height: "10px" }} />AgentGO 면접 녹음 분석
                           </div>
                           <p style={bodyStyle}>{interviewAgentResult}</p>
@@ -2292,7 +1801,7 @@ export default function OfferManagement() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                           <span style={{ ...labelStyle, color: "#64748B" }}>평가자 코멘트 {interviewComments.length}건</span>
                           {interviewComments.map((c, i) => (
-                            <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #DDDDDD", borderRadius: "6px", padding: "8px 10px" }}>
+                            <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #C7D2FE", borderRadius: "6px", padding: "8px 10px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                                 <span style={commentorStyle}>{c.name}</span>
                                 <span style={orgStyle}>· {c.org}</span>
@@ -2313,14 +1822,14 @@ export default function OfferManagement() {
                       레퍼런스 체크
                     </h3>
                     <div>
-                      <div className="ats-agent-callout p-3 border rounded-lg border-orange-200 bg-orange-50">
+                      <div className="p-3 border rounded-lg border-orange-200 bg-orange-50">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <FileText className="w-4 h-4 text-orange-500" />
                             <span className="text-xs font-medium">AgentGO 레퍼런스 체크 결과지 분석</span>
                           </div>
                           {referenceAnalysisStep === "completed" && (
-                            <button onClick={handleResetReference}
+                            <button data-intent="secondary" onClick={handleResetReference}
                               style={{ height:"22px", padding:"0 8px", fontSize:"0.7rem", fontWeight:500, borderRadius:"4px", backgroundColor:"#FFF", color:"#6B7280", border:"1px solid #D1D5DB", cursor:"pointer" }}
                               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F3F4F6")}
                               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FFF")}>재업로드</button>
@@ -2364,7 +1873,7 @@ export default function OfferManagement() {
                               </label>
                             )}
                             {referenceAnalysisStep === "uploaded" && (
-                              <button
+                              <button data-intent="secondary"
                                 type="button"
                                 onClick={() => void handleStartReferenceAnalysis()}
                                 disabled={isReferenceStarting}
@@ -2375,7 +1884,7 @@ export default function OfferManagement() {
                                   fontSize: "0.7rem",
                                   fontWeight: 500,
                                   borderRadius: "4px",
-                                  backgroundColor: "#2277FF",
+                                  backgroundColor: "#4F39F6",
                                   color: "#FFF",
                                   border: "none",
                                   display: "flex",
@@ -2517,6 +2026,7 @@ export default function OfferManagement() {
               const OfferView = () =>
                 selectedOffer.offer ? (
                   <OfferPackageSummary
+                    layout="table"
                     offer={selectedOffer.offer}
                     jobGradeOptions={jobGradeOptions}
                     posGradeOptions={posGradeOptions}
@@ -2545,7 +2055,7 @@ export default function OfferManagement() {
               // 지원자 응답 블록 (공통) — API 데이터 있을 때만
               const ApplicantResponseSection = () =>
                 applicantResponses.length > 0 ? (
-                  <div className="border-t border-border pt-4">
+                  <div className="offer-responses border-t border-border pt-4">
                     <ApplicantResponseSectionComponent
                       responses={applicantResponses}
                     />
@@ -2575,7 +2085,7 @@ export default function OfferManagement() {
                       <div className="border-t border-border pt-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium text-foreground text-sm">현재 제안 내용</h3>
-                          <button onClick={handleOpenEditModal}
+                          <button data-intent="secondary" onClick={handleOpenEditModal}
                             style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#fff", color:"#374151", border:"1px solid #D1D5DB", cursor:"pointer" }}>
                             수정
                           </button>
@@ -2587,10 +2097,10 @@ export default function OfferManagement() {
                       <div className="border-t border-border pt-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium text-foreground text-sm">처우 제안</h3>
-                          <button onClick={handleOpenResendModal}
-                            style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#2277FF", color:"#FFF", border:"none", display:"flex", alignItems:"center", gap:"5px", cursor:"pointer", transition:"all 0.2s" }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0066FF")}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#2277FF")}>
+                          <button data-intent="secondary" onClick={handleOpenResendModal}
+                            style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#3182F6", color:"#FFF", border:"none", display:"flex", alignItems:"center", gap:"5px", cursor:"pointer", transition:"all 0.2s" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#1D6FE8")}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#3182F6")}>
                             <Send className="w-3 h-3" />처우협의 재발송
                           </button>
                         </div>
@@ -2613,7 +2123,7 @@ export default function OfferManagement() {
                     <div className="border-t border-border pt-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="font-medium text-foreground text-sm">처우 협의 내용</h3>
-                        <button onClick={handleOpenEditModal}
+                        <button data-intent="secondary" onClick={handleOpenEditModal}
                           style={{ height:"28px", padding:"0 10px", fontSize:"0.75rem", fontWeight:500, borderRadius:"6px", backgroundColor:"#fff", color:"#374151", border:"1px solid #D1D5DB", cursor:"pointer" }}>
                           수정
                         </button>
@@ -2635,7 +2145,7 @@ export default function OfferManagement() {
           </div>
           ) : (
             <div
-              className="ats-panel border border-border rounded-lg p-5 bg-card flex items-center justify-center text-muted-foreground"
+              className="col-span-2 border border-border rounded-lg p-5 bg-card flex items-center justify-center text-muted-foreground"
               style={{ height: "100%", boxSizing: "border-box", fontSize: "0.8125rem" }}
             >
               목록에서 처우 협의 대상자를 선택하세요.
@@ -2669,7 +2179,7 @@ export default function OfferManagement() {
                     {(selectedOffer.sendHistory?.length ?? 0) + 1}차 발송
                   </span>
                 </div>
-                <button
+                <button data-intent="quiet" aria-label="닫기"
                   onClick={closeMailModal}
                   className="flex items-center justify-center rounded hover:bg-muted/50 transition-colors text-muted-foreground"
                   style={{ width: '24px', height: '24px' }}
@@ -2759,7 +2269,7 @@ export default function OfferManagement() {
               </div>
 
               <div className="flex border-t border-border shrink-0" style={{ gap: '8px', padding: '12px 16px' }}>
-                <button
+                <button data-intent="secondary"
                   type="button"
                   onClick={closeMailModal}
                   disabled={isSendingMail}
@@ -2769,13 +2279,13 @@ export default function OfferManagement() {
                 >
                   취소
                 </button>
-                <button
+                <button data-intent="primary"
                   type="button"
                   onClick={() => void handleConfirmSendMail()}
                   disabled={isSendingMail || !mailSubject.trim() || !mailBody.trim()}
-                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#2277FF', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 0.5 : 1 }}
-                  onMouseEnter={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#0066FF'; }}
-                  onMouseLeave={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#2277FF'; }}
+                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#3182F6', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isSendingMail || !mailSubject.trim() || !mailBody.trim() ? 0.5 : 1 }}
+                  onMouseEnter={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#1D6FE8'; }}
+                  onMouseLeave={(e) => { if (!isSendingMail && mailSubject.trim() && mailBody.trim()) e.currentTarget.style.backgroundColor = '#3182F6'; }}
                 >
                   {isSendingMail ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -2816,7 +2326,7 @@ export default function OfferManagement() {
                     {(selectedOffer.sendHistory?.length ?? 0) + 1}차 발송
                   </span>
                 </div>
-                <button
+                <button data-intent="quiet" aria-label="닫기"
                   type="button"
                   onClick={closeResendModal}
                   disabled={isResending}
@@ -2893,7 +2403,7 @@ export default function OfferManagement() {
 
               {/* 하단 버튼 */}
               <div className="flex border-t border-border shrink-0" style={{ gap: '8px', padding: '12px 16px' }}>
-                <button
+                <button data-intent="secondary"
                   type="button"
                   onClick={closeResendModal}
                   disabled={isResending}
@@ -2903,13 +2413,13 @@ export default function OfferManagement() {
                 >
                   취소
                 </button>
-                <button
+                <button data-intent="primary"
                   type="button"
                   onClick={() => void handleConfirmResend()}
                   disabled={isResending}
-                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#2277FF', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isResending ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isResending ? 0.8 : 1 }}
-                  onMouseEnter={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#0066FF'; }}
-                  onMouseLeave={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#2277FF'; }}
+                  style={{ flex: 1, height: '34px', fontSize: '0.8125rem', fontWeight: 500, borderRadius: '6px', backgroundColor: '#3182F6', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: isResending ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isResending ? 0.8 : 1 }}
+                  onMouseEnter={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#1D6FE8'; }}
+                  onMouseLeave={(e) => { if (!isResending) e.currentTarget.style.backgroundColor = '#3182F6'; }}
                 >
                   {isResending ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -2963,6 +2473,7 @@ export default function OfferManagement() {
                   </div>
 
                   <OfferPackageForm
+                    compact
                     values={editPackageForm.values}
                     jobGradeOptions={jobGradeOptions}
                     posGradeOptions={posGradeOptions}
@@ -2985,7 +2496,7 @@ export default function OfferManagement() {
 
               <div className="p-6 border-t border-border">
                 <div className="flex gap-3">
-                  <button
+                  <button data-intent="secondary"
                     onClick={() => setShowEditModal(false)}
                     disabled={isEditModalSubmitting}
                     style={{
@@ -3013,7 +2524,7 @@ export default function OfferManagement() {
                   >
                     취소
                   </button>
-                  <button
+                  <button data-intent="primary"
                     onClick={() => void handleSaveEdit()}
                     disabled={isEditModalSubmitting}
                     style={{
@@ -3022,7 +2533,7 @@ export default function OfferManagement() {
                       fontSize: "0.8125rem",
                       fontWeight: 500,
                       borderRadius: "6px",
-                      backgroundColor: "#2277FF",
+                      backgroundColor: "#3182F6",
                       color: "#FFF",
                       border: "none",
                       display: "flex",
@@ -3036,11 +2547,11 @@ export default function OfferManagement() {
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        "#0066FF")
+                        "#1D6FE8")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        "#2277FF")
+                        "#3182F6")
                     }
                   >
                     <Check className="w-5 h-5" />
@@ -3070,18 +2581,20 @@ export default function OfferManagement() {
         isDownloading={isApplicationPdfDownloading}
       >
         {applicationPanelData ? (
-          <ApplicationDetailContent data={applicationPanelData} />
+          <ApplicationDetailContent data={applicationPanelData} profileLayout="summary" contentLayout="table" />
         ) : (
           <div className="p-4 text-sm text-muted-foreground">
             지원서 정보가 없습니다.
           </div>
         )}
         <ApplicationStageEvalSection
+          layout="summary"
           title="서류 전형 평가"
           reviews={selectedOffer?.screeningReviews ?? []}
           emptyText="작성된 서류 전형 평가가 없습니다"
         />
         <ApplicationStageEvalSection
+          layout="summary"
           title="면접 전형 평가 (1차)"
           reviews={(selectedOffer?.interviewReviews ?? []).filter((review) =>
             Utils.Mapper.interviewAdmin.isFirstInterviewRoundCd(review.roundCd),
@@ -3089,6 +2602,7 @@ export default function OfferManagement() {
           emptyText="작성된 면접 전형 평가가 없습니다"
         />
         <ApplicationStageEvalSection
+          layout="summary"
           title="면접 전형 평가 (2차)"
           reviews={(selectedOffer?.interviewReviews ?? []).filter((review) =>
             Utils.Mapper.interviewAdmin.isSecondInterviewRoundCd(review.roundCd),

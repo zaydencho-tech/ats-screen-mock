@@ -1,0 +1,838 @@
+/* Study Dashboard / Behance palette adaptation.
+   Colors are sampled/visually interpreted from the static student-blue theme.
+   Typography and spacing retain the existing implementation.
+   Radius values follow https://atlassian.design/foundations/radius/.
+   See outputs/interview-design-system.md for reference and token definitions.
+   Scope deliberately includes only the interview page and its existing shell. */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('../assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+.ats-shell:has(.interview-design),
+.jobs-design-portal {
+  --int-primary: #1b43f3;
+  --int-action-primary: #1b43f3;
+  --int-action-hover: #1637cf;
+  --int-action-active: #112cb0;
+  --int-selection-text: #303b4e;
+  --int-selection-border: #aab5c5;
+  --int-selection-indicator: #7c8ba1;
+  --int-primary-hover: #1637cf;
+  --int-primary-active: #112cb0;
+  --int-secondary: #eef1f5;
+  --int-secondary-hover: #e6eaf0;
+  --int-secondary-active: #dce2eb;
+  --int-secondary-text: #465267;
+  --int-control-hover: #eef1f5;
+  --int-control-disabled: #edf0f7;
+  --int-border-hover: #b5bfce;
+  --int-candidate-hover: #f8f9fb;
+  --int-scrollbar: #d3d9e2;
+  --int-secondary-soft: #f6f7fa;
+  --int-secondary-border: #d5dce6;
+  --int-background: #f7f8fa;
+  --int-surface: #ffffff;
+  --int-text: #292c35;
+  --int-text-secondary: #666d80;
+  --int-text-muted: #747b8d;
+  --int-border: #eef0f4;
+  --int-border-subtle: #eef0f4;
+  --int-focus-ring: rgba(27, 67, 243, .14);
+  --int-tab-divider: #eef0f4;
+  /* @atlaskit/tokens 20.7.0, atlassian-light semantic status tokens. */
+  --int-status-info-bg: #e9f2fe;
+  --int-status-info-text: #1558bc;
+  --int-status-success-bg: #efffd6;
+  --int-status-success-text: #4c6b1f;
+  --int-status-warning-bg: #fff5db;
+  --int-status-warning-text: #9e4c00;
+  --int-status-danger-bg: #ffeceb;
+  --int-status-danger-text: #ae2e24;
+  --int-status-neutral-bg: #0515240f;
+  --int-status-neutral-text: #505258;
+  --int-font: 'Plus Jakarta Sans', 'Pretendard Variable', 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --int-text-xs: 0.75rem;
+  --int-text-sm: 0.8125rem;
+  --int-text-base: 0.875rem;
+  --int-text-lg: 1.125rem;
+  --int-text-title: 1.625rem;
+  --int-text-section: 0.875rem;
+  --int-text-item: 0.875rem;
+  --int-weight-normal: 400;
+  --int-weight-medium: 500;
+  --int-weight-semibold: 600;
+  --int-leading-body: 1.5;
+  --int-leading-title: 1.3;
+  --int-space-1: 4px;
+  --int-space-2: 8px;
+  --int-space-3: 12px;
+  --int-space-4: 16px;
+  --int-space-5: 20px;
+  --int-space-6: 24px;
+  --int-space-8: 32px;
+  /* Atlassian radius.xsmall / small / medium / large / xlarge / full. */
+  --int-radius-xsmall: 2px;
+  --int-radius-small: 4px;
+  --int-radius-control: 6px;
+  --int-radius-card: 8px;
+  --int-radius-modal: 12px;
+  --int-radius-full: 999px;
+  --int-transition: 160ms ease;
+  --int-shadow-hover: 0 4px 16px rgba(41, 49, 65, .04);
+
+  /* Bind existing Tailwind semantic utilities to the scoped palette. */
+  --primary: var(--int-primary);
+  --primary-foreground: var(--int-surface);
+  --secondary: var(--int-secondary);
+  --secondary-foreground: var(--int-text);
+  --accent: var(--int-primary);
+  --accent-foreground: var(--int-surface);
+  --foreground: var(--int-text);
+  --background: var(--int-background);
+  --card: var(--int-surface);
+  --muted: var(--int-background);
+  --muted-foreground: var(--int-text-secondary);
+  --border: var(--int-border);
+  --ring: var(--int-primary);
+  --font-display: var(--int-font);
+  --font-body: var(--int-font);
+  font-family: var(--int-font);
+  color: var(--int-text);
+  background: var(--int-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ats-shell:has(.interview-design) > header {
+  background: var(--int-surface);
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--int-border-subtle);
+}
+.ats-shell:has(.interview-design) > header button,
+.ats-shell:has(.interview-design) > header select,
+.ats-shell:has(.interview-design) > header a.border {
+  border-radius: var(--int-radius-control) !important;
+  border-color: var(--int-border) !important;
+  background-color: var(--int-background) !important;
+  color: var(--int-text) !important;
+  box-shadow: none !important;
+  font-family: var(--int-font);
+}
+.ats-shell:has(.interview-design) > header select { color-scheme: light; }
+.ats-shell:has(.interview-design) > header button:hover,
+.ats-shell:has(.interview-design) > header a.border:hover {
+  background-color: var(--int-control-hover) !important;
+}
+.ats-shell:has(.interview-design) > header button > div:first-child {
+  background: var(--int-selection-indicator) !important;
+}
+.ats-shell:has(.interview-design) > header button > div:first-child span { color: white !important; }
+.ats-shell:has(.interview-design) > .flex > nav {
+  background: var(--int-surface);
+  border-color: var(--int-border-subtle);
+}
+.ats-shell:has(.interview-design) > .flex > nav a {
+  color: var(--int-text-secondary);
+  border-radius: var(--int-radius-control);
+  transition: background-color var(--int-transition), color var(--int-transition);
+}
+.ats-shell:has(.interview-design) > .flex > nav a:hover {
+  background: var(--int-background);
+  color: var(--int-text);
+}
+.ats-shell:has(.interview-design) > .flex > nav a[aria-current='page'] {
+  background: var(--int-secondary);
+  color: var(--int-selection-text);
+}
+.ats-shell:has(.interview-design) main { background: var(--int-background); }
+
+.interview-design {
+  font-size: var(--int-text-sm);
+  line-height: var(--int-leading-body);
+  letter-spacing: -.015em;
+}
+.interview-design *, .interview-design *::before, .interview-design *::after { box-sizing: border-box; }
+.interview-design button, .interview-design input, .interview-design select, .interview-design textarea {
+  font-family: var(--int-font);
+}
+.interview-design button {
+  border-radius: var(--int-radius-control) !important;
+  font-weight: var(--int-weight-medium);
+  transition: background-color var(--int-transition), border-color var(--int-transition), box-shadow var(--int-transition), color var(--int-transition);
+}
+.interview-design button:not(:disabled) { cursor: pointer; }
+.interview-design button:disabled { opacity: .45; cursor: not-allowed; }
+.interview-design button:not(:disabled):hover { filter: brightness(.96); }
+.interview-design button:not(:disabled):active { filter: brightness(.90); }
+.interview-design :is(button, a, select, input, textarea):focus-visible,
+.ats-shell:has(.interview-design) > header :is(button, select, a):focus-visible {
+  outline: 2px solid var(--int-primary);
+  outline-offset: 2px;
+}
+.interview-heading { margin-bottom: var(--int-space-6) !important; }
+.interview-heading > div { gap: var(--int-space-4) !important; }
+.interview-heading h1 {
+  font-size: var(--int-text-title) !important;
+  font-weight: var(--int-weight-semibold) !important;
+  line-height: var(--int-leading-title) !important;
+  letter-spacing: -.04em !important;
+}
+.interview-heading p { color: var(--int-text-secondary) !important; font-size: var(--int-text-sm) !important; }
+
+/* Panel styling; responsive column sizing is defined below. */
+.interview-panel {
+  border: 0;
+  border-radius: var(--int-radius-card) !important;
+  background: var(--int-surface);
+  min-width: 0;
+}
+.interview-tabs {
+  padding: var(--int-space-2) !important;
+  gap: var(--int-space-1);
+  border-color: var(--int-border-subtle) !important;
+  background: var(--int-surface);
+}
+.interview-tabs button {
+  height: 36px !important;
+  border: 0 !important;
+  color: var(--int-text-secondary);
+  font-size: var(--int-text-xs) !important;
+  font-weight: 500 !important;
+}
+.interview-tabs button.text-primary {
+  background: var(--int-secondary) !important;
+  color: var(--int-selection-text) !important;
+  box-shadow: none;
+  font-weight: 600 !important;
+}
+.interview-tabs button:not(.text-primary):hover { background: var(--int-background) !important; color: var(--int-text); }
+.interview-filters {
+  padding: var(--int-space-3) !important;
+  gap: var(--int-space-2) !important;
+  border-color: var(--int-border-subtle) !important;
+}
+.interview-design select, .interview-design input:not([type='checkbox']):not([type='radio']):not([type='file']), .interview-design textarea {
+  border: 1px solid var(--int-border) !important;
+  border-radius: var(--int-radius-control) !important;
+  color: var(--int-text);
+  background-color: var(--int-surface);
+  font-size: var(--int-text-sm);
+  font-weight: 400;
+  line-height: 1.6;
+  transition: border-color var(--int-transition), box-shadow var(--int-transition), background-color var(--int-transition);
+}
+.interview-design select {
+  border-radius: var(--int-radius-control) !important;
+  height: 36px !important;
+  padding-left: var(--int-space-3) !important;
+  background-color: var(--int-background) !important;
+  border-color: transparent !important;
+}
+.interview-design :is(select, input, textarea):not(:disabled):hover { border-color: var(--int-border-hover) !important; }
+.interview-design :is(select, input, textarea):focus {
+  border-color: var(--int-primary) !important;
+  box-shadow: 0 0 0 3px var(--int-focus-ring) !important;
+}
+.interview-design :is(select, input, textarea):disabled { background-color: var(--int-control-disabled) !important; color: var(--int-text-muted) !important; }
+.interview-design textarea { padding: var(--int-space-3) !important; }
+.interview-design textarea::placeholder { color: var(--int-text-muted); }
+.interview-candidates { padding: var(--int-space-2) !important; gap: var(--int-space-2) !important; }
+.interview-design .interview-candidate {
+  padding: var(--int-space-3) !important;
+  border-radius: var(--int-radius-card) !important;
+  border: 1px solid var(--int-border-subtle);
+  background: var(--int-surface);
+  flex-shrink: 0;
+}
+.interview-design .interview-candidate:hover {
+  border-color: var(--int-secondary-border);
+  background: var(--int-candidate-hover);
+  box-shadow: var(--int-shadow-hover);
+  filter: none !important;
+}
+.interview-design .interview-candidate.border-primary {
+  border-color: var(--int-secondary-border) !important;
+  background: var(--int-secondary-soft) !important;
+  box-shadow: inset 3px 0 0 var(--int-selection-indicator);
+}
+.interview-candidate > div:first-child > span { font-weight: 600 !important; font-size: var(--int-text-base) !important; }
+.interview-candidate > div { line-height: 1.7; }
+.interview-candidate-heading { padding: var(--int-space-4) var(--int-space-5) !important; gap: var(--int-space-2) !important; flex-wrap: wrap; }
+.interview-candidate-heading h2 { font-size: var(--int-text-lg) !important; font-weight: 600; line-height: 1.4; letter-spacing: -.015em; }
+.interview-candidate-heading > div:last-child { flex-wrap: wrap; }
+.interview-application-content { padding: var(--int-space-5) !important; }
+.interview-application-content h3 { font-size: var(--int-text-section) !important; font-weight: 600 !important; padding-bottom: var(--int-space-2) !important; border-color: var(--int-border-subtle) !important; }
+.interview-review-panel h3 { font-size: var(--int-text-section) !important; font-weight: 600 !important; }
+.interview-design .rounded.text-xs,
+.interview-design .rounded-full.text-xs { border-radius: var(--int-radius-small); font-size: 11px; line-height: 1.5; padding: 3px 8px; }
+.interview-design :is(.bg-blue-100, .bg-green-100) { background-color: var(--int-secondary-soft); color: var(--int-secondary-text); }
+.interview-design :is(.bg-gray-100, .bg-slate-100) { background-color: var(--int-background); color: var(--int-text-secondary); }
+.interview-design .bg-primary { background-color: var(--int-primary); color: var(--int-surface); }
+.interview-design .bg-primary:not(:disabled):hover { background-color: var(--int-primary-hover); }
+.interview-design .bg-primary:not(:disabled):active { background-color: var(--int-primary-active); }
+.interview-design .fixed > .bg-card,
+.interview-design .fixed > .bg-white { border-radius: var(--int-radius-modal) !important; }
+.interview-design :is(input[type='checkbox'], input[type='radio']) { accent-color: var(--int-primary); }
+.interview-design * { scrollbar-width: thin; scrollbar-color: var(--int-scrollbar) transparent; }
+@media (prefers-reduced-motion: reduce) {
+  .interview-design *, .ats-shell:has(.interview-design) > header * { transition: none !important; }
+}
+.ats-shell:has(.interview-design) > header div:has(> select[aria-label='현재 역할 선택']) {
+  border-radius: var(--int-radius-control) !important;
+  background: var(--int-background) !important;
+  border-color: var(--int-border) !important;
+}
+.interview-design .interview-action-accent {
+  background: var(--int-secondary) !important;
+  color: var(--int-secondary-text) !important;
+}
+.interview-design .interview-action-accent > div { background: var(--int-primary) !important; }
+.interview-design .interview-action-accent:not(:disabled):hover { background: var(--int-secondary-hover) !important; filter: none; }
+.interview-design .interview-action-accent:not(:disabled):active { background: var(--int-secondary-active) !important; }
+
+/* Action hierarchy: only explicit workflow commits use the blue fill.
+   data-intent is presentational; handlers and disabled conditions are unchanged. */
+.interview-tools { --int-primary: var(--int-text-secondary); }
+.interview-design button[data-intent='secondary'],
+.interview-design button.interview-action-accent {
+  background: var(--int-surface) !important;
+  color: var(--int-secondary-text) !important;
+  border: 1px solid var(--int-border) !important;
+  box-shadow: none;
+}
+.interview-design button[data-intent='secondary']:not(:disabled):hover,
+.interview-design button.interview-action-accent:not(:disabled):hover {
+  background: var(--int-secondary-soft) !important;
+  border-color: var(--int-border-hover) !important;
+  filter: none;
+}
+.interview-design button[data-intent='secondary']:not(:disabled):active,
+.interview-design button.interview-action-accent:not(:disabled):active {
+  background: var(--int-secondary) !important;
+  filter: none;
+}
+.interview-design button[data-intent='quiet'] {
+  background: transparent !important;
+  color: var(--int-text-secondary) !important;
+  border: 0 !important;
+}
+.interview-design button[data-intent='quiet']:hover { background: var(--int-secondary-soft) !important; }
+.interview-design button[data-intent='primary'] {
+  background: var(--int-action-primary) !important;
+  color: var(--int-surface) !important;
+  border: 1px solid transparent !important;
+}
+.interview-design button[data-intent='primary']:not(:disabled):hover {
+  background: var(--int-action-hover) !important;
+  filter: none;
+}
+.interview-design button[data-intent='primary']:not(:disabled):active {
+  background: var(--int-action-active) !important;
+  filter: none;
+}
+.interview-design button[data-intent='primary'] svg { color: currentColor !important; }
+.interview-design button[data-intent='primary']:disabled {
+  background: var(--int-control-disabled) !important;
+  color: var(--int-text-muted) !important;
+  border-color: var(--int-border) !important;
+}
+.interview-design .eval-decision-group {
+  display: flex;
+  gap: 0;
+  padding: 3px;
+  background: var(--int-background);
+  border: 0;
+  border-radius: var(--int-radius-card);
+}
+.interview-design .eval-decision-group button {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px;
+  border: 0 !important;
+  border-radius: var(--int-radius-control) !important;
+  background: transparent !important;
+  color: var(--int-text-secondary) !important;
+  box-shadow: none;
+}
+.interview-design .eval-decision-group button:hover:not(:disabled) { background: #e8eef4 !important; filter: none; }
+.interview-design .eval-decision-group button[aria-pressed='true'] {
+  z-index: 1;
+  background: var(--int-surface) !important;
+  color: var(--int-text) !important;
+  font-weight: 600 !important;
+  box-shadow: none;
+}
+.interview-design .eval-decision-group button + button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 14px;
+  transform: translateY(-50%);
+  background: #d9e1e9;
+}
+.interview-design .eval-decision-group button[aria-pressed='true']::before,
+.interview-design .eval-decision-group button[aria-pressed='true'] + button::before { display: none; }
+.interview-design .eval-decision-group:has(button:disabled) { opacity: .65; }
+.interview-design span[class*='bg-primary/'] { background: var(--int-secondary) !important; color: var(--int-secondary-text) !important; }
+.interview-design :is(button, a, select, input, textarea):focus-visible { outline-color: var(--int-action-primary); }
+.interview-design :is(select, input, textarea):focus { border-color: var(--int-action-primary) !important; }
+
+/* All existing dialogs: use radius.xlarge, including inline-styled dialogs. */
+.interview-design .fixed > div:not(.fixed) { border-radius: var(--int-radius-modal) !important; }
+/* Supporting lozenges and tags use radius.small instead of pill corners. */
+.interview-design span:is(.rounded, .rounded-md, .rounded-full, .rounded-lg) { border-radius: var(--int-radius-small) !important; }
+/* Explicitly retain circular user avatars in the existing header. */
+.ats-shell:has(.interview-design) > header button > div:first-child { border-radius: var(--int-radius-full) !important; }
+
+/* Use the available workspace, rather than Tailwind's centered max-width container.
+   Container breakpoints respond to the content area after the navigation rail. */
+.ats-shell:has(.interview-design) > .flex > main {
+  padding: 0 16px !important;
+  container-type: inline-size;
+  container-name: interview-area;
+}
+.interview-design.container {
+  width: 100%;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+  padding-block: 20px !important;
+}
+.interview-workspace {
+  grid-template-columns: clamp(260px, 23cqw, 360px) minmax(0, 1fr) clamp(320px, 29cqw, 480px) !important;
+}
+.interview-heading > div { flex-wrap: wrap; }
+.interview-design :is(.interview-panel, .interview-panel > div) { min-width: 0; }
+.interview-application-content { overflow-wrap: anywhere; }
+.interview-design .interview-candidate-heading > div:last-child { min-width: 0; }
+.interview-design .interview-candidate-heading > div:last-child > span { flex-wrap: wrap; }
+.interview-tools > div > div { flex-wrap: wrap; }
+
+@container interview-area (max-width: 1080px) {
+  .interview-design.container {
+    height: auto !important;
+    min-height: calc(100dvh - 54px);
+    overflow: visible !important;
+  }
+  .interview-workspace {
+    grid-template-columns: minmax(250px, .7fr) minmax(0, 1.3fr) !important;
+    grid-template-rows: auto auto;
+    overflow: visible !important;
+    flex: none !important;
+    align-items: start;
+  }
+  .interview-list-panel {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 16px;
+    height: clamp(440px, calc(100dvh - 110px), 840px);
+  }
+  .interview-application-panel {
+    grid-column: 2;
+    grid-row: 1;
+    height: clamp(480px, 72dvh, 760px);
+  }
+  .interview-review-panel {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 360px;
+  }
+}
+
+@container interview-area (max-width: 720px) {
+  .interview-design.container { padding-block: 16px !important; }
+  .interview-heading { margin-bottom: 16px !important; }
+  .interview-heading h1 { font-size: 24px !important; }
+  .interview-heading > div { gap: 4px !important; }
+  .interview-heading p { flex-basis: 100%; }
+  .interview-workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto;
+  }
+  .interview-list-panel {
+    grid-column: 1;
+    grid-row: 1;
+    position: static;
+    height: 450px;
+  }
+  .interview-application-panel {
+    grid-column: 1;
+    grid-row: 2;
+    height: clamp(480px, 76dvh, 700px);
+  }
+  .interview-review-panel { grid-column: 1; grid-row: 3; }
+  .interview-candidate-heading { padding: 12px !important; }
+  .interview-application-content { padding: 16px !important; }
+}
+
+@media (max-width: 600px) {
+  .ats-shell:has(.interview-design) > .flex > main { padding-inline: 8px !important; }
+  .ats-shell:has(.interview-design) > .flex > nav { width: 56px !important; }
+  .ats-shell:has(.interview-design) > .flex > nav > div > div { padding-inline: 4px; }
+  .ats-shell:has(.interview-design) > header { padding-inline: 12px !important; }
+  .ats-shell:has(.interview-design) > header nav,
+  .ats-shell:has(.interview-design) > header nav > div { gap: 6px !important; }
+  .ats-shell:has(.interview-design) > header button > span { display: none; }
+  .ats-shell:has(.interview-design) > header a.border > span { display: none; }
+  .ats-shell:has(.interview-design) > header a.border { padding-inline: 8px !important; }
+}
+
+/* Headings, selected tab surfaces and whitespace already separate these groups.
+   Retain panel/card outlines, form borders and modal header/footer boundaries. */
+.interview-design :is(
+  .interview-filters,
+  .interview-candidate-heading,
+  .interview-tools,
+  .interview-reviewers,
+  .applicant-photo-header,
+  .application-section,
+  .application-section-heading
+) {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+/* Compact density: retain font sizes and action hierarchy; reduce stacked spacing. */
+.interview-design.container { padding-block: 16px !important; }
+.interview-heading { margin-bottom: 16px !important; }
+.interview-design .interview-tabs {
+  padding: 4px 8px !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--int-tab-divider) !important;
+}
+.interview-tabs button { height: 32px !important; position: relative; }
+.interview-filters { padding: 8px !important; gap: 6px !important; }
+.interview-design select { height: 32px !important; }
+.interview-candidates { gap: 6px !important; }
+.interview-design .interview-candidate { padding: 8px 10px !important; }
+.interview-candidate > div { line-height: 1.5; }
+.interview-candidate-heading { padding: 10px 16px !important; }
+.interview-application-content { padding: 12px 16px !important; }
+.interview-design .applicant-photo-header {
+  gap: 12px !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+.interview-design .applicant-photo-header > div:first-child > div { width: 54px !important; height: 72px !important; }
+.interview-design .applicant-photo-header > div:last-child { min-width: 0; padding-top: 0 !important; }
+.interview-design .application-section { padding-bottom: 8px !important; margin-bottom: 12px !important; }
+.interview-design .application-section:last-child { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+.interview-design .application-section-heading { padding-bottom: 0 !important; margin-bottom: 8px !important; line-height: 1.5; }
+.interview-design .application-info-row { margin-bottom: 4px !important; line-height: 1.5; }
+.interview-design .application-section p { line-height: 1.65; }
+.interview-tools > div:not(.fixed) { padding: 8px 10px !important; }
+.interview-review-content { padding: 10px !important; }
+.interview-review-content > div { gap: 10px !important; }
+.interview-design textarea { padding: 8px 10px !important; line-height: 1.5; }
+
+@container interview-area (max-width: 720px) {
+  .interview-tabs button { height: 36px !important; }
+  .interview-design select { height: 36px !important; }
+  .interview-design .interview-candidate { padding: 10px 12px !important; }
+  .interview-review-panel button { min-height: 36px; }
+  .interview-design .application-section p { line-height: 1.65; }
+}
+
+/* Reviewer summary: reference hierarchy of a balance card, using actual ATS data.
+   Identity and status above; labeled metadata below with vertical separators. */
+.interview-design .reviewer-summary-card {
+  container: reviewer-summary / inline-size;
+  padding: 14px;
+  border: 1px solid var(--int-border);
+  border-radius: var(--int-radius-card);
+  background: var(--int-surface);
+}
+.reviewer-summary-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.reviewer-summary-identity { min-width: 0; }
+.reviewer-summary-label, .reviewer-summary-field dt { display: block; color: var(--int-text-muted); font-size: 12px; font-weight: 400; line-height: 1.5; }
+.interview-design .reviewer-summary-name { margin: 4px 0 0; color: var(--int-text); font-size: var(--int-text-item); font-weight: 600; line-height: 1.4; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.interview-design .reviewer-summary-status { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; padding: 5px 7px; border-radius: var(--int-radius-small); background: var(--int-background); color: var(--int-text-secondary); font-size: 11px; font-weight: 500; line-height: 1.5; }
+.reviewer-status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.interview-design .reviewer-summary-status[data-status='submitted'] { color: var(--int-selection-text); }
+.interview-design .reviewer-summary-status[data-status='draft'] { background: #fff8ec; color: #89611f; }
+.reviewer-summary-metadata { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, .8fr) minmax(0, 1.6fr); gap: 0; margin: 0; }
+.reviewer-summary-field { min-width: 0; padding-inline: 10px; }
+.reviewer-summary-field:first-child { padding-left: 0; }
+.reviewer-summary-field:last-child { padding-right: 0; }
+.reviewer-summary-field + .reviewer-summary-field { border-left: 1px solid var(--int-border); }
+.reviewer-summary-field dd { margin: 5px 0 0; color: var(--int-text); font-size: 12px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+.reviewer-summary-field time { font-weight: 500; font-variant-numeric: tabular-nums; }
+.reviewer-summary-field dd[data-decision='불합격'] { color: #a63c36; }
+.reviewer-summary-field dd[data-decision='보류'] { color: #89611f; }
+.reviewer-summary-comment { margin-top: 14px; }
+.reviewer-summary-comment p { margin: 5px 0 0; color: var(--int-text-secondary); font-size: 12px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.reviewer-summary-restricted { margin: 12px 0 0; color: var(--int-text-muted); font-size: 12px; line-height: 1.5; }
+.reviewer-summary-metadata:has(> :only-child) { grid-template-columns: minmax(0, 1fr); }
+.reviewer-summary-metadata:has(> :nth-child(2):last-child) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+@container reviewer-summary (max-width: 300px) {
+  .reviewer-summary-metadata { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 12px; }
+  .reviewer-summary-field:nth-child(2) { padding-right: 0; }
+  .reviewer-summary-updated { grid-column: 1 / -1; padding: 0; border-left: 0 !important; }
+}
+
+/* Candidate cards share the reviewer summary's identity / status / metadata hierarchy. */
+.interview-design .interview-candidate { padding: 10px 12px !important; }
+.candidate-summary-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.candidate-summary-identity { display: block; min-width: 0; }
+.candidate-summary-label { display: block; color: var(--int-text-muted); font-size: 12px; font-weight: 400; line-height: 1.4; }
+.candidate-summary-name { display: block; margin-top: 3px; color: var(--int-text); font-size: var(--int-text-item); font-weight: 600; line-height: 1.4; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.candidate-summary-statuses { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.interview-design .candidate-summary-status { display: inline-block; padding: 2px 6px; border-radius: var(--int-radius-small); font-size: 11px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
+.candidate-summary-position { display: block; margin: 4px 0 10px; color: var(--int-text-secondary); font-size: 12px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.candidate-summary-metadata { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.candidate-summary-field { display: block; min-width: 0; }
+.candidate-summary-field + .candidate-summary-field { padding-left: 10px; border-left: 1px solid var(--int-border); }
+.candidate-summary-field:first-child { padding-right: 10px; }
+.candidate-summary-value { display: block; margin-top: 5px; color: var(--int-text); font-size: 12px; font-weight: 500; line-height: 1.5; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.candidate-summary-total { color: var(--int-text-secondary); font-weight: 400; }
+
+/* Typography hierarchy: page > selected detail > section / item > body > metadata.
+   Card names must not compete with the selected applicant or section headings. */
+.interview-design .applicant-photo-header > div:last-child > div:first-child {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1.4;
+}
+.interview-design .application-section div { font-size: var(--int-text-sm) !important; }
+.interview-design .application-info-row > span:last-child,
+.interview-design .application-section p { font-size: var(--int-text-sm) !important; font-weight: 400; }
+.interview-design .application-info-row > span:first-child { font-size: var(--int-text-xs); font-weight: 400; }
+.interview-design .reviewer-summary-comment p { font-size: var(--int-text-sm); font-weight: 400; line-height: 1.6; }
+.interview-design .reviewer-summary-decision dd { font-weight: 600; }
+.interview-design button:is([data-intent='primary'], [data-intent='secondary'], [data-intent='navigation']),
+.interview-design .eval-decision-group button {
+  font-size: var(--int-text-sm) !important;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.interview-design .interview-tools span:not(.reviewer-status-dot) { font-weight: 400; }
+.interview-design .fixed :is(h2, h3) { font-size: 16px !important; font-weight: 600 !important; line-height: 1.4; }
+
+/* Jira / Atlassian light lozenges: soft backgrounds, semantic readable text.
+   Target status spans only, never primary buttons or selectable card surfaces. */
+.interview-design span.bg-blue-100 {
+  background: var(--int-status-info-bg) !important;
+  color: var(--int-status-info-text) !important;
+}
+.interview-design span.bg-green-100,
+.interview-design span[class*='bg-primary/'],
+.interview-design .reviewer-summary-status[data-status='submitted'] {
+  background: var(--int-status-success-bg) !important;
+  color: var(--int-status-success-text) !important;
+}
+.interview-design span.bg-yellow-100,
+.interview-design .reviewer-summary-status[data-status='draft'] {
+  background: var(--int-status-warning-bg) !important;
+  color: var(--int-status-warning-text) !important;
+}
+.interview-design span.bg-red-100,
+.interview-design span[class*='bg-destructive/'] {
+  background: var(--int-status-danger-bg) !important;
+  color: var(--int-status-danger-text) !important;
+}
+.interview-design span:is(.bg-gray-100, .bg-slate-100, .bg-muted),
+.interview-design .reviewer-summary-status[data-status='pending'] {
+  background: var(--int-status-neutral-bg) !important;
+  color: var(--int-status-neutral-text) !important;
+}
+
+/* Separate workflow progress from the scheduled-interview category. */
+.interview-design span.int-status-scheduled { background: #f8eefe !important; color: #803fa5 !important; }
+
+/* Expanded profile: doubled 54x72 photo, with labeled identity metadata. */
+.interview-design .applicant-photo-header[data-layout='summary'] {
+  container: applicant-profile / inline-size;
+  align-items: flex-start !important;
+  gap: 16px !important;
+}
+.interview-design .applicant-photo-header[data-layout='summary'] > div:first-child > div { width: 108px !important; height: 144px !important; }
+.applicant-profile-summary { flex: 1; min-width: 0; }
+.applicant-profile-eyebrow, .applicant-profile-fields dt { display: block; font-size: 12px; font-weight: 400; line-height: 1.4; color: var(--int-text-muted); }
+.interview-design .applicant-profile-name { margin: 4px 0 12px; font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--int-text); }
+.applicant-profile-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 0; margin: 0; }
+.applicant-profile-field { min-width: 0; }
+.applicant-profile-email { grid-column: 1 / -1; }
+.applicant-profile-fields dd { margin: 3px 0 0; color: var(--int-text); font-size: 13px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
+.applicant-profile-phone + .applicant-profile-field { padding-left: 12px; border-left: 1px solid var(--int-border); }
+.applicant-profile-field.applicant-profile-phone { padding-right: 12px; padding-left: 0 !important; border-left: 0 !important; }
+@container applicant-profile (max-width: 400px) {
+  .applicant-profile-fields { grid-template-columns: minmax(0, 1fr); }
+  .applicant-profile-field { grid-column: 1; padding: 0 !important; border-left: 0 !important; }
+}
+
+.interview-design .eval-decision-group button[aria-pressed='true']:hover:not(:disabled) { background: var(--int-surface) !important; }
+
+/* Minimal semantic tables inside the application; other pages keep their layout. */
+.interview-design .application-table-layout { display: flex; flex-direction: column; min-width: 0; }
+.application-table-section { margin-bottom: 18px; min-width: 0; }
+.application-table-section:last-child { margin-bottom: 0; }
+.application-detail-table { width: 100%; table-layout: fixed; border-collapse: collapse; border-block: 1px solid var(--int-tab-divider); font-size: 12px; line-height: 1.5; }
+.application-detail-table :is(th, td) { padding: 6px 10px; vertical-align: top; border-bottom: 1px solid var(--int-tab-divider); text-align: left; overflow-wrap: anywhere; white-space: pre-wrap; }
+.application-detail-table tr:last-child > :is(th, td) { border-bottom: 0; }
+.application-detail-table th { width: 112px; background: var(--int-background); color: var(--int-text-secondary); font-size: 12px; font-weight: 500; }
+.application-detail-table td { color: var(--int-text); font-weight: 400; }
+.application-detail-table strong { font-weight: 600; }
+.application-detail-table .application-table-empty { color: var(--int-text-muted); }
+.application-table-list { list-style: none; margin: 0; padding: 0; }
+.application-table-list li + li { margin-top: 4px; }
+.application-language-name { font-weight: 500; margin-right: 10px; }
+.application-table-prose { margin: 0; line-height: 1.65; white-space: pre-wrap; }
+.application-table-link { display: inline-flex; align-items: baseline; gap: 5px; color: var(--int-status-info-text); overflow-wrap: anywhere; }
+.application-table-link svg { flex-shrink: 0; }
+.application-table-link:hover { text-decoration: underline; }
+.application-table-attachments { display: flex; flex-direction: column; gap: 4px; }
+.application-table-attachments button { min-width: 0; }
+.application-table-attachments button > div { min-width: 0; }
+.application-table-referrer { display: inline-block; margin-left: 8px; padding: 1px 6px; background: var(--int-secondary-soft); color: var(--int-text-secondary); border-radius: var(--int-radius-small); font-size: 12px; }
+@container interview-area (max-width: 720px) {
+  .application-detail-table th { width: 84px; }
+  .application-detail-table :is(th, td) { padding: 6px 8px; }
+}
+
+/* Match the round and evaluation tab groups' vertical insets to the 8px left inset. */
+.interview-design .interview-round-tabs,
+.interview-design .interview-review-panel .interview-tabs {
+  padding: 8px !important;
+}
+
+/* Keep the photo surface and dimensions; remove only its perimeter stroke. */
+.interview-design .applicant-photo-header[data-layout='summary'] > div:first-child > div {
+  position: relative;
+  border: 0 !important;
+  background-color: #edf2f7 !important;
+}
+.interview-design .applicant-photo-placeholder-icon {
+  width: 40px;
+  height: 40px;
+  color: #8c9db0;
+  fill: none;
+  flex-shrink: 0;
+}
+.interview-design .applicant-photo-caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 3px 4px;
+  background: transparent;
+  color: var(--int-text-muted);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+}
+.interview-design .applicant-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.interview-design .applicant-photo-placeholder .applicant-photo-caption {
+  position: static;
+  padding: 0;
+}
+
+/* Custom interview filters; the listbox is portaled to avoid panel clipping. */
+.interview-design .interview-filter-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  background: var(--int-background);
+  color: var(--int-text);
+  font-size: 13px;
+  text-align: left;
+}
+.interview-filter-trigger > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.interview-filter-trigger > svg { flex-shrink: 0; color: var(--int-text-muted); transition: transform 160ms ease; }
+.interview-filter-trigger[aria-expanded='true'] > svg { transform: rotate(180deg); }
+.interview-design .interview-filter-trigger:hover:not(:disabled),
+.interview-design .interview-filter-trigger[aria-expanded='true'] { background: var(--int-secondary); filter: none; }
+.interview-filter-menu {
+  position: fixed;
+  z-index: 1000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px solid #eef0f4;
+  border-radius: 6px;
+  background: #fff;
+  color: #292c35;
+  box-shadow: 0 6px 20px rgba(9, 30, 66, .12);
+  font-family: 'Plus Jakarta Sans', 'Pretendard Variable', 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -.015em;
+}
+.interview-filter-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 34px;
+  padding: 7px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.interview-filter-option > span { min-width: 0; overflow-wrap: anywhere; }
+.interview-filter-option > svg { flex-shrink: 0; color: #465267; }
+.interview-filter-option[aria-selected='true'] { background: #f7f8fa; font-weight: 600; }
+.interview-filter-option[data-active='true'] { background: #eef1f5; }
+.interview-design .interview-final-field-label {
+  color: var(--int-text-secondary);
+  font-weight: 400;
+}
+.interview-design .interview-final-comment-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.interview-design .interview-required-dot {
+  display: block;
+  flex-shrink: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #c9372c;
+}
+
+/* Two aligned surfaces: interview tools above, evaluation and records below. */
+.interview-design .interview-review-panel:has(.interview-review-stack) {
+  background: transparent;
+}
+.interview-review-stack { gap: 12px; }
+.interview-design .interview-tools {
+  width: 100%;
+  border-radius: var(--int-radius-card);
+  background: var(--int-surface);
+}
+.interview-tools > div:not(.fixed) { background-color: var(--int-surface) !important; }
+.interview-review-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+  border-radius: var(--int-radius-card);
+  background: var(--int-surface);
+  overflow: clip;
+}
+.interview-review-section > .interview-tabs {
+  border-radius: var(--int-radius-card) var(--int-radius-card) 0 0;
+}
+@container interview-area (max-width: 720px) {
+  .interview-design .interview-filter-trigger { height: 36px; }
+}

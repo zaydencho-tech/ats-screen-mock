@@ -34,7 +34,7 @@ function publicNavStyle(active: boolean): CSSProperties {
     fontFamily: "'SUIT', sans-serif",
     fontSize: "0.875rem",
     fontWeight: active ? 600 : 500,
-    color: "#314158",
+    color: "var(--int-text-secondary, #314158)",
     whiteSpace: "nowrap",
   };
 }
@@ -109,7 +109,7 @@ export default function Root() {
 
   return (
     <div
-      className="flex flex-col"
+      className="ats-shell flex flex-col"
       style={{ height: "100vh", overflow: "hidden" }}
     >
       <header
@@ -217,14 +217,14 @@ export default function Root() {
                   >
                     <UserCog
                       className="w-4 h-4"
-                      style={{ color: "#4f39f6" }}
+                      style={{ color: "var(--int-text, #4f39f6)" }}
                     />
                     {roleCount <= 1 ? (
                       <span
                         style={{
                           fontSize: "0.75rem",
                           fontWeight: 500,
-                          color: "#020618",
+                          color: "var(--int-text, #020618)",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
@@ -244,7 +244,7 @@ export default function Root() {
                         style={{
                           fontSize: "0.75rem",
                           fontWeight: 500,
-                          color: "#020618",
+                          color: "var(--int-text, #020618)",
                           minWidth: 0,
                           maxWidth: "100%",
                         }}
@@ -308,7 +308,7 @@ export default function Root() {
                         style={{
                           fontSize: "0.75rem",
                           fontWeight: 500,
-                          color: "#314158",
+                          color: "var(--int-text-secondary, #314158)",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
@@ -322,7 +322,7 @@ export default function Root() {
                         style={{
                           width: "13px",
                           height: "13px",
-                          color: "#90A1B9",
+                          color: "var(--int-text-muted, #90A1B9)",
                           transition: "transform 0.18s",
                           transform: dropdownOpen
                             ? "rotate(180deg)"
@@ -392,7 +392,7 @@ export default function Root() {
                                   style={{
                                     fontSize: "0.75rem",
                                     fontWeight: 600,
-                                    color: "#020618",
+                                    color: "var(--int-text, #020618)",
                                   }}
                                 >
                                   {displayUsername}
@@ -400,7 +400,7 @@ export default function Root() {
                                 <div
                                   style={{
                                     fontSize: "0.6875rem",
-                                    color: "#90A1B9",
+                                    color: "var(--int-text-muted, #90A1B9)",
                                     marginTop: "1px",
                                   }}
                                 >
@@ -458,7 +458,7 @@ export default function Root() {
                     >
                       <Settings
                         className="w-4 h-4"
-                        style={{ color: "#90a1b9" }}
+                        style={{ color: "var(--int-text-muted, #90a1b9)" }}
                       />
                       <span style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
                         설정

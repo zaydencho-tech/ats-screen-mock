@@ -1,9 +1,3 @@
-import "./admin-spacing.css";
-import CustomSelect from "../../components/admin/CustomSelect";
-import CandidateCardContent from "../../components/admin/CandidateCardContent";
-import SegmentedControl from "../../components/admin/SegmentedControl";
-import "./admin-content.css";
-import "./admin-palette.css";
 import {
   useState,
   useEffect,
@@ -12,7 +6,6 @@ import {
   useCallback,
   useRef,
   type CSSProperties,
-  type FocusEvent,
 } from "react";
 import { flushSync } from "react-dom";
 import { useLocation } from "react-router";
@@ -47,7 +40,7 @@ import {
   useScreeningSelStCodeOptions,
   resolveInterviewMethodLabel,
 } from "../../utils/codes";
-import ManagedCorpSelect from "../../components/admin/ManagedCorpSelect";
+import InterviewFilterSelect from "../../components/admin/InterviewFilterSelect";
 import AdminListFetchState from "../../components/admin/AdminListFetchState";
 import { scrollAdminListItemIntoView } from "../../utils/adminListFetchState";
 import MemberNameSearchInput from "../../components/admin/MemberNameSearchInput";
@@ -70,55 +63,12 @@ import {
 type CenterTab = "지원서" | "평가";
 type RightTab = "평가" | "히스토리" | "메모";
 
-const FILTER_SELECT_STYLE: CSSProperties = {
-  height: "34px",
-  borderRadius: "6px",
-  border: "1px solid #D1D5DB",
-  padding: "0 28px 0 10px",
-  fontSize: "0.8125rem",
-  minWidth: "120px",
-  appearance: "none",
-  backgroundImage:
-    "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e\")",
-  backgroundPosition: "right 8px center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "12px 12px",
-  outline: "none",
-  backgroundColor: "#ffffff",
-  color: "#283038",
-};
-
-function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
-  return {
-    ...FILTER_SELECT_STYLE,
-    ...(disabled
-      ? {
-          backgroundColor: "#EBF0F5",
-          color: "#90a1b9",
-          opacity: 0.5,
-          cursor: "not-allowed",
-        }
-      : {}),
-  };
-}
-
-function handleFilterSelectFocus(e: FocusEvent<HTMLSelectElement>) {
-  if (e.currentTarget.disabled) return;
-  e.target.style.borderColor = "#283038";
-  e.target.style.boxShadow = "0 0 0 3px rgba(49, 130, 246, 0.12)";
-}
-
-function handleFilterSelectBlur(e: FocusEvent<HTMLSelectElement>) {
-  e.target.style.borderColor = "#D1D5DB";
-  e.target.style.boxShadow = "none";
-}
-
 const INTERVIEWER_SEARCH_INPUT_STYLE: CSSProperties = {
   height: "34px",
   padding: "0 10px",
   fontSize: "0.8125rem",
-  borderRadius: "6px",
-  border: "1px solid #D1D5DB",
+  borderRadius: "var(--int-radius-control)",
+  border: "1px solid var(--int-border)",
 };
 
 /** 일정 생성 모달 입력 필드 (v4) */
@@ -126,14 +76,14 @@ const SCHEDULE_MODAL_INPUT_STYLE: CSSProperties = {
   height: "34px",
   padding: "0 10px",
   fontSize: "0.8125rem",
-  borderRadius: "6px",
+  borderRadius: "var(--int-radius-control)",
 };
 
 const SCHEDULE_MODAL_SELECT_STYLE: CSSProperties = {
   width: "100%",
   height: "34px",
-  borderRadius: "6px",
-  border: "1px solid #D1D5DB",
+  borderRadius: "var(--int-radius-control)",
+  border: "1px solid var(--int-border)",
   padding: "0 28px 0 10px",
   fontSize: "0.8125rem",
   appearance: "none",
@@ -142,7 +92,7 @@ const SCHEDULE_MODAL_SELECT_STYLE: CSSProperties = {
   backgroundPosition: "right 8px center",
   backgroundRepeat: "no-repeat",
   outline: "none",
-  backgroundColor: "#FFF",
+  backgroundColor: "var(--int-surface)",
 };
 
 const SCHEDULE_MODAL_LABEL_STYLE: CSSProperties = {
@@ -155,9 +105,9 @@ const SCHEDULE_MODAL_LABEL_STYLE: CSSProperties = {
 const SCHEDULE_AGENT_BUTTON_STYLE: CSSProperties = {
   height: "28px",
   padding: "0 12px",
-  fontSize: "0.75rem",
+  fontSize: "var(--int-text-xs)",
   fontWeight: 500,
-  borderRadius: "5px",
+  borderRadius: "var(--int-radius-control)",
   gap: "6px",
 };
 
@@ -2619,7 +2569,7 @@ export default function InterviewManagementV2() {
       case "회신대기":
         return "bg-yellow-100 text-yellow-700";
       case "예정":
-        return "bg-blue-100 text-blue-700";
+        return "int-status-scheduled bg-blue-100 text-blue-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -2656,19 +2606,18 @@ export default function InterviewManagementV2() {
 
   return (
     <div
-      className="ats-admin-content ats-spacing container mx-auto px-6"
+      className="interview-design container mx-auto px-6"
       style={{
         height: "calc(100vh - 54px)",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        paddingTop: "20px",
+        paddingTop: "24px",
         paddingBottom: "24px",
         boxSizing: "border-box",
       }}
     >
       <motion.div
-        className="ats-page-layout"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -2680,27 +2629,27 @@ export default function InterviewManagementV2() {
         }}
       >
         {/* 헤더 */}
-        <div className="ats-page-heading">
+        <div className="interview-heading" style={{ marginBottom: "12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <h1
               className="font-display"
               style={{
                 fontSize: "30px",
-                fontWeight: 700,
+                fontWeight: 500,
                 lineHeight: 1.3,
                 letterSpacing: "-0.01em",
-                color: "#283038",
+                color: "var(--int-text)",
               }}
             >
               면접 전형
             </h1>
-            <p style={{ fontSize: "14px", color: "#858d96" }}>{pageSubtitle}</p>
+            <p style={{ fontSize: "14px", color: "var(--int-text-secondary)" }}>{pageSubtitle}</p>
           </div>
         </div>
 
         {/* 3컬럼 레이아웃: 목록 | 지원서/평가 | AgentGO + 평가 패널 */}
         <div
-          className="ats-interview-columns"
+          className="interview-workspace"
           style={{
             display: "grid",
             gridTemplateColumns: "320px 1fr 390px",
@@ -2712,7 +2661,7 @@ export default function InterviewManagementV2() {
         >
           {/* ── 왼쪽: 1차/2차 탭 + 필터 + 목록 ── */}
           <div
-            className="ats-panel border border-border rounded-lg bg-card"
+            className="interview-panel interview-list-panel border border-border rounded-lg bg-card"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -2720,19 +2669,38 @@ export default function InterviewManagementV2() {
             }}
           >
             {/* 1차/2차 탭 */}
-            <div className="ats-segment-bar">
-              <SegmentedControl
-                label="면접 차수"
-                options={["1차", "2차"] as const}
-                value={activeTab}
-                onChange={setActiveTab}
-                formatLabel={(value) => `${value} 면접`}
-              />
+            <div className="interview-tabs interview-round-tabs"
+              style={{
+                display: "flex",
+                borderBottom: "1px solid var(--border)",
+                flexShrink: 0,
+              }}
+            >
+              {(["1차", "2차"] as const).map((t) => (
+                <button data-intent="navigation"
+                  key={t}
+                  type="button"
+                  onClick={() => setActiveTab(t)}
+                  className={`flex-1 transition-colors ${
+                    activeTab === t
+                      ? "text-primary border-b-2 border-primary"
+                      : "text-muted-foreground hover:text-foreground border-b-2 border-transparent"
+                  }`}
+                  style={{
+                    height: "38px",
+                    fontSize: "0.8125rem",
+                    fontWeight: activeTab === t ? 600 : 400,
+                    background: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {t} 면접
+                </button>
+              ))}
             </div>
 
             {/* 필터 */}
-            <div
-              className="ats-filter-bar ats-filter-stack"
+            <div className="interview-filters"
               style={{
                 padding: "10px",
                 borderBottom: "1px solid var(--border)",
@@ -2742,85 +2710,40 @@ export default function InterviewManagementV2() {
                 flexShrink: 0,
               }}
             >
-              {!isInterviewer && (
-                <ManagedCorpSelect
-                  custom
-                  value={selectedCorpId}
-                  onChange={handleCorpChange}
-                  showLabel={false}
-                  selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
-                  className="w-full"
+              {!isInterviewer && corpSelect.selectOptions.length > 0 && (
+                <InterviewFilterSelect
+                  label="계열사"
+                  value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(selectedCorpId)}
+                  onChange={(value) => handleCorpChange(Utils.Mapper.managedCorpSelect.parseManagedCorpSelectValue(value))}
+                  disabled={isSelectDisabled}
+                  options={corpSelect.selectOptions.map(corp => ({ value: corp.corpId, label: corp.corpName }))}
                 />
               )}
-
-              <CustomSelect
-                aria-label="공고 필터"
+              <InterviewFilterSelect
+                label="공고"
                 value={selectedJobPostId}
-                onChange={(e) => setSelectedJobPostId(e.target.value)}
+                onChange={setSelectedJobPostId}
                 disabled={isJobOptionsLoading}
-                className={`w-full bg-card focus:outline-none ${isJobOptionsLoading ? "cursor-not-allowed" : ""}`}
-                style={resolveFilterSelectStyle(isJobOptionsLoading)}
-                onFocus={handleFilterSelectFocus}
-                onBlur={handleFilterSelectBlur}
-              >
-                <option value="all">전체 공고</option>
-                {isJobOptionsLoading ? (
-                  <option value="" disabled>
-                    불러오는 중...
-                  </option>
-                ) : (
-                  jobPostings.map((job) => (
-                    <option key={job.jobPostId} value={job.jobPostId}>
-                      {job.jobTitle}
-                    </option>
-                  ))
-                )}
-              </CustomSelect>
-
-              <CustomSelect
-                aria-label="면접 일정 필터"
+                options={[{ value: "all", label: "전체 공고" }, ...jobPostings.map(job => ({ value: job.jobPostId, label: job.jobTitle }))]}
+              />
+              <InterviewFilterSelect
+                label="일정"
                 value={selectedScheduleStatus}
-                onChange={(e) => setSelectedScheduleStatus(e.target.value)}
-                className="w-full bg-card focus:outline-none"
-                style={resolveFilterSelectStyle(false)}
-                onFocus={handleFilterSelectFocus}
-                onBlur={handleFilterSelectBlur}
-              >
-                <option value="all">전체 일정</option>
-                {SCHEDULE_STATUS_FILTER_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </CustomSelect>
-
-              <CustomSelect
-                aria-label="면접 상태 필터"
+                onChange={setSelectedScheduleStatus}
+                options={[{ value: "all", label: "전체 일정" }, ...SCHEDULE_STATUS_FILTER_OPTIONS]}
+              />
+              <InterviewFilterSelect
+                label="면접 상태"
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
+                onChange={setSelectedStatus}
                 disabled={isSelStOptionsLoading}
-                className={`w-full bg-card focus:outline-none ${isSelStOptionsLoading ? "cursor-not-allowed" : ""}`}
-                style={resolveFilterSelectStyle(isSelStOptionsLoading)}
-                onFocus={handleFilterSelectFocus}
-                onBlur={handleFilterSelectBlur}
-              >
-                <option value="all">전체 면접 상태</option>
-                {isSelStOptionsLoading ? (
-                  <option value="" disabled>
-                    불러오는 중...
-                  </option>
-                ) : (
-                  selStFilterOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))
-                )}
-              </CustomSelect>
+                options={[{ value: "all", label: "전체 면접 상태" }, ...selStFilterOptions]}
+              />
             </div>
 
             {/* 목록 */}
             <div
+              className="interview-candidates"
               ref={listScrollRef}
               style={{
                 flex: 1,
@@ -2859,46 +2782,52 @@ export default function InterviewManagementV2() {
                   const statusLabel = getInterviewStatusLabel(interview);
 
                   return (
-                    <button
+                    <button data-intent="candidate"
                       key={interview.id}
                       type="button"
                       data-list-item-id={interview.id}
                       aria-pressed={selectedInterview?.id === interview.id}
                       onClick={() => handleSelectInterview(interview)}
-                      className={`ats-list-card ats-candidate-list-card w-full text-left border rounded-lg transition-all ${
+                      className={`interview-candidate w-full text-left border rounded-lg transition-all ${
                         selectedInterview?.id === interview.id
                           ? "border-primary bg-primary/5"
                           : "border-border bg-card hover:bg-muted/30"
                       }`}
                       style={{ padding: "8px 10px" }}
                     >
-                      <CandidateCardContent
-                        name={interview.name}
-                        fields={[
-                          { label: "직무", value: interview.position },
-                          ...(interview.date ? [{
-                            label: "면접 일정",
-                            value: `${interview.date} ${interview.time}`,
-                          }] : []),
-                          { label: "평가 현황", value: `${submittedCount}/${totalCount} 완료` },
-                        ]}
-                        badges={<>
+                      <span className="candidate-summary-header">
+                        <span className="candidate-summary-identity">
+                          <span className="candidate-summary-label">지원자</span>
+                          <span className="candidate-summary-name">{interview.name}</span>
+                        </span>
+                        <span className="candidate-summary-statuses">
                           {statusLabel ? (
-                            <span
-                              className={`px-1.5 py-0.5 rounded text-xs font-medium ${getInterviewStatusColor(interview)}`}
-                            >
+                            <span className={`candidate-summary-status ${getInterviewStatusColor(interview)}`}>
                               {statusLabel}
                             </span>
                           ) : null}
                           {interview.scheduleStatusName ? (
-                            <span
-                              className={`px-1.5 py-0.5 rounded text-xs font-medium ${getScheduleStatusColor(interview.scheduleStatus, interview.scheduleStatusName)}`}
-                            >
+                            <span className={`candidate-summary-status ${getScheduleStatusColor(interview.scheduleStatus, interview.scheduleStatusName)}`}>
                               {interview.scheduleStatusName}
                             </span>
                           ) : null}
-                        </>}
-                      />
+                        </span>
+                      </span>
+                      <span className="candidate-summary-position">{interview.position}</span>
+                      <span className="candidate-summary-metadata">
+                        <span className="candidate-summary-field">
+                          <span className="candidate-summary-label">면접 일정</span>
+                          <span className="candidate-summary-value">
+                            {interview.date
+                              ? <>{interview.date} {interview.time}</>
+                              : (interview.scheduleStatusName || "미정")}
+                          </span>
+                        </span>
+                        <span className="candidate-summary-field candidate-summary-evaluation">
+                          <span className="candidate-summary-label">평가 완료</span>
+                          <span className="candidate-summary-value">{submittedCount}<span className="candidate-summary-total"> / {totalCount}</span></span>
+                        </span>
+                      </span>
                     </button>
                   );
                 })}
@@ -2908,7 +2837,7 @@ export default function InterviewManagementV2() {
 
           {/* ── 가운데: 지원서/평가 탭 ── */}
           <div
-            className="ats-panel border border-border rounded-lg bg-card relative"
+            className="interview-panel interview-application-panel border border-border rounded-lg bg-card relative"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -2924,8 +2853,7 @@ export default function InterviewManagementV2() {
             {selectedInterview ? (
               <>
                 {/* 지원자 헤더 */}
-                <div
-                  className="ats-interview-applicant-header"
+                <div className="interview-candidate-heading"
                   style={{
                     padding: "12px 16px",
                     borderBottom: "1px solid var(--border)",
@@ -2937,7 +2865,7 @@ export default function InterviewManagementV2() {
                 >
                   <h2
                     className="font-display"
-                    style={{ fontSize: "18px", color: "#283038" }}
+                    style={{ fontSize: "18px", color: "var(--int-text)" }}
                   >
                     {selectedInterview.name}
                   </h2>
@@ -2966,8 +2894,8 @@ export default function InterviewManagementV2() {
                     {selectedInterview.date ? (
                       <span
                         style={{
-                          fontSize: "0.75rem",
-                          color: "#9CA3AF",
+                          fontSize: "var(--int-text-xs)",
+                          color: "var(--int-text-muted)",
                           display: "flex",
                           alignItems: "center",
                           gap: "4px",
@@ -3003,26 +2931,49 @@ export default function InterviewManagementV2() {
                 </div>
 
                 {/* 탭 헤더 */}
-                <div className="ats-segment-bar ats-segment-compact">
-                  <SegmentedControl
-                    label="지원자 상세 보기"
-                    options={["지원서", "평가"] as const}
-                    value={activeCenterTab}
-                    onChange={setActiveCenterTab}
-                  />
+                <div className="interview-tabs"
+                  style={{
+                    display: "flex",
+                    borderBottom: "1px solid var(--border)",
+                    flexShrink: 0,
+                  }}
+                >
+                  {(["지원서", "평가"] as const).map((t) => (
+                    <button data-intent="navigation"
+                      key={t}
+                      type="button"
+                      onClick={() => setActiveCenterTab(t)}
+                      className={`transition-colors ${
+                        activeCenterTab === t
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted-foreground hover:text-foreground border-b-2 border-transparent"
+                      }`}
+                      style={{
+                        height: "36px",
+                        padding: "0 20px",
+                        fontSize: "0.8125rem",
+                        fontWeight: activeCenterTab === t ? 600 : 400,
+                        background: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {t}
+                    </button>
+                  ))}
                 </div>
 
                 {/* 탭 콘텐츠 */}
                 <div
+                  className="interview-application-content"
                   style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}
                 >
                   {activeCenterTab === "지원서" &&
                     (applicationPanelData ? (
-                      <ApplicationDetailContent data={applicationPanelData} columns={2} showSectionNumbers={false} />
+                      <ApplicationDetailContent data={applicationPanelData} profileLayout="summary" contentLayout="table" />
                     ) : (
                       <ApplicationDetailContent
-                        columns={2}
-                        showSectionNumbers={false}
+                        profileLayout="summary"
+                        contentLayout="table"
                         data={{
                           name: selectedInterview.name,
                           email: selectedInterview.email,
@@ -3057,14 +3008,14 @@ export default function InterviewManagementV2() {
                           <div
                             style={{
                               border: "1px solid var(--border)",
-                              borderRadius: "8px",
+                              borderRadius: "var(--int-radius-control)",
                               overflow: "hidden",
                             }}
                           >
                             <div
                               style={{
                                 padding: "10px 14px",
-                                backgroundColor: "#F9FAFB",
+                                backgroundColor: "var(--int-background)",
                                 borderBottom: "1px solid var(--border)",
                               }}
                             >
@@ -3072,7 +3023,7 @@ export default function InterviewManagementV2() {
                                 style={{
                                   fontWeight: 600,
                                   fontSize: "0.8125rem",
-                                  color: "#283038",
+                                  color: "var(--int-text)",
                                 }}
                               >
                                 서류 전형 평가
@@ -3088,106 +3039,49 @@ export default function InterviewManagementV2() {
                             >
                               {visibleScreeningReviews.length > 0 ? (
                                 visibleScreeningReviews.map((review, idx) => (
-                                  <div
-                                    key={idx}
-                                    style={{
-                                      padding: "8px 10px",
-                                      border: "1px solid var(--border)",
-                                      borderRadius: "6px",
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "flex-start",
-                                        justifyContent: "space-between",
-                                        marginBottom: "4px",
-                                      }}
-                                    >
-                                      <div>
-                                        <div
-                                          style={{
-                                            fontWeight: 500,
-                                            fontSize: "0.8125rem",
-                                          }}
-                                        >
-                                          {review.reviewerName}
-                                        </div>
-                                        <div
-                                          style={{
-                                            fontSize: "0.75rem",
-                                            color: "#6B7280",
-                                          }}
-                                        >
-                                          {review.department}
-                                        </div>
+                                  <article key={idx} className="reviewer-summary-card screening-reviewer-summary">
+                                    <div className="reviewer-summary-header">
+                                      <div className="reviewer-summary-identity">
+                                        <span className="reviewer-summary-label">평가자</span>
+                                        <h4 className="reviewer-summary-name">{review.reviewerName}</h4>
                                       </div>
-                                      {review.decision?.trim() ? (
-                                        <span
-                                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                                            review.decision === "합격"
-                                              ? "bg-primary/10 text-primary"
-                                              : review.decision === "불합격"
-                                                ? "bg-destructive/10 text-destructive"
-                                                : "bg-yellow-100 text-yellow-700"
-                                          }`}
-                                        >
-                                          {review.decision}
-                                        </span>
-                                      ) : (
-                                        <span
-                                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                                            review.status === "draft"
-                                              ? "bg-yellow-100 text-yellow-700"
-                                              : "bg-muted text-muted-foreground"
-                                          }`}
-                                        >
-                                          {Utils.Mapper.documentScreening.resolveReviewerStatusLabel(
-                                            review,
-                                          )}
-                                        </span>
-                                      )}
+                                      <span className="reviewer-summary-status" data-status={review.status}>
+                                        <span className="reviewer-status-dot" aria-hidden="true" />
+                                        {Utils.Mapper.documentScreening.resolveReviewerStatusLabel(review)}
+                                      </span>
                                     </div>
-                                    {review.comment ? (
-                                      <div
-                                        style={{
-                                          fontSize: "0.75rem",
-                                          color: "#374151",
-                                          marginBottom: "3px",
-                                          whiteSpace: "pre-line",
-                                        }}
-                                      >
-                                        {review.comment}
+                                    <dl className="reviewer-summary-metadata">
+                                      <div className="reviewer-summary-field">
+                                        <dt>소속</dt>
+                                        <dd>{review.department}</dd>
                                       </div>
-                                    ) : null}
-                                    {review.updatedAt &&
-                                    review.status !== "pending" ? (
-                                      <div
-                                        style={{
-                                          fontSize: "0.7rem",
-                                          color: "#9CA3AF",
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: "3px",
-                                        }}
-                                      >
-                                        <Clock
-                                          style={{
-                                            width: "11px",
-                                            height: "11px",
-                                          }}
-                                        />
-                                        {review.updatedAt}
+                                      {review.decision?.trim() && (
+                                        <div className="reviewer-summary-field reviewer-summary-decision">
+                                          <dt>평가 결정</dt>
+                                          <dd data-decision={review.decision}>{review.decision}</dd>
+                                        </div>
+                                      )}
+                                      {review.updatedAt && review.status !== "pending" && (
+                                        <div className="reviewer-summary-field reviewer-summary-updated">
+                                          <dt>수정 일시</dt>
+                                          <dd><time>{review.updatedAt}</time></dd>
+                                        </div>
+                                      )}
+                                    </dl>
+                                    {review.comment && (
+                                      <div className="reviewer-summary-comment">
+                                        <span className="reviewer-summary-label">평가 코멘트</span>
+                                        <p>{review.comment}</p>
                                       </div>
-                                    ) : null}
-                                  </div>
+                                    )}
+                                  </article>
                                 ))
                               ) : (
                                 <div
                                   style={{
                                     textAlign: "center",
                                     padding: "20px 0",
-                                    color: "#9CA3AF",
+                                    color: "var(--int-text-muted)",
                                     fontSize: "0.8125rem",
                                   }}
                                 >
@@ -3208,7 +3102,7 @@ export default function InterviewManagementV2() {
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  color: "#9CA3AF",
+                  color: "var(--int-text-muted)",
                   fontSize: "0.8125rem",
                 }}
               >
@@ -3219,7 +3113,7 @@ export default function InterviewManagementV2() {
 
           {/* ── 오른쪽: AgentGO + 평가/히스토리/메모 탭 ── */}
           <div
-            className="ats-panel border border-border rounded-lg bg-card"
+            className="interview-panel interview-review-panel border border-border rounded-lg bg-card"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -3227,7 +3121,7 @@ export default function InterviewManagementV2() {
             }}
           >
             {selectedInterview ? (
-              <div
+              <div className="interview-review-stack"
                 style={{
                   flex: 1,
                   overflowY: "auto",
@@ -3239,8 +3133,7 @@ export default function InterviewManagementV2() {
                 {(showScheduleCoordinationPanel ||
                   showInterviewQuestionPanel ||
                   showInterviewRecordingAnalysisSection) && (
-                  <div
-                    className="ats-interview-agent-sections"
+                  <div className="interview-tools"
                     style={{
                       borderBottom: "1px solid var(--border)",
                       flexShrink: 0,
@@ -3252,7 +3145,7 @@ export default function InterviewManagementV2() {
                       <div
                         style={{
                           padding: "10px 12px",
-                          backgroundColor: "rgba(40,48,56,0.03)",
+                          backgroundColor: "var(--int-secondary-soft)",
                         }}
                       >
                         <div
@@ -3267,14 +3160,14 @@ export default function InterviewManagementV2() {
                             style={{
                               width: "14px",
                               height: "14px",
-                              color: "#525b64",
+                              color: "var(--int-primary)",
                             }}
                           />
                           <span
                             style={{
                               fontWeight: 600,
                               fontSize: "0.8125rem",
-                              color: "#283038",
+                              color: "var(--int-text)",
                             }}
                           >
                             AgentGO 면접 일정 추천
@@ -3304,12 +3197,12 @@ export default function InterviewManagementV2() {
                                 회신 대기
                               </span>
                               <span
-                                style={{ fontSize: "0.75rem", color: "#6B7280" }}
+                                style={{ fontSize: "var(--int-text-xs)", color: "var(--int-text-secondary)" }}
                               >
                                 면접 일정: 미정
                               </span>
                             </div>
-                            <button
+                            <button data-intent="secondary"
                               type="button"
                               onClick={() => {
                                 if (!canPerformScheduleCoordinationActions)
@@ -3320,11 +3213,11 @@ export default function InterviewManagementV2() {
                               disabled={!canPerformScheduleCoordinationActions}
                               style={{
                                 height: "28px",
-                                fontSize: "0.75rem",
+                                fontSize: "var(--int-text-xs)",
                                 fontWeight: 500,
-                                borderRadius: "5px",
-                                backgroundColor: "rgba(40,48,56,0.15)",
-                                color: "#525b64",
+                                borderRadius: "var(--int-radius-control)",
+                                backgroundColor: "var(--int-secondary)",
+                                color: "var(--int-primary)",
                                 border: "none",
                                 cursor: canPerformScheduleCoordinationActions
                                   ? "pointer"
@@ -3341,11 +3234,11 @@ export default function InterviewManagementV2() {
                                 if (!canPerformScheduleCoordinationActions)
                                   return;
                                 e.currentTarget.style.backgroundColor =
-                                  "rgba(40,48,56,0.25)";
+                                  "var(--int-secondary-hover)";
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor =
-                                  "rgba(40,48,56,0.15)";
+                                  "var(--int-secondary)";
                               }}
                             >
                               <Sparkles
@@ -3354,7 +3247,7 @@ export default function InterviewManagementV2() {
                               재생성
                             </button>
                             {import.meta.env.DEV && (
-                              <button
+                              <button data-intent="secondary"
                                 type="button"
                                 onClick={() => void handleSelectScheduleTemp()}
                                 disabled={
@@ -3382,7 +3275,7 @@ export default function InterviewManagementV2() {
                           </div>
                         ) : (
                           <div>
-                            <button
+                            <button data-intent="secondary"
                               type="button"
                               onClick={() => {
                                 if (!canPerformScheduleCoordinationActions)
@@ -3391,15 +3284,14 @@ export default function InterviewManagementV2() {
                                 setShowScheduleModal(true);
                               }}
                               disabled={!canPerformScheduleCoordinationActions}
-                              className="ats-agent-action"
                               style={{
                                 height: "28px",
                                 width: "100%",
-                                fontSize: "0.75rem",
+                                fontSize: "var(--int-text-xs)",
                                 fontWeight: 500,
-                                borderRadius: "5px",
-                                backgroundColor: "rgba(40,48,56,0.2)",
-                                color: "#525b64",
+                                borderRadius: "var(--int-radius-control)",
+                                backgroundColor: "var(--int-secondary-border)",
+                                color: "var(--int-primary)",
                                 border: "none",
                                 cursor: canPerformScheduleCoordinationActions
                                   ? "pointer"
@@ -3416,11 +3308,11 @@ export default function InterviewManagementV2() {
                                 if (!canPerformScheduleCoordinationActions)
                                   return;
                                 e.currentTarget.style.backgroundColor =
-                                  "rgba(40,48,56,0.3)";
+                                  "rgba(79,57,246,0.3)";
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor =
-                                  "rgba(40,48,56,0.2)";
+                                  "var(--int-secondary-border)";
                               }}
                             >
                               <Sparkles
@@ -3471,7 +3363,7 @@ export default function InterviewManagementV2() {
                                   style={{
                                     width: "15px",
                                     height: "15px",
-                                    color: "#525b64",
+                                    color: "var(--int-primary)",
                                   }}
                                 />
                                 <h3
@@ -3481,7 +3373,7 @@ export default function InterviewManagementV2() {
                                   AgentGO 면접 일정 생성
                                 </h3>
                               </div>
-                              <button
+                              <button data-intent="quiet"
                                 type="button"
                                 onClick={() => setShowScheduleModal(false)}
                                 className="hover:bg-muted rounded transition-colors"
@@ -3693,8 +3585,8 @@ export default function InterviewManagementV2() {
                                                   padding: "5px 10px",
                                                   border:
                                                     "1px solid var(--border)",
-                                                  borderRadius: "6px",
-                                                  backgroundColor: "#F9FAFB",
+                                                  borderRadius: "var(--int-radius-control)",
+                                                  backgroundColor: "var(--int-background)",
                                                 }}
                                               >
                                                 <span
@@ -3708,8 +3600,8 @@ export default function InterviewManagementV2() {
                                                 {meta ? (
                                                   <span
                                                     style={{
-                                                      fontSize: "0.75rem",
-                                                      color: "#6B7280",
+                                                      fontSize: "var(--int-text-xs)",
+                                                      color: "var(--int-text-secondary)",
                                                       marginRight: "auto",
                                                       marginLeft: "6px",
                                                     }}
@@ -3717,7 +3609,7 @@ export default function InterviewManagementV2() {
                                                     {meta}
                                                   </span>
                                                 ) : null}
-                                                <button
+                                                <button data-intent="quiet"
                                                   type="button"
                                                   onClick={() =>
                                                     handleRemoveInterviewer(
@@ -3751,7 +3643,7 @@ export default function InterviewManagementV2() {
                                                     style={{
                                                       width: "11px",
                                                       height: "11px",
-                                                      color: "#9CA3AF",
+                                                      color: "var(--int-text-muted)",
                                                     }}
                                                   />
                                                 </button>
@@ -3774,8 +3666,7 @@ export default function InterviewManagementV2() {
                                       <label style={SCHEDULE_MODAL_LABEL_STYLE}>
                                         일정 개수
                                       </label>
-                                      <CustomSelect
-                                        aria-label="일정 개수"
+                                      <select
                                         value={scheduleSettings.candidateCount}
                                         disabled={
                                           !canPerformScheduleCoordinationActions
@@ -3798,14 +3689,13 @@ export default function InterviewManagementV2() {
                                             {n}개
                                           </option>
                                         ))}
-                                      </CustomSelect>
+                                      </select>
                                     </div>
                                     <div>
                                       <label style={SCHEDULE_MODAL_LABEL_STYLE}>
                                         소요 시간
                                       </label>
-                                      <CustomSelect
-                                        aria-label="소요 시간"
+                                      <select
                                         value={scheduleSettings.duration}
                                         disabled={
                                           !canPerformScheduleCoordinationActions
@@ -3828,7 +3718,7 @@ export default function InterviewManagementV2() {
                                         <option value={2.5}>2시간 30분</option>
                                         <option value={3}>3시간</option>
                                         <option value={3.5}>3시간 30분</option>
-                                      </CustomSelect>
+                                      </select>
                                     </div>
                                   </div>
 
@@ -3880,7 +3770,7 @@ export default function InterviewManagementV2() {
                                     style={{
                                       fontSize: "0.9rem",
                                       fontWeight: 500,
-                                      color: "#374151",
+                                      color: "var(--int-text-secondary)",
                                     }}
                                   >
                                     일정 분석 중...
@@ -3888,7 +3778,7 @@ export default function InterviewManagementV2() {
                                   <p
                                     style={{
                                       fontSize: "0.8rem",
-                                      color: "#9CA3AF",
+                                      color: "var(--int-text-muted)",
                                       marginTop: "4px",
                                     }}
                                   >
@@ -3908,7 +3798,7 @@ export default function InterviewManagementV2() {
                                   <p
                                     style={{
                                       fontSize: "0.8125rem",
-                                      color: "#6B7280",
+                                      color: "var(--int-text-secondary)",
                                       marginBottom: "2px",
                                     }}
                                   >
@@ -3920,8 +3810,8 @@ export default function InterviewManagementV2() {
                                       style={{
                                         padding: "12px 14px",
                                         border: "1px solid var(--border)",
-                                        borderRadius: "8px",
-                                        backgroundColor: "#F9FAFB",
+                                        borderRadius: "var(--int-radius-control)",
+                                        backgroundColor: "var(--int-background)",
                                       }}
                                     >
                                       <div
@@ -3929,7 +3819,7 @@ export default function InterviewManagementV2() {
                                           fontSize: "0.9rem",
                                           fontWeight: 600,
                                           marginBottom: "3px",
-                                          color: "#283038",
+                                          color: "var(--int-text)",
                                         }}
                                       >
                                         {candidate.date} {candidate.time}
@@ -3937,7 +3827,7 @@ export default function InterviewManagementV2() {
                                       <div
                                         style={{
                                           fontSize: "0.8125rem",
-                                          color: "#6B7280",
+                                          color: "var(--int-text-secondary)",
                                         }}
                                       >
                                         {[
@@ -3968,7 +3858,7 @@ export default function InterviewManagementV2() {
                             >
                               {agentStep === "candidates" ? (
                                 <>
-                                  <button
+                                  <button data-intent="secondary"
                                     type="button"
                                     onClick={() => setAgentStep("idle")}
                                     disabled={
@@ -3978,9 +3868,9 @@ export default function InterviewManagementV2() {
                                     style={{
                                       flex: 1,
                                       height: "36px",
-                                      borderRadius: "6px",
-                                      border: "1px solid #D1D5DB",
-                                      backgroundColor: "#FFF",
+                                      borderRadius: "var(--int-radius-control)",
+                                      border: "1px solid var(--int-border)",
+                                      backgroundColor: "var(--int-surface)",
                                       fontSize: "0.8125rem",
                                       fontWeight: 500,
                                       cursor:
@@ -3997,7 +3887,7 @@ export default function InterviewManagementV2() {
                                   >
                                     재설정
                                   </button>
-                                  <button
+                                  <button data-intent="primary"
                                     type="button"
                                     onClick={() => void handleSendSchedule()}
                                     disabled={
@@ -4005,13 +3895,13 @@ export default function InterviewManagementV2() {
                                       isSendingSchedule ||
                                       scheduleCandidates.length === 0
                                     }
-                                    className="ats-primary-button flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{
                                       flex: 2,
                                       height: "36px",
-                                      borderRadius: "6px",
-                                      backgroundColor: "#525b64",
-                                      color: "#FFF",
+                                      borderRadius: "var(--int-radius-control)",
+                                      backgroundColor: "var(--int-primary)",
+                                      color: "var(--int-surface)",
                                       border: "none",
                                       cursor: "pointer",
                                       fontSize: "0.8125rem",
@@ -4044,7 +3934,7 @@ export default function InterviewManagementV2() {
                                   style={{
                                     flex: 1,
                                     height: "36px",
-                                    borderRadius: "6px",
+                                    borderRadius: "var(--int-radius-control)",
                                     backgroundColor: "#E5E7EB",
                                     display: "flex",
                                     alignItems: "center",
@@ -4054,7 +3944,7 @@ export default function InterviewManagementV2() {
                                   <span
                                     style={{
                                       fontSize: "0.8125rem",
-                                      color: "#9CA3AF",
+                                      color: "var(--int-text-muted)",
                                     }}
                                   >
                                     분석 중...
@@ -4062,7 +3952,7 @@ export default function InterviewManagementV2() {
                                 </div>
                               ) : (
                                 <>
-                                  <button
+                                  <button data-intent="secondary"
                                     type="button"
                                     onClick={() => {
                                       setShowScheduleModal(false);
@@ -4071,9 +3961,9 @@ export default function InterviewManagementV2() {
                                     style={{
                                       flex: 1,
                                       height: "36px",
-                                      borderRadius: "6px",
-                                      border: "1px solid #D1D5DB",
-                                      backgroundColor: "#FFF",
+                                      borderRadius: "var(--int-radius-control)",
+                                      border: "1px solid var(--int-border)",
+                                      backgroundColor: "var(--int-surface)",
                                       fontSize: "0.8125rem",
                                       fontWeight: 500,
                                       cursor: "pointer",
@@ -4081,7 +3971,7 @@ export default function InterviewManagementV2() {
                                   >
                                     취소
                                   </button>
-                                  <button
+                                  <button data-intent="primary"
                                     type="button"
                                     onClick={() => void handleGenerateSchedule()}
                                     disabled={
@@ -4093,13 +3983,13 @@ export default function InterviewManagementV2() {
                                       !scheduleSettings.location.trim() ||
                                       !scheduleSettings.responseDeadline
                                     }
-                                    className="ats-primary-button flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{
                                       flex: 2,
                                       height: "36px",
-                                      borderRadius: "6px",
-                                      backgroundColor: "#525b64",
-                                      color: "#FFF",
+                                      borderRadius: "var(--int-radius-control)",
+                                      backgroundColor: "var(--int-primary)",
+                                      color: "var(--int-surface)",
                                       border: "none",
                                       cursor: "pointer",
                                       fontSize: "0.8125rem",
@@ -4126,26 +4016,26 @@ export default function InterviewManagementV2() {
                     {(showInterviewQuestionPanel ||
                       showInterviewRecordingAnalysisSection) && (
                       <div
-                        className="ats-interview-support"
                         style={{
+                          padding: "10px 12px",
                           display: "flex",
                           flexDirection: "column",
                           gap: "6px",
+                          backgroundColor: "var(--int-secondary-soft)",
                         }}
                       >
                         {/* 면접 정보 */}
                         {selectedInterview?.date ? (
                           <div
-                            className="ats-interview-schedule-info"
                             style={{
                               display: "flex",
                               alignItems: "center",
                               gap: "12px",
                               padding: "6px 8px",
-                              backgroundColor: "#F0F4FF",
-                              borderRadius: "6px",
-                              fontSize: "0.75rem",
-                              color: "#374151",
+                              backgroundColor: "var(--int-secondary-soft)",
+                              borderRadius: "var(--int-radius-control)",
+                              fontSize: "var(--int-text-xs)",
+                              color: "var(--int-text-secondary)",
                             }}
                           >
                             <span
@@ -4159,7 +4049,7 @@ export default function InterviewManagementV2() {
                                 style={{
                                   width: "11px",
                                   height: "11px",
-                                  color: "#525b64",
+                                  color: "var(--int-primary)",
                                 }}
                               />
                               {selectedInterview.date} {selectedInterview.time}
@@ -4176,7 +4066,7 @@ export default function InterviewManagementV2() {
                                   style={{
                                     width: "11px",
                                     height: "11px",
-                                    color: "#525b64",
+                                    color: "var(--int-primary)",
                                   }}
                                 />
                                 {selectedInterview.location}
@@ -4188,18 +4078,16 @@ export default function InterviewManagementV2() {
                         {/* AgentGO 면접 질문 추천 */}
                         {showInterviewQuestionPanel && (
                           <div
-                            className="ats-agent-card"
                             style={{
-                              border: "1px solid rgba(40,48,56,0.2)",
-                              borderRadius: "8px",
+                              border: "1px solid var(--int-border)",
+                              borderRadius: "var(--int-radius-control)",
                               overflow: "hidden",
                             }}
                           >
                             <div
-                              className="ats-agent-card-heading"
                               style={{
                                 padding: "8px 10px",
-                                backgroundColor: "rgba(40,48,56,0.05)",
+                                backgroundColor: "var(--int-secondary-soft)",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
@@ -4216,7 +4104,7 @@ export default function InterviewManagementV2() {
                                   style={{
                                     width: "13px",
                                     height: "13px",
-                                    color: "#525b64",
+                                    color: "var(--int-primary)",
                                   }}
                                 />
                                 <span
@@ -4230,17 +4118,17 @@ export default function InterviewManagementV2() {
                               </div>
                               <div style={{ display: "flex", gap: "4px" }}>
                                 {recommendedQuestions.length > 0 && (
-                                  <button
+                                  <button data-intent="secondary"
                                     type="button"
                                     onClick={() => setShowQuestionsModal(true)}
                                     style={{
                                       height: "24px",
                                       padding: "0 8px",
-                                      fontSize: "0.7rem",
+                                      fontSize: "var(--int-text-xs)",
                                       fontWeight: 500,
-                                      borderRadius: "4px",
-                                      backgroundColor: "rgba(40,48,56,0.15)",
-                                      color: "#525b64",
+                                      borderRadius: "var(--int-radius-control)",
+                                      backgroundColor: "var(--int-secondary)",
+                                      color: "var(--int-primary)",
                                       border: "none",
                                       cursor: "pointer",
                                     }}
@@ -4248,9 +4136,8 @@ export default function InterviewManagementV2() {
                                     상세 보기
                                   </button>
                                 )}
-                                <button
+                                <button data-intent="secondary"
                                   type="button"
-                                  className="ats-agent-action"
                                   onClick={() => void handleGenerateQuestions()}
                                   disabled={
                                     !canPerformInterviewAgentActions ||
@@ -4260,11 +4147,11 @@ export default function InterviewManagementV2() {
                                   style={{
                                     height: "24px",
                                     padding: "0 8px",
-                                    fontSize: "0.7rem",
+                                    fontSize: "var(--int-text-xs)",
                                     fontWeight: 500,
-                                    borderRadius: "4px",
-                                    backgroundColor: "#525b64",
-                                    color: "#FFF",
+                                    borderRadius: "var(--int-radius-control)",
+                                    backgroundColor: "var(--int-primary)",
+                                    color: "var(--int-surface)",
                                     border: "none",
                                     cursor:
                                       questionsGenerating ||
@@ -4294,8 +4181,8 @@ export default function InterviewManagementV2() {
                                 <div className="w-6 h-6 border-4 border-accent/30 border-t-accent rounded-full animate-spin mx-auto mb-2" />
                                 <p
                                   style={{
-                                    fontSize: "0.7rem",
-                                    color: "#6B7280",
+                                    fontSize: "var(--int-text-xs)",
+                                    color: "var(--int-text-secondary)",
                                   }}
                                 >
                                   질문 생성 중...
@@ -4308,18 +4195,16 @@ export default function InterviewManagementV2() {
                         {/* AgentGO 녹음 분석 */}
                         {showInterviewRecordingAnalysisSection && (
                           <div
-                            className="ats-agent-card"
                             style={{
-                              border: "1px solid rgba(40,48,56,0.2)",
-                              borderRadius: "8px",
+                              border: "1px solid var(--int-border)",
+                              borderRadius: "var(--int-radius-control)",
                               overflow: "hidden",
                             }}
                           >
                             <div
-                              className="ats-agent-card-heading"
                               style={{
                                 padding: "8px 10px",
-                                backgroundColor: "rgba(40,48,56,0.05)",
+                                backgroundColor: "var(--int-secondary-soft)",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "5px",
@@ -4329,7 +4214,7 @@ export default function InterviewManagementV2() {
                                 style={{
                                   width: "13px",
                                   height: "13px",
-                                  color: "#525b64",
+                                  color: "var(--int-primary)",
                                 }}
                               />
                               <span
@@ -4343,7 +4228,7 @@ export default function InterviewManagementV2() {
                             </div>
                             <div style={{ padding: "8px 10px" }}>
                               {recordingStatus === "idle" && (
-                                <button
+                                <button data-intent="secondary"
                                   type="button"
                                   onClick={() => void handleStartRecording()}
                                   disabled={
@@ -4351,15 +4236,15 @@ export default function InterviewManagementV2() {
                                     isRecordingActionLoading ||
                                     !canStartRecordingByAnalysisStatus
                                   }
-                                  className="flex items-center justify-center gap-1.5"
+                                  className="interview-action-accent flex items-center justify-center gap-1.5"
                                   style={{
                                     height: "28px",
                                     width: "100%",
-                                    fontSize: "0.75rem",
+                                    fontSize: "var(--int-text-xs)",
                                     fontWeight: 500,
-                                    borderRadius: "5px",
+                                    borderRadius: "var(--int-radius-control)",
                                     backgroundColor: "#EF4444",
-                                    color: "#FFF",
+                                    color: "var(--int-surface)",
                                     border: "none",
                                     cursor:
                                       !showInterviewRecordingPanel ||
@@ -4380,7 +4265,7 @@ export default function InterviewManagementV2() {
                                       width: "8px",
                                       height: "8px",
                                       borderRadius: "50%",
-                                      backgroundColor: "#FFF",
+                                      backgroundColor: "var(--int-surface)",
                                     }}
                                   />
                                   {isRecordingActionLoading
@@ -4413,7 +4298,7 @@ export default function InterviewManagementV2() {
                                     />
                                     <span
                                       style={{
-                                        fontSize: "0.75rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
                                         color: "#EF4444",
                                       }}
@@ -4422,8 +4307,8 @@ export default function InterviewManagementV2() {
                                     </span>
                                     <span
                                       style={{
-                                        fontSize: "0.75rem",
-                                        color: "#6B7280",
+                                        fontSize: "var(--int-text-xs)",
+                                        color: "var(--int-text-secondary)",
                                         marginLeft: "auto",
                                       }}
                                     >
@@ -4435,18 +4320,18 @@ export default function InterviewManagementV2() {
                                     </span>
                                   </div>
                                   <div style={{ display: "flex", gap: "4px" }}>
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={handlePauseRecording}
                                       disabled={isRecordingActionLoading}
                                       style={{
                                         flex: 1,
                                         height: "26px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "5px",
-                                        border: "1px solid #D1D5DB",
-                                        backgroundColor: "#FFF",
+                                        borderRadius: "var(--int-radius-control)",
+                                        border: "1px solid var(--int-border)",
+                                        backgroundColor: "var(--int-surface)",
                                         cursor: isRecordingActionLoading
                                           ? "not-allowed"
                                           : "pointer",
@@ -4457,18 +4342,18 @@ export default function InterviewManagementV2() {
                                     >
                                       일시정지
                                     </button>
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={() => void handleStopRecording()}
                                       disabled={isRecordingActionLoading}
                                       style={{
                                         flex: 1,
                                         height: "26px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "5px",
-                                        backgroundColor: "#374151",
-                                        color: "#FFF",
+                                        borderRadius: "var(--int-radius-control)",
+                                        backgroundColor: "var(--int-text-secondary)",
+                                        color: "var(--int-surface)",
                                         border: "none",
                                         cursor: isRecordingActionLoading
                                           ? "not-allowed"
@@ -4507,7 +4392,7 @@ export default function InterviewManagementV2() {
                                     />
                                     <span
                                       style={{
-                                        fontSize: "0.75rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
                                         color: "#F59E0B",
                                       }}
@@ -4516,8 +4401,8 @@ export default function InterviewManagementV2() {
                                     </span>
                                     <span
                                       style={{
-                                        fontSize: "0.75rem",
-                                        color: "#6B7280",
+                                        fontSize: "var(--int-text-xs)",
+                                        color: "var(--int-text-secondary)",
                                         marginLeft: "auto",
                                       }}
                                     >
@@ -4529,18 +4414,18 @@ export default function InterviewManagementV2() {
                                     </span>
                                   </div>
                                   <div style={{ display: "flex", gap: "4px" }}>
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={handleResumeRecording}
                                       disabled={isRecordingActionLoading}
                                       style={{
                                         flex: 1,
                                         height: "26px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "5px",
-                                        backgroundColor: "#283038",
-                                        color: "#FFF",
+                                        borderRadius: "var(--int-radius-control)",
+                                        backgroundColor: "var(--int-primary)",
+                                        color: "var(--int-surface)",
                                         border: "none",
                                         cursor: isRecordingActionLoading
                                           ? "not-allowed"
@@ -4552,18 +4437,18 @@ export default function InterviewManagementV2() {
                                     >
                                       재생
                                     </button>
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={() => void handleStopRecording()}
                                       disabled={isRecordingActionLoading}
                                       style={{
                                         flex: 1,
                                         height: "26px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "5px",
-                                        backgroundColor: "#374151",
-                                        color: "#FFF",
+                                        borderRadius: "var(--int-radius-control)",
+                                        backgroundColor: "var(--int-text-secondary)",
+                                        color: "var(--int-surface)",
                                         border: "none",
                                         cursor: isRecordingActionLoading
                                           ? "not-allowed"
@@ -4593,8 +4478,8 @@ export default function InterviewManagementV2() {
                                   <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded-full animate-spin mx-auto mb-2" />
                                   <p
                                     style={{
-                                      fontSize: "0.7rem",
-                                      color: "#6B7280",
+                                      fontSize: "var(--int-text-xs)",
+                                      color: "var(--int-text-secondary)",
                                     }}
                                   >
                                     분석 중...
@@ -4611,8 +4496,8 @@ export default function InterviewManagementV2() {
                                       flex: 1,
                                       padding: "4px 8px",
                                       backgroundColor: "#F0FDF4",
-                                      borderRadius: "4px",
-                                      fontSize: "0.7rem",
+                                      borderRadius: "var(--int-radius-control)",
+                                      fontSize: "var(--int-text-xs)",
                                       color: "#15803D",
                                       fontWeight: 500,
                                       display: "flex",
@@ -4622,17 +4507,17 @@ export default function InterviewManagementV2() {
                                     분석 완료
                                   </div>
                                   {displayedRecordingAnalysis ? (
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={() => setShowAnalysisModal(true)}
                                       style={{
                                         height: "26px",
                                         padding: "0 8px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "4px",
-                                        backgroundColor: "rgba(40,48,56,0.15)",
-                                        color: "#525b64",
+                                        borderRadius: "var(--int-radius-control)",
+                                        backgroundColor: "var(--int-secondary)",
+                                        color: "var(--int-primary)",
                                         border: "none",
                                         cursor: "pointer",
                                       }}
@@ -4641,18 +4526,18 @@ export default function InterviewManagementV2() {
                                     </button>
                                   ) : null}
                                   {showInterviewRecordingPanel ? (
-                                    <button
+                                    <button data-intent="secondary"
                                       type="button"
                                       onClick={handlePrepareRerecording}
                                       disabled={isRecordingActionLoading}
                                       style={{
                                         height: "26px",
                                         padding: "0 8px",
-                                        fontSize: "0.7rem",
+                                        fontSize: "var(--int-text-xs)",
                                         fontWeight: 500,
-                                        borderRadius: "4px",
-                                        border: "1px solid #D1D5DB",
-                                        backgroundColor: "#FFF",
+                                        borderRadius: "var(--int-radius-control)",
+                                        border: "1px solid var(--int-border)",
+                                        backgroundColor: "var(--int-surface)",
                                         cursor: isRecordingActionLoading
                                           ? "not-allowed"
                                           : "pointer",
@@ -4674,21 +4559,44 @@ export default function InterviewManagementV2() {
                   </div>
                 )}
 
+                <section className="interview-review-section" aria-label="면접 평가 및 기록">
                 {/* 탭 헤더 */}
-                <div
-                  className="ats-segment-bar"
-                  style={{ position: "sticky", top: 0, backgroundColor: "var(--card)", zIndex: 1 }}
+                <div className="interview-tabs"
+                  style={{
+                    display: "flex",
+                    borderBottom: "1px solid var(--border)",
+                    flexShrink: 0,
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: "var(--card)",
+                    zIndex: 1,
+                  }}
                 >
-                  <SegmentedControl
-                    label="면접 평가 도구"
-                    options={["평가", "히스토리", "메모"] as const}
-                    value={activeRightTab}
-                    onChange={setActiveRightTab}
-                  />
+                  {(["평가", "히스토리", "메모"] as const).map((tab) => (
+                    <button data-intent="navigation"
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveRightTab(tab)}
+                      className={`flex-1 transition-colors ${
+                        activeRightTab === tab
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted-foreground hover:text-foreground border-b-2 border-transparent"
+                      }`}
+                      style={{
+                        height: "36px",
+                        fontSize: "0.8125rem",
+                        fontWeight: activeRightTab === tab ? 600 : 400,
+                        background: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {tab}
+                    </button>
+                  ))}
                 </div>
 
                 {/* 탭 콘텐츠 */}
-                <div style={{ padding: "12px" }}>
+                <div className="interview-review-content" style={{ padding: "12px" }}>
                   {/* ▸ 평가 탭 */}
                   {activeRightTab === "평가" && (
                     <div
@@ -4705,8 +4613,8 @@ export default function InterviewManagementV2() {
                             className="font-medium"
                             style={{
                               fontSize: "0.8125rem",
-                              color: "#283038",
-                              marginBottom: "8px",
+                              color: "var(--int-text)",
+                              marginBottom: "16px",
                             }}
                           >
                             최종 평가
@@ -4715,7 +4623,7 @@ export default function InterviewManagementV2() {
                           <div className="space-y-2">
                             <div>
                               <label
-                                className="block mb-1.5 font-medium"
+                                className="interview-final-field-label block mb-1.5 font-medium"
                                 style={{ fontSize: "0.8125rem" }}
                               >
                                 최종 결정
@@ -4735,11 +4643,11 @@ export default function InterviewManagementV2() {
 
                             <div>
                               <label
-                                className="block mb-1.5 font-medium"
+                                className="interview-final-field-label interview-final-comment-label mb-1.5 font-medium"
                                 style={{ fontSize: "0.8125rem" }}
                               >
                                 최종 코멘트{" "}
-                                <span className="text-destructive">*</span>
+                                <span className="interview-required-dot" role="img" aria-label="필수" />
                               </label>
                               <textarea
                                 value={finalComment}
@@ -4757,7 +4665,7 @@ export default function InterviewManagementV2() {
                               />
                             </div>
 
-                            <button
+                            <button data-intent="primary"
                               type="button"
                               onClick={() =>
                                 void handleSaveFinalDecision(true)
@@ -4768,19 +4676,18 @@ export default function InterviewManagementV2() {
                                 isEvalDisabledByScheduleUnset ||
                                 isEvalRsltOptionsLoading
                               }
-                              className="ats-primary-button w-full text-white transition-colors flex items-center justify-center"
-                              data-save-state={saveStatus}
+                              className="w-full text-white transition-colors flex items-center justify-center"
                               style={{
                                 height: "34px",
                                 padding: "0 16px",
                                 fontSize: "0.8125rem",
                                 fontWeight: 500,
-                                borderRadius: "6px",
+                                borderRadius: "var(--int-radius-control)",
                                 gap: "6px",
                                 backgroundColor:
                                   saveStatus === "saved"
                                     ? "#10B981"
-                                    : "#283038",
+                                    : "var(--int-primary)",
                                 opacity:
                                   saveStatus === "saving"
                                     ? 0.7
@@ -4812,7 +4719,7 @@ export default function InterviewManagementV2() {
                               <div className="p-2.5 bg-primary/5 border border-primary/20 rounded-lg">
                                 <div
                                   className="text-muted-foreground mb-1.5 font-medium"
-                                  style={{ fontSize: "0.7rem" }}
+                                  style={{ fontSize: "var(--int-text-xs)" }}
                                 >
                                   마지막 저장 평가
                                 </div>
@@ -4822,7 +4729,7 @@ export default function InterviewManagementV2() {
                                       selectedFinalDecisionCd,
                                       evalRsltOptions,
                                     )}`}
-                                    style={{ fontSize: "0.75rem" }}
+                                    style={{ fontSize: "var(--int-text-xs)" }}
                                   >
                                     {selectedFinalDecisionLabel ||
                                       selectedInterview?.finalDecision}
@@ -4831,7 +4738,7 @@ export default function InterviewManagementV2() {
                                 {selectedInterview?.finalComment ? (
                                   <div
                                     className="text-muted-foreground mt-1"
-                                    style={{ fontSize: "0.75rem" }}
+                                    style={{ fontSize: "var(--int-text-xs)" }}
                                   >
                                     {selectedInterview.finalComment}
                                   </div>
@@ -4848,7 +4755,7 @@ export default function InterviewManagementV2() {
                                   selectedFinalDecisionCd,
                                   evalRsltOptions,
                                 )) && (
-                                <button
+                                <button data-intent="secondary"
                                   type="button"
                                   onClick={() =>
                                     void loadInterviewResultEmailDraft()
@@ -4863,18 +4770,18 @@ export default function InterviewManagementV2() {
                                     padding: "0 16px",
                                     fontSize: "0.8125rem",
                                     fontWeight: 500,
-                                    borderRadius: "6px",
+                                    borderRadius: "var(--int-radius-control)",
                                     gap: "6px",
                                     backgroundColor:
                                       selectedInterview?.resultEmailSent === true
-                                        ? "#9CA3AF"
+                                        ? "var(--int-text-muted)"
                                         : isEvalPassCode(
                                               selectedFinalDecisionCd,
                                               evalRsltOptions,
                                             )
-                                          ? "#283038"
+                                          ? "var(--int-primary)"
                                           : "#EF4444",
-                                    color: "#FFFFFF",
+                                    color: "var(--int-surface)",
                                     border: "none",
                                     cursor:
                                       isEmailDraftLoading ||
@@ -4918,7 +4825,7 @@ export default function InterviewManagementV2() {
                               className="font-medium"
                               style={{
                                 fontSize: "0.8125rem",
-                                color: "#283038",
+                                color: "var(--int-text)",
                                 marginBottom: "8px",
                               }}
                             >
@@ -4970,7 +4877,7 @@ export default function InterviewManagementV2() {
 
                               <div className="flex gap-2">
                                 {isEditingReview && isMyReviewSubmitted ? (
-                                  <button
+                                  <button data-intent="secondary"
                                     type="button"
                                     onClick={() => {
                                       setIsEditingReview(false);
@@ -4994,13 +4901,13 @@ export default function InterviewManagementV2() {
                                       padding: "0 16px",
                                       fontSize: "0.8125rem",
                                       fontWeight: 500,
-                                      borderRadius: "6px",
+                                      borderRadius: "var(--int-radius-control)",
                                     }}
                                   >
                                     취소
                                   </button>
                                 ) : null}
-                                <button
+                                <button data-intent="secondary"
                                   type="button"
                                   onClick={() => void handleSaveReview(false)}
                                   disabled={
@@ -5015,14 +4922,14 @@ export default function InterviewManagementV2() {
                                     padding: "0 16px",
                                     fontSize: "0.8125rem",
                                     fontWeight: 500,
-                                    borderRadius: "6px",
+                                    borderRadius: "var(--int-radius-control)",
                                     gap: "6px",
                                   }}
                                 >
                                   <Save className="w-3.5 h-3.5" />
                                   임시저장
                                 </button>
-                                <button
+                                <button data-intent="primary"
                                   type="button"
                                   onClick={() => void handleSaveReview(true)}
                                   disabled={
@@ -5032,15 +4939,15 @@ export default function InterviewManagementV2() {
                                     !decisionCd.trim() ||
                                     !comment.trim()
                                   }
-                                  className="ats-primary-button flex-1 text-white hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="flex-1 text-white hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                   style={{
                                     height: "34px",
                                     padding: "0 16px",
                                     fontSize: "0.8125rem",
                                     fontWeight: 500,
-                                    borderRadius: "6px",
+                                    borderRadius: "var(--int-radius-control)",
                                     gap: "6px",
-                                    backgroundColor: "#283038",
+                                    backgroundColor: "var(--int-primary)",
                                   }}
                                 >
                                   <Send className="w-3.5 h-3.5" />
@@ -5050,7 +4957,7 @@ export default function InterviewManagementV2() {
 
                               <p
                                 className="text-muted-foreground text-center"
-                                style={{ fontSize: "0.75rem" }}
+                                style={{ fontSize: "var(--int-text-xs)" }}
                               >
                                 제출 후 수정 가능합니다
                               </p>
@@ -5074,7 +4981,7 @@ export default function InterviewManagementV2() {
                               </div>
                               <div
                                 className="space-y-0.5"
-                                style={{ fontSize: "0.75rem" }}
+                                style={{ fontSize: "var(--int-text-xs)" }}
                               >
                                 <div>
                                   결정:{" "}
@@ -5090,7 +4997,7 @@ export default function InterviewManagementV2() {
                                   <div>코멘트: {myReview.comment}</div>
                                 ) : null}
                               </div>
-                              <button
+                              <button data-intent="secondary"
                                 type="button"
                                 onClick={() => {
                                   setDecisionCd(
@@ -5111,7 +5018,7 @@ export default function InterviewManagementV2() {
                                   padding: "0 16px",
                                   fontSize: "0.8125rem",
                                   fontWeight: 500,
-                                  borderRadius: "6px",
+                                  borderRadius: "var(--int-radius-control)",
                                 }}
                               >
                                 평가 수정
@@ -5121,7 +5028,7 @@ export default function InterviewManagementV2() {
                         )}
 
                       {/* 면접 평가자 명단 */}
-                      <div
+                      <div className="interview-reviewers"
                         style={{
                           borderTop: "1px solid var(--border)",
                           paddingTop: "10px",
@@ -5132,7 +5039,7 @@ export default function InterviewManagementV2() {
                           style={{
                             fontSize: "0.8125rem",
                             marginBottom: "8px",
-                            color: "#283038",
+                            color: "var(--int-text)",
                           }}
                         >
                           면접 평가자 명단
@@ -5145,51 +5052,17 @@ export default function InterviewManagementV2() {
                                 reviewer.reviewerId === currentAdmin.id;
 
                               return (
-                                <div
-                                  key={idx}
-                                  className="p-2 border border-border rounded-lg"
-                                >
-                                  <div className="flex items-center justify-between mb-1">
-                                    <div>
-                                      <div
-                                        className="font-medium"
-                                        style={{ fontSize: "0.8125rem" }}
-                                      >
-                                        {reviewer.reviewerName}
-                                      </div>
-                                      <div
-                                        className="text-muted-foreground"
-                                        style={{ fontSize: "0.75rem" }}
-                                      >
-                                        {reviewer.department}
-                                      </div>
-                                      {reviewer.updatedAt &&
-                                      reviewer.status !== "pending" ? (
-                                        <div
-                                          className="text-muted-foreground flex items-center gap-1"
-                                          style={{
-                                            fontSize: "0.75rem",
-                                            marginTop: "1px",
-                                          }}
-                                        >
-                                          <Clock className="w-3 h-3" />
-                                          {reviewer.updatedAt}
-                                        </div>
-                                      ) : null}
+                                <article key={idx} className="reviewer-summary-card">
+                                  <div className="reviewer-summary-header">
+                                    <div className="reviewer-summary-identity">
+                                      <span className="reviewer-summary-label">평가자</span>
+                                      <h4 className="reviewer-summary-name">{reviewer.reviewerName}</h4>
                                     </div>
                                     {reviewer.status === "submitted" ||
                                     reviewer.status === "draft" ||
                                     reviewer.status === "pending" ? (
-                                      <span
-                                        className={`px-2 py-0.5 rounded ${
-                                          reviewer.status === "submitted"
-                                            ? "bg-primary/10 text-primary"
-                                            : reviewer.status === "draft"
-                                              ? "bg-yellow-100 text-yellow-700"
-                                              : "bg-muted text-muted-foreground"
-                                        }`}
-                                        style={{ fontSize: "0.75rem" }}
-                                      >
+                                      <span className="reviewer-summary-status" data-status={reviewer.status}>
+                                        <span className="reviewer-status-dot" aria-hidden="true" />
                                         {reviewer.status === "submitted"
                                           ? "제출완료"
                                           : reviewer.status === "draft"
@@ -5199,45 +5072,35 @@ export default function InterviewManagementV2() {
                                     ) : null}
                                   </div>
 
-                                  {canViewReview &&
-                                    reviewer.status !== "pending" && (
-                                      <div
-                                        className="space-y-0.5"
-                                        style={{ fontSize: "0.75rem" }}
-                                      >
-                                        <div>
-                                          <span className="text-muted-foreground">
-                                            결정:{" "}
-                                          </span>
-                                          <span
-                                            className={`font-medium ${
-                                              reviewer.decision === "합격"
-                                                ? "text-primary"
-                                                : reviewer.decision === "불합격"
-                                                  ? "text-destructive"
-                                                  : "text-yellow-600"
-                                            }`}
-                                          >
-                                            {reviewer.decision}
-                                          </span>
-                                        </div>
-                                        {reviewer.comment && (
-                                          <p className="text-muted-foreground whitespace-pre-line">
-                                            {reviewer.comment}
-                                          </p>
-                                        )}
+                                  <dl className="reviewer-summary-metadata">
+                                    <div className="reviewer-summary-field">
+                                      <dt>소속</dt>
+                                      <dd>{reviewer.department}</dd>
+                                    </div>
+                                    {canViewReview && reviewer.status !== "pending" && (
+                                      <div className="reviewer-summary-field reviewer-summary-decision">
+                                        <dt>평가 결정</dt>
+                                        <dd data-decision={reviewer.decision}>{reviewer.decision}</dd>
                                       </div>
                                     )}
+                                    {reviewer.updatedAt && reviewer.status !== "pending" ? (
+                                      <div className="reviewer-summary-field reviewer-summary-updated">
+                                        <dt>수정 일시</dt>
+                                        <dd><time>{reviewer.updatedAt}</time></dd>
+                                      </div>
+                                    ) : null}
+                                  </dl>
 
-                                  {!canViewReview && (
-                                    <div
-                                      className="text-muted-foreground"
-                                      style={{ fontSize: "0.75rem" }}
-                                    >
-                                      타 평가자 내용은 볼 수 없습니다
+                                  {canViewReview && reviewer.status !== "pending" && reviewer.comment && (
+                                    <div className="reviewer-summary-comment">
+                                      <span className="reviewer-summary-label">평가 코멘트</span>
+                                      <p>{reviewer.comment}</p>
                                     </div>
                                   )}
-                                </div>
+                                  {!canViewReview && (
+                                    <p className="reviewer-summary-restricted">타 평가자 내용은 볼 수 없습니다</p>
+                                  )}
+                                </article>
                               );
                             },
                           )}
@@ -5252,7 +5115,7 @@ export default function InterviewManagementV2() {
                       style={{
                         textAlign: "center",
                         padding: "40px 0",
-                        color: "#9CA3AF",
+                        color: "var(--int-text-muted)",
                         fontSize: "0.8125rem",
                       }}
                     >
@@ -5283,9 +5146,8 @@ export default function InterviewManagementV2() {
                           }}
                           placeholder="메모를 입력하세요..."
                         />
-                        <button
+                        <button data-intent="secondary"
                           type="button"
-                          className="ats-primary-button"
                           disabled={!currentMemoText.trim()}
                           style={{
                             marginTop: "6px",
@@ -5293,11 +5155,11 @@ export default function InterviewManagementV2() {
                             height: "32px",
                             fontSize: "0.8125rem",
                             fontWeight: 500,
-                            borderRadius: "6px",
+                            borderRadius: "var(--int-radius-control)",
                             backgroundColor: currentMemoText.trim()
-                              ? "#283038"
-                              : "#D1D5DB",
-                            color: "#FFF",
+                              ? "var(--int-primary)"
+                              : "var(--int-border)",
+                            color: "var(--int-surface)",
                             border: "none",
                             cursor: currentMemoText.trim()
                               ? "pointer"
@@ -5305,11 +5167,11 @@ export default function InterviewManagementV2() {
                           }}
                           onMouseEnter={(e) => {
                             if (currentMemoText.trim())
-                              e.currentTarget.style.backgroundColor = "#0066FF";
+                              e.currentTarget.style.backgroundColor = "var(--int-primary-hover)";
                           }}
                           onMouseLeave={(e) => {
                             if (currentMemoText.trim())
-                              e.currentTarget.style.backgroundColor = "#283038";
+                              e.currentTarget.style.backgroundColor = "var(--int-primary)";
                           }}
                         >
                           메모 저장
@@ -5318,6 +5180,7 @@ export default function InterviewManagementV2() {
                     </div>
                   )}
                 </div>
+                </section>
               </div>
             ) : (
               <div
@@ -5326,7 +5189,7 @@ export default function InterviewManagementV2() {
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  color: "#9CA3AF",
+                  color: "var(--int-text-muted)",
                   fontSize: "0.8125rem",
                 }}
               >
@@ -5370,16 +5233,16 @@ export default function InterviewManagementV2() {
                     }}
                   >
                     <Sparkles
-                      style={{ width: "16px", height: "16px", color: "#525b64" }}
+                      style={{ width: "16px", height: "16px", color: "var(--int-primary)" }}
                     />
                     <h3 className="font-display" style={{ fontSize: "16px" }}>
                       AgentGO 면접 질문 추천
                     </h3>
-                    <span style={{ fontSize: "0.75rem", color: "#6B7280" }}>
+                    <span style={{ fontSize: "var(--int-text-xs)", color: "var(--int-text-secondary)" }}>
                       ({questionGenerationCount}/10회)
                     </span>
                   </div>
-                  <button
+                  <button data-intent="quiet"
                     type="button"
                     onClick={() => setShowQuestionsModal(false)}
                     className="hover:bg-muted rounded transition-colors"
@@ -5402,8 +5265,8 @@ export default function InterviewManagementV2() {
                       style={{
                         padding: "10px 12px",
                         border: "1px solid var(--border)",
-                        borderRadius: "8px",
-                        backgroundColor: "#F9FAFB",
+                        borderRadius: "var(--int-radius-control)",
+                        backgroundColor: "var(--int-background)",
                       }}
                     >
                       <div
@@ -5418,7 +5281,7 @@ export default function InterviewManagementV2() {
                             width: "22px",
                             height: "22px",
                             borderRadius: "50%",
-                            backgroundColor: "rgba(49,130,246,0.1)",
+                            backgroundColor: "var(--int-secondary-soft)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -5428,9 +5291,9 @@ export default function InterviewManagementV2() {
                         >
                           <span
                             style={{
-                              fontSize: "0.75rem",
+                              fontSize: "var(--int-text-xs)",
                               fontWeight: 600,
-                              color: "#283038",
+                              color: "var(--int-primary)",
                             }}
                           >
                             {idx + 1}
@@ -5439,7 +5302,7 @@ export default function InterviewManagementV2() {
                         <p
                           style={{
                             fontSize: "0.8125rem",
-                            color: "#374151",
+                            color: "var(--int-text-secondary)",
                             lineHeight: 1.55,
                             margin: 0,
                           }}
@@ -5450,7 +5313,7 @@ export default function InterviewManagementV2() {
                     </div>
                   ))}
                 </div>
-                <button
+                <button data-intent="secondary"
                   type="button"
                   onClick={() => void handleGenerateQuestions()}
                   disabled={
@@ -5463,13 +5326,13 @@ export default function InterviewManagementV2() {
                     height: "34px",
                     fontSize: "0.8125rem",
                     fontWeight: 500,
-                    borderRadius: "6px",
+                    borderRadius: "var(--int-radius-control)",
                     backgroundColor:
                       questionGenerationCount >= 10
-                        ? "#D1D5DB"
-                        : "rgba(40,48,56,0.15)",
+                        ? "var(--int-border)"
+                        : "var(--int-secondary)",
                     color:
-                      questionGenerationCount >= 10 ? "#9CA3AF" : "#525b64",
+                      questionGenerationCount >= 10 ? "var(--int-text-muted)" : "var(--int-primary)",
                     border: "none",
                     cursor:
                       questionGenerationCount >= 10 ||
@@ -5527,13 +5390,13 @@ export default function InterviewManagementV2() {
                     }}
                   >
                     <Sparkles
-                      style={{ width: "16px", height: "16px", color: "#525b64" }}
+                      style={{ width: "16px", height: "16px", color: "var(--int-primary)" }}
                     />
                     <h3 className="font-display" style={{ fontSize: "16px" }}>
                       AgentGO 면접 녹음 분석 결과
                     </h3>
                   </div>
-                  <button
+                  <button data-intent="quiet"
                     type="button"
                     onClick={() => setShowAnalysisModal(false)}
                     className="hover:bg-muted rounded transition-colors"
@@ -5552,8 +5415,8 @@ export default function InterviewManagementV2() {
                   <div
                     style={{
                       padding: "10px 12px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "8px",
+                      backgroundColor: "var(--int-background)",
+                      borderRadius: "var(--int-radius-control)",
                     }}
                   >
                     <h4
@@ -5568,7 +5431,7 @@ export default function InterviewManagementV2() {
                     <p
                       style={{
                         fontSize: "0.8125rem",
-                        color: "#374151",
+                        color: "var(--int-text-secondary)",
                         lineHeight: 1.6,
                       }}
                     >
@@ -5590,7 +5453,7 @@ export default function InterviewManagementV2() {
                         style={{
                           width: "14px",
                           height: "14px",
-                          color: "#283038",
+                          color: "var(--int-primary)",
                         }}
                       />
                       강점
@@ -5607,9 +5470,9 @@ export default function InterviewManagementV2() {
                           key={i}
                           style={{
                             fontSize: "0.8125rem",
-                            color: "#374151",
+                            color: "var(--int-text-secondary)",
                             paddingLeft: "12px",
-                            borderLeft: "2px solid rgba(49,130,246,0.4)",
+                            borderLeft: "2px solid var(--int-secondary)",
                             lineHeight: 1.5,
                           }}
                         >
@@ -5650,7 +5513,7 @@ export default function InterviewManagementV2() {
                           key={i}
                           style={{
                             fontSize: "0.8125rem",
-                            color: "#374151",
+                            color: "var(--int-text-secondary)",
                             paddingLeft: "12px",
                             borderLeft: "2px solid rgba(202,138,4,0.4)",
                             lineHeight: 1.5,
@@ -5664,9 +5527,9 @@ export default function InterviewManagementV2() {
                   <div
                     style={{
                       padding: "10px 12px",
-                      backgroundColor: "rgba(40,48,56,0.05)",
-                      border: "1px solid rgba(40,48,56,0.2)",
-                      borderRadius: "8px",
+                      backgroundColor: "var(--int-secondary-soft)",
+                      border: "1px solid var(--int-border)",
+                      borderRadius: "var(--int-radius-control)",
                     }}
                   >
                     <h4
@@ -5681,7 +5544,7 @@ export default function InterviewManagementV2() {
                     <p
                       style={{
                         fontSize: "0.8125rem",
-                        color: "#374151",
+                        color: "var(--int-text-secondary)",
                         lineHeight: 1.6,
                       }}
                     >
@@ -5721,15 +5584,15 @@ export default function InterviewManagementV2() {
                   </p>
 
                   <div className="space-y-3 mb-6">
-                    <button
+                    <button data-intent="quiet"
                       type="button"
                       onClick={() => setNextStep("2차 면접")}
                       className="w-full p-4 rounded-lg border-2 transition-all text-left"
                       style={{
                         borderColor:
-                          nextStep === "2차 면접" ? "#283038" : "#D1D5DB",
+                          nextStep === "2차 면접" ? "var(--int-primary)" : "var(--int-border)",
                         backgroundColor:
-                          nextStep === "2차 면접" ? "#EFF6FF" : "#FFF",
+                          nextStep === "2차 면접" ? "var(--int-secondary-soft)" : "var(--int-surface)",
                       }}
                     >
                       <div className="flex items-center gap-3">
@@ -5753,15 +5616,15 @@ export default function InterviewManagementV2() {
                       </div>
                     </button>
 
-                    <button
+                    <button data-intent="quiet"
                       type="button"
                       onClick={() => setNextStep("처우 협의")}
                       className="w-full p-4 rounded-lg border-2 transition-all text-left"
                       style={{
                         borderColor:
-                          nextStep === "처우 협의" ? "#283038" : "#D1D5DB",
+                          nextStep === "처우 협의" ? "var(--int-primary)" : "var(--int-border)",
                         backgroundColor:
-                          nextStep === "처우 협의" ? "#EFF6FF" : "#FFF",
+                          nextStep === "처우 협의" ? "var(--int-secondary-soft)" : "var(--int-surface)",
                       }}
                     >
                       <div className="flex items-center gap-3">
@@ -5787,7 +5650,7 @@ export default function InterviewManagementV2() {
                   </div>
 
                   <div className="flex gap-3">
-                    <button
+                    <button data-intent="secondary"
                       type="button"
                       onClick={() => setShowNextStepModal(false)}
                       disabled={saveStatus === "saving"}
@@ -5795,7 +5658,7 @@ export default function InterviewManagementV2() {
                     >
                       취소
                     </button>
-                    <button
+                    <button data-intent="primary"
                       type="button"
                       onClick={() => void handleConfirmNextStep()}
                       disabled={saveStatus === "saving"}
@@ -5835,7 +5698,7 @@ export default function InterviewManagementV2() {
                   <h3 className="font-display" style={{ fontSize: "16px" }}>
                     {isPassEmailModal ? "합격 안내 메일" : "불합격 안내 메일"}
                   </h3>
-                  <button
+                  <button data-intent="quiet"
                     type="button"
                     onClick={closeEmailModal}
                     disabled={isSendingEmail}
@@ -5856,7 +5719,7 @@ export default function InterviewManagementV2() {
                   <div>
                     <label
                       className="block font-medium"
-                      style={{ fontSize: "0.75rem", marginBottom: "4px" }}
+                      style={{ fontSize: "var(--int-text-xs)", marginBottom: "4px" }}
                     >
                       수신
                     </label>
@@ -5868,8 +5731,8 @@ export default function InterviewManagementV2() {
                       style={{
                         height: "28px",
                         padding: "0 12px",
-                        fontSize: "0.75rem",
-                        borderRadius: "5px",
+                        fontSize: "var(--int-text-xs)",
+                        borderRadius: "var(--int-radius-control)",
                         boxSizing: "border-box",
                       }}
                     />
@@ -5878,7 +5741,7 @@ export default function InterviewManagementV2() {
                   <div>
                     <label
                       className="block font-medium"
-                      style={{ fontSize: "0.75rem", marginBottom: "4px" }}
+                      style={{ fontSize: "var(--int-text-xs)", marginBottom: "4px" }}
                     >
                       제목
                     </label>
@@ -5891,8 +5754,8 @@ export default function InterviewManagementV2() {
                       style={{
                         height: "28px",
                         padding: "0 12px",
-                        fontSize: "0.75rem",
-                        borderRadius: "5px",
+                        fontSize: "var(--int-text-xs)",
+                        borderRadius: "var(--int-radius-control)",
                         boxSizing: "border-box",
                       }}
                     />
@@ -5901,7 +5764,7 @@ export default function InterviewManagementV2() {
                   <div>
                     <label
                       className="block font-medium"
-                      style={{ fontSize: "0.75rem", marginBottom: "4px" }}
+                      style={{ fontSize: "var(--int-text-xs)", marginBottom: "4px" }}
                     >
                       내용
                     </label>
@@ -5909,7 +5772,7 @@ export default function InterviewManagementV2() {
                       className="w-full border border-border"
                       style={{
                         padding: "16px 12px",
-                        borderRadius: "5px",
+                        borderRadius: "var(--int-radius-control)",
                         boxSizing: "border-box",
                         backgroundColor:
                           "color-mix(in oklab, var(--muted) 30%, transparent)",
@@ -5933,7 +5796,7 @@ export default function InterviewManagementV2() {
                   </div>
 
                   <div className="flex gap-2" style={{ paddingTop: "4px" }}>
-                    <button
+                    <button data-intent="secondary"
                       type="button"
                       onClick={closeEmailModal}
                       disabled={isSendingEmail}
@@ -5943,12 +5806,12 @@ export default function InterviewManagementV2() {
                         padding: "0 16px",
                         fontSize: "0.8125rem",
                         fontWeight: 500,
-                        borderRadius: "6px",
+                        borderRadius: "var(--int-radius-control)",
                       }}
                     >
                       취소
                     </button>
-                    <button
+                    <button data-intent="primary"
                       type="button"
                       onClick={() => void handleSendInterviewResultEmail()}
                       disabled={
@@ -5962,9 +5825,9 @@ export default function InterviewManagementV2() {
                         padding: "0 16px",
                         fontSize: "0.8125rem",
                         fontWeight: 500,
-                        borderRadius: "6px",
+                        borderRadius: "var(--int-radius-control)",
                         gap: "6px",
-                        backgroundColor: "#283038",
+                        backgroundColor: "var(--int-primary)",
                       }}
                     >
                       {isSendingEmail ? (

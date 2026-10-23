@@ -118,11 +118,10 @@ export default function OfferPackageEditorSection({
   };
 
   return (
-    <div className="ats-offer-editor border-t border-border pt-4 space-y-3">
+    <div className="offer-proposal-editor border-t border-border pt-4 space-y-3">
       <h3 className="text-xs font-medium text-foreground">처우 제안 작성</h3>
       <OfferPackageForm
         compact
-        columns={4}
         values={values}
         jobGradeOptions={jobGradeOptions}
         posGradeOptions={posGradeOptions}
@@ -132,9 +131,8 @@ export default function OfferPackageEditorSection({
         activeFields={activeFields}
         onChange={patchValues}
       />
-      <button
+      <button data-intent="primary"
         type="button"
-        className="ats-primary-button"
         onClick={() => void handleSave()}
         disabled={isSaving}
         style={{
@@ -144,7 +142,7 @@ export default function OfferPackageEditorSection({
           fontSize: "0.75rem",
           fontWeight: 500,
           borderRadius: "6px",
-          backgroundColor: isSaving ? "#93C5FD" : "#2277FF",
+          backgroundColor: isSaving ? "#93C5FD" : "#3182F6",
           color: "#FFF",
           border: "none",
           display: "flex",
@@ -155,10 +153,10 @@ export default function OfferPackageEditorSection({
           transition: "all 0.2s",
         }}
         onMouseEnter={(e) => {
-          if (!isSaving) e.currentTarget.style.backgroundColor = "#0066FF";
+          if (!isSaving) e.currentTarget.style.backgroundColor = "#1D6FE8";
         }}
         onMouseLeave={(e) => {
-          if (!isSaving) e.currentTarget.style.backgroundColor = "#2277FF";
+          if (!isSaving) e.currentTarget.style.backgroundColor = "#3182F6";
         }}
       >
         {isSaving ? (

@@ -30,12 +30,6 @@ npm start
 
 기본 주소는 `http://localhost:8003`입니다. 다른 포트는 `PORT=8010 npm start`로 지정합니다. `HOST` 기본값은 `0.0.0.0`입니다. `/healthz`로 서버 상태를 확인합니다. 소스를 변경하면 다시 빌드해야 합니다.
 
-## 외부 미리보기
-
-배포 주소: https://ats-screen-mock.backup17583.chatgpt.site
-
-`npm run build`는 정적 호스팅에서 화면별 주소를 직접 열 수 있도록 `dist/screens/*/index.html`도 생성합니다. Sites 배포 설정은 `.openai/hosting.json`에 있습니다. 외부 미리보기에도 가상 데이터와 로컬 목업만 사용하며 실제 ATS 서버에 연결하지 않습니다.
-
 ## 목업 동작 범위
 
 - 원본 탭·필터·선택·폼·모달을 사용합니다. 공고 등록·수정·삭제·공개 상태, 지원서 입력·임시저장·제출, 처우 수정과 평가 저장은 로컬 응답을 사용합니다.
@@ -61,14 +55,32 @@ npm start
 
 직접 렌더링 주소는 `/render/?route=원본경로&page=페이지ID&state=상태ID`입니다. 페이지·상태 ID는 manifest를 참조합니다. 같은 출처의 부모 창은 `ats-preview:ready`, `ats-preview:navigate`, `ats-preview:state`, `ats-preview:error`, `ats-preview:out-of-scope` 메시지로 상태를 확인할 수 있습니다. `window.__ATS_PREVIEW__.snapshot`에도 검증 정보가 있습니다.
 
+## 면접전형 디자인 시스템 적용
+
+면접전형에는 Fintora 기반의 Plus Jakarta Sans를 유지하고, Radius는 Atlassian/Jira 공식 토큰(컨트롤 6px·카드 8px·모달 12px)에 맞췄으며, Study Dashboard 레퍼런스의 블루 테마를 기준으로 #1B43F3 / #EEF1F5 / #F7F8FA / #FFFFFF 팔레트를 적용했습니다. 블루 채움은 주요 확정 작업에 집중하고 보조 작업·탐색·선택 상태는 중립색으로 구분합니다. `src/styles/interview-design.css`에서 CSS Variables와 컴포넌트 상태를 정의합니다. 지원자 목록·지원서·평가 섹션은 가용 폭에 따라 3열·2열·1열로 재배치하며 React 업무 로직은 유지합니다.  공통 컴포넌트는 면접전형 밖에서 이전 값으로 폴백합니다. 세부 토큰과 관찰값·추정값 구분은 `outputs/interview-design-system.md`를 참고하세요.
+
 ## 원본과 검증
 
-원본은 `ats-f12-poc-main.zip`의 `itcen-ats-frontend`입니다. 최초 추출 시 선택한 5개 페이지의 원본 SHA-256을 `source-provenance.json`에 기록했습니다. 통신·라우팅·외부 위젯 등 실행 환경을 목업으로 교체했으며, 이후 사용자 요청에 따라 관리자 대시보드·채용공고·면접 전형·처우협의의 본문 디자인을 수정했습니다. 사이드바와 상단 헤더는 유지합니다. 대시보드는 `src/app/pages/admin/dashboard.css`, 나머지 관리자 페이지는 `.ats-admin-content`로 제한된 `src/app/pages/admin/admin-content.css`를 사용합니다. 전체지원자·서류전형 페이지는 이 추출본에 포함되어 있지 않습니다. 의존 파일의 최초 목록은 `source-dependencies.json`에 기록했습니다. 이 폴더에 독립된 `package-lock.json`이 있으며 상위 프로젝트의 모듈·서버를 참조하지 않습니다.
+원본은 `ats-f12-poc-main.zip`의 `itcen-ats-frontend`입니다. 최초 추출한 5개 페이지의 원본 SHA-256은 `source-provenance.json`에 기록되어 있습니다. 이후 면접전형 페이지에는 위에 설명한 스타일 변경을 적용했으므로 현재 파일은 원본과 바이트 단위로 동일하지 않습니다. 통신·라우팅·외부 위젯 등 실행 환경만 목업으로 교체했습니다. 의존 파일 목록은 `source-dependencies.json`에 기록했습니다. 이 폴더에 독립된 `package-lock.json`이 있으며 상위 프로젝트의 모듈·서버를 참조하지 않습니다.
 
 ```sh
 npm test
 ```
 
-Playwright로 모든 상태 예시와 화면 선택, 주소 복원, 초기화, 원본 메뉴 이동, 범위 밖 이동 차단을 확인합니다. 관리자 네 화면의 커스텀 드롭다운은 선택값 변경, 방향키·Enter·Escape·Tab 조작, 바깥 클릭 닫기도 검증합니다. Chromium은 `CHROMIUM_PATH`, `/usr/bin/chromium`, Playwright 설치 브라우저 순으로 사용합니다. 필요한 경우 `npx playwright install chromium`으로 설치합니다. 실행 결과와 대표 스크린샷은 `artifacts/`에 생성합니다.
+Playwright로 모든 상태 예시와 화면 선택, 주소 복원, 초기화, 원본 메뉴 이동, 범위 밖 이동 차단을 확인합니다. Chromium은 `CHROMIUM_PATH`, `/usr/bin/chromium`, Playwright 설치 브라우저 순으로 사용합니다. 필요한 경우 `npx playwright install chromium`으로 설치합니다. 실행 결과와 대표 스크린샷은 `artifacts/`에 생성합니다.
 
-이 프로젝트는 `_external` 아래 있으므로 상위 Arch 저장소의 기본 Git 추적 대상에서는 제외됩니다.
+## GitHub Pages 배포
+
+저장소: https://github.com/zaydencho-tech/ats-screen-mock
+
+`main` 브랜치에 커밋하면 `.github/workflows/pages.yml`에서 설치·빌드 후 GitHub Pages로 배포합니다. 저장소의 **Settings → Pages → Source**는 **GitHub Actions**를 사용합니다.
+
+배포 주소: https://zaydencho-tech.github.io/ats-screen-mock/
+
+`ATS_BASE_PATH`로 배포 경로를 지정하며 로컬 기본값은 `/`입니다. GitHub Actions에서는 Pages 설정의 경로를 사용합니다. 빌드 시 5개 `/screens/<화면>/`의 정적 진입점을 생성하므로 화면별 주소와 상태 쿼리를 공유하고 새로고침할 수 있습니다. 실제 백엔드 없이 가상 데이터로 실행합니다.
+
+```sh
+ATS_BASE_PATH=/ats-screen-mock/ npm run build:pages
+```
+
+최근 디자인 시스템은 대시보드·채용공고·면접전형·처우협의에 적용되어 있습니다. 기준은 `outputs/interview-design-system.md`이며, 임시 작업·백업·스크린샷·의존성·빌드 결과는 Git 업로드에서 제외합니다.

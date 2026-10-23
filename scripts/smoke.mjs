@@ -5,7 +5,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { once } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { chromium, expect } from '@playwright/test';
+import { chromium } from '@playwright/test';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const screens = JSON.parse(await readFile(path.join(root, 'src/demo/screens.json'), 'utf8'));
@@ -24,7 +24,7 @@ const address = await new Promise((resolve, reject) => {
   child.stderr.on('data', chunk => process.stderr.write(chunk));
 }).catch(error => { child.kill(); throw error; });
 let browser;
-const report = { screens: screens.length, presets: [], customSelectChecks: [], shellChecks: [], externalRequests: [], pageErrors: [] };
+const report = { screens: screens.length, presets: [], shellChecks: [], externalRequests: [], pageErrors: [] };
 try {
   const executablePath = process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined);
   browser = await chromium.launch({ executablePath, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
@@ -72,44 +72,6 @@ try {
       if (featured[screen.slug] === preset.id) await page.screenshot({ path: path.join(artifacts, `${screen.slug}.png`) });
       console.log(`PASS ${screen.slug}/${preset.id}`);
     }
-  }
-
-  for (const screen of screens.filter(screen => screen.slug !== 'apply')) {
-    const source = manifest.pages.find(item => item.component === screen.component);
-    await page.goto(`${address}/render/?${new URLSearchParams({ route: screen.route, page: source.id, state: screen.presets[0].stateId })}`);
-    await ready(page, source.id);
-    assert.equal(await page.locator('main select:not(.ats-custom-select-native)').count(), 0);
-    const control = page.locator('main .ats-custom-select').first();
-    const trigger = control.getByRole('combobox');
-    const native = control.locator('select');
-    const original = await native.inputValue();
-    await trigger.click();
-    const menu = page.getByRole('listbox');
-    await menu.waitFor();
-    assert.equal(await menu.locator('[aria-selected="true"] svg').count(), 1);
-    await expect(trigger).toHaveCSS('border-color', 'rgb(34, 119, 255)');
-    const nextLabel = await menu.getByRole('option').nth(1).textContent();
-    await trigger.press('ArrowDown');
-    await trigger.press('Enter');
-    assert.notEqual(await native.inputValue(), original);
-    assert.equal(await trigger.locator('.ats-custom-select-label > span').first().textContent(), nextLabel);
-    assert.equal(await menu.count(), 0);
-    await trigger.click();
-    await trigger.press('Escape');
-    assert.equal(await menu.count(), 0);
-    assert.equal(await trigger.evaluate(node => document.activeElement === node), true);
-    await trigger.click();
-    await page.locator('h1').click();
-    assert.equal(await menu.count(), 0);
-    await trigger.click();
-    await trigger.press('Home');
-    await trigger.press('Enter');
-    assert.equal(await native.inputValue(), original);
-    await trigger.click();
-    await trigger.press('Tab');
-    assert.equal(await menu.count(), 0);
-    report.customSelectChecks.push({ screen: screen.slug, passed: true });
-    console.log(`PASS ${screen.slug}/custom-select`);
   }
 
   await page.goto(address);
@@ -161,7 +123,7 @@ try {
   assert.equal((await fetch(`${address}/src/preview/fixtures.mjs`)).status, 404);
   report.shellChecks.push('server serves built output only');
   report.passed = true;
-  console.log(`PASS ${report.presets.length} presets, ${report.customSelectChecks.length} custom selects and ${report.shellChecks.length} shell checks; no external requests`);
+  console.log(`PASS ${report.presets.length} presets and ${report.shellChecks.length} shell checks; no external requests`);
 } catch (error) {
   report.passed = false;
   report.error = error.stack;

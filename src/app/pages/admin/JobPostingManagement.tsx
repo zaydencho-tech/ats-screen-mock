@@ -1,8 +1,3 @@
-import "./admin-spacing.css";
-import CustomSelect from "../../components/admin/CustomSelect";
-import "./admin-content.css";
-import "./admin-palette.css";
-import SegmentedControl from "../../components/admin/SegmentedControl";
 import {
   useState,
   useRef,
@@ -15,13 +10,14 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useSearchParams, useLocation } from "react-router";
-import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, X, Bell, Users, FileText, Download, FileDown, XCircle, Loader2, Send, Upload } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, X, Bell, FileText, Download, FileDown, XCircle, Loader2, Send, Upload } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useActiveRole, useAdmin } from "../../contexts/AdminContext";
 import { useAdminAgent } from "../../contexts/AgentContext";
 import { useConfirm } from "../../contexts/ConfirmDialogContext";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { useManagedCorpSelect, useRoleChangeEffect, useRoleScopedEffect, useJobPostApplicantApplicationPanel, useApplicantApplicationPdf } from "../../hooks";
+import FilterSelect from "../../components/admin/InterviewFilterSelect";
 import ManagedCorpSelect from "../../components/admin/ManagedCorpSelect";
 import AdminListFetchState from "../../components/admin/AdminListFetchState";
 import ApplicationDetailContent from "../../components/admin/ApplicationDetailContent";
@@ -83,7 +79,7 @@ const FILTER_SELECT_STYLE: CSSProperties = {
   backgroundSize: "12px 12px",
   outline: "none",
   backgroundColor: "#ffffff",
-  color: "#283038",
+  color: "#020618",
 };
 
 function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
@@ -102,7 +98,7 @@ function resolveFilterSelectStyle(disabled?: boolean): CSSProperties {
 
 function handleFilterSelectFocus(e: FocusEvent<HTMLSelectElement>) {
   if (e.currentTarget.disabled) return;
-  e.target.style.borderColor = "#2277FF";
+  e.target.style.borderColor = "#3182F6";
   e.target.style.boxShadow = "0 0 0 3px rgba(49, 130, 246, 0.12)";
 }
 
@@ -1830,66 +1826,35 @@ export default function JobPostingManagement() {
 
   return (
     <div
-      className="ats-admin-content ats-spacing container mx-auto px-6"
+      className="interview-design jobs-design container mx-auto px-6"
       style={{
         height: "calc(100vh - 54px)",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        paddingTop: "20px",
+        paddingTop: "24px",
         paddingBottom: "24px",
         boxSizing: "border-box",
       }}
     >
       <motion.div
-        className="ats-page-layout"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}
       >
-        <div className="ats-page-heading ats-job-heading flex items-center justify-between">
+        <div className="jobs-heading interview-heading flex items-center justify-between mb-3">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h1 className="font-display" style={{ fontSize: '30px', fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.01em', color: '#283038' }}>채용 공고</h1>
-            <p style={{ fontSize: '14px', color: '#858d96' }}>
+            <h1 className="font-display" style={{ fontSize: '30px', fontWeight: 700, lineHeight: 1.3, letterSpacing: '-0.01em', color: '#020618' }}>채용 공고</h1>
+            <p style={{ fontSize: '14px', color: '#314158' }}>
               {pageSubtitle}
             </p>
           </div>
-          <div className="ats-job-heading-controls ats-filter-bar flex items-center gap-2">
-            {!isInterviewer && (
-              <ManagedCorpSelect
-                custom
-                value={selectedCorpId}
-                onChange={(corpId) => {
-                  setSelectedCorpId(corpId);
-                  setSelectedJob(null);
-                }}
-                showLabel={false}
-                selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
-                className="flex items-center"
-              />
-            )}
-            <CustomSelect
-              aria-label="상태 필터"
-              value={filterStatus}
-              onChange={(e) =>
-                setFilterStatus(e.target.value as JobPostingFilterStatus)
-              }
-              className="bg-card focus:outline-none"
-              style={resolveFilterSelectStyle()}
-              onFocus={handleFilterSelectFocus}
-              onBlur={handleFilterSelectBlur}
-            >
-              <option value="all">전체 상태</option>
-              <option value="active">진행중</option>
-              <option value="scheduled">진행예정</option>
-              <option value="inactive">비활성</option>
-              <option value="closed">마감</option>
-            </CustomSelect>
+          <div className="flex items-center gap-2">
             {canCreatePosting && (
-              <button
+              <button data-intent="secondary"
                 onClick={handleCreateNew}
-                className="ats-primary-action bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center"
                 style={{
                   height: '34px',
                   padding: '0 16px',
@@ -1906,15 +1871,30 @@ export default function JobPostingManagement() {
           </div>
         </div>
 
-
+        <div className="jobs-filters mb-3 flex items-center" style={{ gap: "6px" }}>
+          {!isInterviewer && (
+            <ManagedCorpSelect
+              customUI
+              value={selectedCorpId}
+              onChange={(corpId) => {
+                setSelectedCorpId(corpId);
+                setSelectedJob(null);
+              }}
+              showLabel={false}
+              selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
+              className="flex items-center"
+            />
+          )}
+          <FilterSelect label="공고 상태" value={filterStatus} onChange={(value) => setFilterStatus(value as JobPostingFilterStatus)} options={[{value:"all",label:"전체 상태"},{value:"active",label:"진행중"},{value:"scheduled",label:"진행예정"},{value:"inactive",label:"비활성"},{value:"closed",label:"마감"}]} />
+        </div>
 
         <div
-          className="ats-management-columns grid gap-3"
+          className="jobs-workspace grid grid-cols-3 gap-3"
           style={{ flex: 1, minHeight: 0, overflow: "hidden" }}
         >
           <div
             ref={jobListScrollRef}
-            className="ats-summary-list ats-job-summary-list space-y-1.5 overflow-y-auto"
+            className="jobs-list-panel col-span-1 space-y-1.5 overflow-y-auto"
             style={{ height: "100%", boxSizing: "border-box" }}
           >
             <AdminListFetchState
@@ -1944,47 +1924,48 @@ export default function JobPostingManagement() {
                   onClick={() => {
                     void handleSelectJob(job);
                   }}
-                  className={`ats-list-card ats-summary-card w-full text-left p-2.5 border rounded-lg transition-all ${
+                  className={`jobs-list-card w-full text-left p-2.5 border rounded-lg transition-all ${
                     selectedJob?.id === job.id
                       ? "border-primary bg-primary/5"
                       : "border-border bg-card hover:bg-muted/30"
                   }`}
                 >
-                  <div className="ats-summary-header">
-                    <span className="ats-summary-header-title">{job.title}</span>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${Utils.Mapper.jobPostAdmin.resolveJobPostStatusBadgeClass(job.status)}`}
-                    >
-                      {Utils.Mapper.jobPostAdmin.resolveJobPostStatusLabel(job.status)}
+                  <span className="candidate-summary-header">
+                    <span className="candidate-summary-identity">
+                      <span className="candidate-summary-label">채용공고</span>
+                      <span className="candidate-summary-name">{job.title}</span>
                     </span>
-                  </div>
-                  <div className="ats-summary-body">
-                    <div className="ats-summary-metric-row">
-                      <div>
-                        <div className="ats-summary-caption">총 지원자</div>
-                        <div className="ats-summary-value">
-                          {counts.total.toLocaleString()}<span>명</span>
-                        </div>
-                      </div>
-                      <Users className="ats-summary-icon" aria-hidden="true" />
-                    </div>
-                    <div className="ats-summary-caption">
-                      기간: {job.startDate} ~ {job.deadline}
-                    </div>
-                    <div className="ats-summary-stages">
-                      <div><span>서류</span><strong>{counts.document}</strong></div>
-                      <div><span>1차</span><strong>{counts.firstInterview}</strong></div>
-                      <div><span>2차</span><strong>{counts.secondInterview}</strong></div>
-                      <div><span>처우</span><strong>{counts.offer}</strong></div>
-                    </div>
-                  </div>
+                    <span className="candidate-summary-statuses">
+                      <span className={`candidate-summary-status ${Utils.Mapper.jobPostAdmin.resolveJobPostStatusBadgeClass(job.status)}`}>
+                        {Utils.Mapper.jobPostAdmin.resolveJobPostStatusLabel(job.status)}
+                      </span>
+                    </span>
+                  </span>
+                  <span className="candidate-summary-position">
+                    기간: {job.startDate} ~ {job.deadline}
+                  </span>
+                  <span className="candidate-summary-metadata jobs-card-metadata">
+                    <span className="candidate-summary-field">
+                      <span className="candidate-summary-label">총 지원자</span>
+                      <span className="candidate-summary-value jobs-applicant-total">{counts.total}<span className="jobs-applicant-total-unit">명</span></span>
+                    </span>
+                    <span className="candidate-summary-field">
+                      <span className="candidate-summary-label">전형별 지원자</span>
+                      <span className="candidate-summary-value jobs-stage-counts">
+                        <span><span>서류</span> {counts.document}</span>
+                        <span><span>1차</span> {counts.firstInterview}</span>
+                        <span><span>2차</span> {counts.secondInterview}</span>
+                        <span><span>처우</span> {counts.offer}</span>
+                      </span>
+                    </span>
+                  </span>
                 </button>
               );
             })}
             </AdminListFetchState>
           </div>
 
-          <div className="ats-panel ats-detail-panel border border-border rounded-lg p-3 bg-card overflow-y-auto" style={{ height: "100%", boxSizing: "border-box" }}>
+          <div className="jobs-detail-panel col-span-2 border border-border rounded-lg p-3 bg-card overflow-y-auto" style={{ height: "100%", boxSizing: "border-box" }}>
             {selectedJob ? (
               <>
                 {(isDetailLoading || isApplicantsLoading) && (
@@ -2001,24 +1982,45 @@ export default function JobPostingManagement() {
                   <div className="mb-2 text-xs text-destructive">{detailError}</div>
                 )}
                 {!isEditing && (
-                  <div className="ats-job-view-tabs mb-4">
-                    <SegmentedControl
-                      label="채용공고 상세 보기"
-                      options={["list", "detail"] as const}
-                      value={viewMode}
-                      onChange={setViewMode}
-                      formatLabel={(value) => value === "list"
-                        ? "공고 정보"
-                        : `지원자 목록 (${selectedJob.applicantCounts?.total ?? selectedJob.applicants.length})`}
-                    />
+                  <div className="jobs-tabs interview-tabs flex items-center gap-2 mb-2 border-b border-border">
+                    <button data-intent="navigation"
+                      onClick={() => setViewMode("list")}
+                      className={`font-medium transition-colors ${
+                        viewMode === "list"
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      style={{
+                        padding: '0 12px',
+                        paddingBottom: '4px',
+                        fontSize: '0.75rem'
+                      }}
+                    >
+                      공고 정보
+                    </button>
+                    <button data-intent="navigation"
+                      onClick={() => setViewMode("detail")}
+                      className={`font-medium transition-colors ${
+                        viewMode === "detail"
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      style={{
+                        padding: '0 12px',
+                        paddingBottom: '4px',
+                        fontSize: '0.75rem'
+                      }}
+                    >
+                      지원자 목록 ({selectedJob.applicantCounts?.total ?? selectedJob.applicants.length})
+                    </button>
                   </div>
                 )}
 
                 {viewMode === "detail" && !isEditing ? (
-                  <div className="ats-job-applicants">
+                  <div>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-display text-lg" style={{ color: "#283038" }}>
+                        <h3 className="font-display text-lg" style={{ color: "#020618" }}>
                           지원자 목록
                         </h3>
                         {canBulkRejectApplicants && selectedApplicantIds.length > 0 && (
@@ -2029,7 +2031,7 @@ export default function JobPostingManagement() {
                       </div>
                       <div className="flex gap-2">
                         {canBulkRejectApplicants && (
-                          <button
+                          <button data-intent="danger"
                             onClick={() => void handleBulkReject()}
                             disabled={
                               selectedApplicantIds.length === 0 ||
@@ -2053,7 +2055,7 @@ export default function JobPostingManagement() {
                             일괄 불합격
                           </button>
                         )}
-                        <button
+                        <button data-intent="secondary"
                           onClick={() => void handleExcelDownload()}
                           className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center"
                           style={{
@@ -2074,34 +2076,8 @@ export default function JobPostingManagement() {
                     {/* 필터 — /admin-v2 전용 (/admin/applicants와 동일 공통코드) */}
                     {isAdminV2Ui && (
                       <div className="mb-2 flex items-center gap-2">
-                        <CustomSelect
-                          aria-label="지원자 전형 단계"
-                          value={applicantStageFilter}
-                          onChange={(e) => setApplicantStageFilter(e.target.value)}
-                          disabled={isApplicantCodeOptionsLoading}
-                          style={{ height: '28px', padding: '0 8px', fontSize: '0.75rem', borderRadius: '5px', border: '1px solid #D1D5DB', outline: 'none', color: '#374151', background: 'white', cursor: isApplicantCodeOptionsLoading ? 'not-allowed' : 'pointer' }}
-                        >
-                          <option value="all">전형 단계: 전체</option>
-                          {applicantFilterOptions.selStep.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </CustomSelect>
-                        <CustomSelect
-                          aria-label="지원자 전형 상태"
-                          value={applicantStatusFilter}
-                          onChange={(e) => setApplicantStatusFilter(e.target.value)}
-                          disabled={isApplicantCodeOptionsLoading}
-                          style={{ height: '28px', padding: '0 8px', fontSize: '0.75rem', borderRadius: '5px', border: '1px solid #D1D5DB', outline: 'none', color: '#374151', background: 'white', cursor: isApplicantCodeOptionsLoading ? 'not-allowed' : 'pointer' }}
-                        >
-                          <option value="all">전형 상태: 전체</option>
-                          {applicantFilterOptions.selSt.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </CustomSelect>
+                        <FilterSelect label="전형 단계" value={applicantStageFilter} onChange={(value) => setApplicantStageFilter(value)} disabled={isApplicantCodeOptionsLoading} options={[{value:"all",label:"전형 단계: 전체"},...applicantFilterOptions.selStep]} />
+                        <FilterSelect label="전형 상태" value={applicantStatusFilter} onChange={(value) => setApplicantStatusFilter(value)} disabled={isApplicantCodeOptionsLoading} options={[{value:"all",label:"전형 상태: 전체"},...applicantFilterOptions.selSt]} />
                       </div>
                     )}
 
@@ -2114,7 +2090,7 @@ export default function JobPostingManagement() {
                     <>
                     {canBulkRejectApplicants &&
                       selectedJob.applicants.length > 0 && (
-                      <div className="ats-job-applicant-selection mb-2 p-2 bg-muted/20 rounded-lg flex items-center gap-2">
+                      <div className="mb-2 p-2 bg-muted/20 rounded-lg flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={areAllBulkRejectSelectableApplicantsSelected}
@@ -2126,7 +2102,7 @@ export default function JobPostingManagement() {
                       </div>
                     )}
 
-                    <div className="ats-job-applicant-list space-y-1.5">
+                    <div className="space-y-1.5">
                       {selectedJob.applicants
                         .filter((a) => effectiveApplicantStageFilter === "all" || normalizeSelStCd(a.currentStageCd) === normalizeSelStCd(effectiveApplicantStageFilter))
                         .filter((a) => effectiveApplicantStatusFilter === "all" || normalizeSelStCd(a.currentStatusCd) === normalizeSelStCd(effectiveApplicantStatusFilter))
@@ -2139,7 +2115,7 @@ export default function JobPostingManagement() {
                         return (
                         <div
                           key={applicant.id}
-                          className={`ats-job-section ats-job-applicant-card p-2 border rounded-lg transition-all ${
+                          className={`p-2 border rounded-lg transition-all ${
                             canBulkRejectApplicants &&
                             isBulkRejectSelectable &&
                             selectedApplicantIds.includes(applicant.id)
@@ -2157,51 +2133,51 @@ export default function JobPostingManagement() {
                                 className="mt-1 w-3.5 h-3.5 rounded border-border text-primary focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
                               />
                             )}
-                            <div className="ats-job-applicant-body flex-1 flex items-start justify-between">
+                            <div className="flex-1 flex items-start justify-between">
                               <div className="flex-1">
-                                <div className="ats-job-applicant-heading flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-1">
                                   <h4 className="font-medium text-base">{applicant.name}</h4>
                                   <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getStatusColor(applicant.stageStatus)}`}>
                                     {getApplicantStatusLabel(applicant)}
                                   </span>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedApplicant(applicant);
-                                      setShowApplicationPanel(true);
-                                    }}
-                                    className="bg-accent/20 text-accent hover:bg-accent/30 transition-colors flex items-center"
-                                    style={{
-                                      height: '28px',
-                                      padding: '0 12px',
-                                      fontSize: '0.75rem',
-                                      fontWeight: 500,
-                                      borderRadius: '5px',
-                                      gap: '4px'
-                                    }}
-                                  >
-                                    <FileText className="w-3.5 h-3.5" />
-                                    이력서 보기
-                                  </button>
                                 </div>
-                                <div className="ats-job-applicant-fields grid grid-cols-2 gap-x-3 gap-y-1 text-xs mb-1.5">
+                                <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs mb-1.5">
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">이메일</span>
+                                    <span className="text-muted-foreground">이메일:</span>
                                     <span>{applicant.email}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">연락처</span>
+                                    <span className="text-muted-foreground">연락처:</span>
                                     <span>{applicant.phone}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">지원일</span>
+                                    <span className="text-muted-foreground">지원일:</span>
                                     <span>{applicant.appliedDate}</span>
                                   </div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-muted-foreground">전형 단계</span>
+                                    <span className="text-muted-foreground">전형 단계:</span>
                                     <span className="font-medium">{getApplicantStageLabel(applicant)}</span>
                                   </div>
                                 </div>
                               </div>
+                              <button data-intent="secondary"
+                                onClick={() => {
+                                  setSelectedApplicant(applicant);
+                                  setShowApplicationPanel(true);
+                                }}
+                                className="bg-accent/20 text-accent hover:bg-accent/30 transition-colors flex items-center"
+                                style={{
+                                  height: '28px',
+                                  padding: '0 12px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 500,
+                                  borderRadius: '5px',
+                                  gap: '4px'
+                                }}
+                              >
+                                <FileText className="w-3.5 h-3.5" />
+                                이력서 보기
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -2222,7 +2198,7 @@ export default function JobPostingManagement() {
                     )}
                   </div>
                 ) : (
-                  <div className={`ats-job-information${isEditing ? " is-editing" : ""}`}>
+                  <>
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         {isEditing ? (
@@ -2243,12 +2219,12 @@ export default function JobPostingManagement() {
                               border: '1px solid #D1D5DB',
                               padding: '0 10px',
                               fontSize: '0.875rem',
-                              color: '#283038',
+                              color: '#020618',
                               outline: 'none',
                               boxSizing: 'border-box'
                             }}
                             onFocus={(e) => {
-                              e.target.style.borderColor = '#2277FF';
+                              e.target.style.borderColor = '#3182F6';
                               e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
                             }}
                             onBlur={(e) => {
@@ -2257,14 +2233,14 @@ export default function JobPostingManagement() {
                             }}
                           />
                         ) : (
-                          <h2 className="font-display mb-1 text-lg" style={{ color: "#283038" }}>{selectedJob.title}</h2>
+                          <h2 className="font-display mb-1 text-lg" style={{ color: "#020618" }}>{selectedJob.title}</h2>
                         )}
                       </div>
                       <div className="flex gap-2">
                         {!isEditing && viewMode === "list" && (
                           <>
                             {canEditPosting && (
-                              <button
+                              <button data-intent="secondary" aria-label="공고 공개 상태 변경"
                                 onClick={() => handleToggleStatus(selectedJob.id)}
                                 disabled={isViewStatusUpdating || selectedJob.status === "closed"}
                                 className="border border-border hover:bg-muted/50 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
@@ -2286,7 +2262,7 @@ export default function JobPostingManagement() {
                             )}
                             {canEditPosting && (
                               <>
-                                <button
+                                <button data-intent="secondary" aria-label="공고 수정"
                                   type="button"
                                   onClick={() => beginJobFormEdit(selectedJob)}
                                   className="border border-border hover:bg-muted/50 transition-colors flex items-center justify-center"
@@ -2299,7 +2275,7 @@ export default function JobPostingManagement() {
                                 >
                                   <Edit style={{ width: '12px', height: '12px' }} />
                                 </button>
-                                <button
+                                <button data-intent="danger" aria-label="공고 삭제"
                                   onClick={() => void handleDelete(selectedJob.id)}
                                   disabled={isDeleting}
                                   className="border border-destructive hover:bg-destructive/10 transition-colors text-destructive flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
@@ -2384,19 +2360,16 @@ export default function JobPostingManagement() {
                   ) : null}
 
                   {/* 기본정보 */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
-                    <h3 className="ats-job-section-title block mb-2">기본정보</h3>
-                    <div className="ats-job-fields space-y-2">
+                  {isEditing ? (<div className="p-3 bg-muted/20 border border-border rounded-lg">
+                    <label className="block mb-2 font-medium text-sm" style={{ color: "#020618" }}>기본정보</label>
+                    <div className="space-y-2">
                       <div>
                         <label className="block mb-1 text-xs font-medium" style={{ color: "#90a1b9" }}>
                           계열사
                         </label>
                         {isEditing ? (
-                          <CustomSelect
-                            aria-label="계열사"
-                            value={selectedJob.company}
-                            onChange={(e) => {
-                              const corpCd = e.target.value;
+                          <FilterSelect label="공고 계열사" value={selectedJob.company} onChange={(value) => {
+                              const corpCd = value;
                               const corp =
                                 Utils.Mapper.managedCorpSelect.findManagedCorpByCd(
                                   corpOptions,
@@ -2407,41 +2380,9 @@ export default function JobPostingManagement() {
                                 company: corpCd,
                                 companyName: corp?.corpName ?? selectedJob.companyName,
                               });
-                            }}
-                            className="w-full rounded-lg focus:outline-none"
-                            style={{
-                              height: '28px',
-                              borderRadius: '5px',
-                              border: '1px solid #D1D5DB',
-                              padding: '0 24px 0 8px',
-                              fontSize: '0.75rem',
-                              appearance: 'none',
-                              backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2390a1b9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m4 6 4 4 4-4'/%3e%3c/svg%3e\")",
-                              backgroundPosition: 'right 6px center',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundSize: '10px 10px',
-                              outline: 'none'
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = '#2277FF';
-                              e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = '#D1D5DB';
-                              e.target.style.boxShadow = 'none';
-                            }}
-                          >
-                            {corpOptions.map((corp) => (
-                              <option
-                                key={corp.corpId}
-                                value={corp.corpCd || corp.corpId}
-                              >
-                                {corp.corpName}
-                              </option>
-                            ))}
-                          </CustomSelect>
+                            }} options={corpOptions.map(corp=>({value:corp.corpCd || corp.corpId,label:corp.corpName}))} />
                         ) : (
-                          <div className="font-medium text-xs" style={{ color: "#283038" }}>
+                          <div className="font-medium text-xs" style={{ color: "#020618" }}>
                             {selectedJobCorpName}
                           </div>
                         )}
@@ -2475,32 +2416,26 @@ export default function JobPostingManagement() {
                             }}
                           />
                         ) : (
-                          <div className="font-medium text-xs" style={{ color: "#283038" }}>
+                          <div className="font-medium text-xs" style={{ color: "#020618" }}>
                             {selectedWorkLocationLabel}
                           </div>
                         )}
                       </div>
                     </div>
-                  </div>
+                  </div>) : (<section className="jobs-readonly-section"><h3>기본정보</h3><table className="application-detail-table" aria-label="기본정보"><tbody><tr><th scope="row">계열사</th><td>{selectedJobCorpName}</td></tr><tr><th scope="row">근무지</th><td>{selectedWorkLocationLabel}</td></tr></tbody></table></section>)}
 
                   {/* 채용 조건 */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
-                    <h3 className="ats-job-section-title block mb-2">채용 조건</h3>
-                    <div className="ats-job-fields grid grid-cols-2 gap-2">
+                  {isEditing ? (<div className="p-3 bg-muted/20 border border-border rounded-lg">
+                    <label className="block mb-2 font-medium text-sm" style={{ color: "#020618" }}>채용 조건</label>
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block mb-1 text-xs font-medium" style={{ color: "#90a1b9" }}>
                           지원구분
                         </label>
                         {isEditing ? (
                           <div className="space-y-1.5">
-                            <CustomSelect
-                              aria-label="지원구분"
-                              value={selectedSportSeValue}
-                              disabled={
-                                isJobPostCodeLoading || sportSeOptions.length === 0
-                              }
-                              onChange={(e) => {
-                                const sportSeCd = e.target.value;
+                            <FilterSelect label="지원구분" value={selectedSportSeValue} onChange={(value) => {
+                                const sportSeCd = value;
                                 const option = sportSeOptions.find(
                                   (item) => item.value === sportSeCd,
                                 );
@@ -2527,42 +2462,7 @@ export default function JobPostingManagement() {
                                     ? selectedJob.experienceYearMax
                                     : undefined,
                                 });
-                              }}
-                              className="w-full rounded-lg focus:outline-none"
-                              style={{
-                                height: '28px',
-                                borderRadius: '5px',
-                                border: '1px solid #D1D5DB',
-                                padding: '0 24px 0 8px',
-                                fontSize: '0.75rem',
-                                appearance: 'none',
-                                backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2390a1b9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m4 6 4 4 4-4'/%3e%3c/svg%3e\")",
-                                backgroundPosition: 'right 6px center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '10px 10px',
-                                outline: 'none'
-                              }}
-                              onFocus={(e) => {
-                                e.target.style.borderColor = '#2277FF';
-                                e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
-                              }}
-                              onBlur={(e) => {
-                                e.target.style.borderColor = '#D1D5DB';
-                                e.target.style.boxShadow = 'none';
-                              }}
-                            >
-                              {isJobPostCodeLoading ? (
-                                <option value="">지원구분 불러오는 중...</option>
-                              ) : sportSeOptions.length === 0 ? (
-                                <option value="">지원구분 코드 없음</option>
-                              ) : (
-                                sportSeOptions.map((option) => (
-                                  <option key={option.value} value={option.value}>
-                                    {option.label}
-                                  </option>
-                                ))
-                              )}
-                            </CustomSelect>
+                              }} disabled={isJobPostCodeLoading || sportSeOptions.length === 0} options={isJobPostCodeLoading ? [{value:"",label:"지원구분 불러오는 중..."}] : sportSeOptions.length === 0 ? [{value:"",label:"지원구분 코드 없음"}] : sportSeOptions} />
                             {showCareerYearInputs && (
                               <div className="flex items-center gap-1.5">
                                 <input
@@ -2617,7 +2517,7 @@ export default function JobPostingManagement() {
                             )}
                           </div>
                         ) : (
-                          <div className="font-medium text-xs" style={{ color: "#283038" }}>
+                          <div className="font-medium text-xs" style={{ color: "#020618" }}>
                             {selectedSportSeViewLabel}
                           </div>
                         )}
@@ -2627,14 +2527,8 @@ export default function JobPostingManagement() {
                           고용형태
                         </label>
                         {isEditing ? (
-                          <CustomSelect
-                            aria-label="고용형태"
-                            value={selectedEmplStleValue}
-                            disabled={
-                              isJobPostCodeLoading || emplStleOptions.length === 0
-                            }
-                            onChange={(e) => {
-                              const emplStleCd = e.target.value;
+                          <FilterSelect label="고용형태" value={selectedEmplStleValue} onChange={(value) => {
+                              const emplStleCd = value;
                               const option = emplStleOptions.find(
                                 (item) => item.value === emplStleCd,
                               );
@@ -2644,49 +2538,14 @@ export default function JobPostingManagement() {
                                 emplStleName: option?.label,
                                 type: option?.label ?? emplStleCd,
                               });
-                            }}
-                            className="w-full rounded-lg focus:outline-none"
-                            style={{
-                              height: '28px',
-                              borderRadius: '5px',
-                              border: '1px solid #D1D5DB',
-                              padding: '0 24px 0 8px',
-                              fontSize: '0.75rem',
-                              appearance: 'none',
-                              backgroundImage: "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2390a1b9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m4 6 4 4 4-4'/%3e%3c/svg%3e\")",
-                              backgroundPosition: 'right 6px center',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundSize: '10px 10px',
-                              outline: 'none'
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = '#2277FF';
-                              e.target.style.boxShadow = '0 0 0 3px rgba(49, 130, 246, 0.1)';
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor = '#D1D5DB';
-                              e.target.style.boxShadow = 'none';
-                            }}
-                          >
-                            {isJobPostCodeLoading ? (
-                              <option value="">고용형태 불러오는 중...</option>
-                            ) : emplStleOptions.length === 0 ? (
-                              <option value="">고용형태 코드 없음</option>
-                            ) : (
-                              emplStleOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))
-                            )}
-                          </CustomSelect>
+                            }} disabled={isJobPostCodeLoading || emplStleOptions.length === 0} options={isJobPostCodeLoading ? [{value:"",label:"고용형태 불러오는 중..."}] : emplStleOptions.length === 0 ? [{value:"",label:"고용형태 코드 없음"}] : emplStleOptions} />
                         ) : (
-                          <div className="font-medium text-xs" style={{ color: "#283038" }}>
+                          <div className="font-medium text-xs" style={{ color: "#020618" }}>
                             {selectedEmplStleLabel}
                           </div>
                         )}
                       </div>
-                      <div className="ats-job-dates col-span-2 grid grid-cols-2 gap-2">
+                      <div className="col-span-2 grid grid-cols-2 gap-2">
                         <div>
                           <label className="block mb-1 text-xs font-medium" style={{ color: "#90a1b9" }}>
                             공고 게시 시작일
@@ -2712,7 +2571,7 @@ export default function JobPostingManagement() {
                               }}
                             />
                           ) : (
-                            <div className="font-medium text-xs" style={{ color: "#283038" }}>{selectedJob.startDate}</div>
+                            <div className="font-medium text-xs" style={{ color: "#020618" }}>{selectedJob.startDate}</div>
                           )}
                         </div>
                         <div>
@@ -2740,23 +2599,23 @@ export default function JobPostingManagement() {
                               }}
                             />
                           ) : (
-                            <div className="font-medium text-xs" style={{ color: "#283038" }}>{selectedJob.deadline}</div>
+                            <div className="font-medium text-xs" style={{ color: "#020618" }}>{selectedJob.deadline}</div>
                           )}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>) : (<section className="jobs-readonly-section"><h3>채용 조건</h3><table className="application-detail-table" aria-label="채용 조건"><tbody><tr><th scope="row">지원구분</th><td>{selectedSportSeViewLabel}</td></tr><tr><th scope="row">고용형태</th><td>{selectedEmplStleLabel}</td></tr><tr><th scope="row">공고 게시 시작일</th><td>{selectedJob.startDate}</td></tr><tr><th scope="row">공고 게시 종료일</th><td>{selectedJob.deadline}</td></tr></tbody></table></section>)}
 
                   {/* 직무 상세 */}
-                  <div className="ats-job-section ats-job-description-section p-3 bg-muted/20 border border-border rounded-lg">
+                  <div className="p-3 bg-muted/20 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="ats-job-section-title">직무 상세</h3>
+                      <label className="font-medium text-sm" style={{ color: "#020618" }}>직무 상세</label>
                       {isEditing && isJdGenerationAgentEnabled && (
-                        <button
+                        <button data-intent="secondary"
                           onClick={() => setShowAIModal(true)}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#333333",
+                            color: "#4F39F6",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -2769,7 +2628,7 @@ export default function JobPostingManagement() {
                         </button>
                       )}
                     </div>
-                    <div className="ats-job-text-fields space-y-2">
+                    <div className="space-y-2">
                       <div>
                         <label className="block mb-1 text-xs font-medium" style={{ color: "#90a1b9" }}>
                           주요 업무
@@ -2796,7 +2655,7 @@ export default function JobPostingManagement() {
                             {selectedJob.responsibilities.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-1.5">
                                 <span className="text-xs shrink-0" style={{ color: '#000000', lineHeight: 'var(--leading-relaxed)' }}>•</span>
-                                <span className="text-xs" style={{ color: "#283038", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
+                                <span className="text-xs" style={{ color: "#020618", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -2829,7 +2688,7 @@ export default function JobPostingManagement() {
                             {selectedJob.requirements.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-1.5">
                                 <span className="text-xs shrink-0" style={{ color: '#000000', lineHeight: 'var(--leading-relaxed)' }}>•</span>
-                                <span className="text-xs" style={{ color: "#283038", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
+                                <span className="text-xs" style={{ color: "#020618", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -2862,7 +2721,7 @@ export default function JobPostingManagement() {
                             {selectedJob.preferred.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-1.5">
                                 <span className="text-xs shrink-0" style={{ color: '#000000', lineHeight: 'var(--leading-relaxed)' }}>•</span>
-                                <span className="text-xs" style={{ color: "#858d96", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
+                                <span className="text-xs" style={{ color: "#314158", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -2900,7 +2759,7 @@ export default function JobPostingManagement() {
                                     className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-lg text-xs font-medium"
                                   >
                                     {tech}
-                                    <button
+                                    <button data-intent="quiet" aria-label="닫기"
                                       type="button"
                                       onClick={() => removeTechStack(index)}
                                       className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
@@ -2929,15 +2788,15 @@ export default function JobPostingManagement() {
                   </div>
 
                   {/* 복리후생 */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
+                  <div className="p-3 bg-muted/20 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="ats-job-section-title">복리후생</h3>
+                      <label className="font-medium text-sm" style={{ color: "#020618" }}>복리후생</label>
                       {isEditing && (
-                        <button
+                        <button data-intent="secondary"
                           onClick={() => openTemplatePicker("benefits")}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#333333",
+                            color: "#4F39F6",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -2978,7 +2837,7 @@ export default function JobPostingManagement() {
                         {selectedJob.benefits.map((item, idx) => (
                           <li key={idx} className="flex items-start gap-1.5">
                             <span className="text-xs shrink-0" style={{ color: '#000000', lineHeight: 'var(--leading-relaxed)' }}>•</span>
-                            <span className="text-xs" style={{ color: "#283038", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
+                            <span className="text-xs" style={{ color: "#020618", lineHeight: 'var(--leading-relaxed)' }}>{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -2986,15 +2845,15 @@ export default function JobPostingManagement() {
                   </div>
 
                   {/* 기타 (유의사항) */}
-                  <div className="ats-job-section p-3 bg-muted/20 border border-border rounded-lg">
+                  <div className="p-3 bg-muted/20 border border-border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="ats-job-section-title">기타 (유의사항)</h3>
+                      <label className="font-medium text-sm" style={{ color: "#020618" }}>기타 (유의사항)</label>
                       {isEditing && (
-                        <button
+                        <button data-intent="secondary"
                           onClick={() => openTemplatePicker("notes")}
                           className="bg-accent/20 hover:bg-accent/30 transition-colors flex items-center"
                           style={{
-                            color: "#333333",
+                            color: "#4F39F6",
                             height: '28px',
                             padding: '0 12px',
                             fontSize: '0.75rem',
@@ -3049,7 +2908,7 @@ export default function JobPostingManagement() {
                               <span
                                 className="text-xs"
                                 style={{
-                                  color: "#283038",
+                                  color: "#020618",
                                   lineHeight: "var(--leading-relaxed)",
                                 }}
                               >
@@ -3062,9 +2921,9 @@ export default function JobPostingManagement() {
                   </div>
 
                   {/* 전형절차 */}
-                  <div className="ats-job-section ats-job-process-section p-3 bg-muted/20 border border-border rounded-lg">
-                    <h3 className="ats-job-section-title block mb-2">전형절차</h3>
-                    <div className="ats-job-reviewer-fields space-y-2">
+                  <div className="p-3 bg-muted/20 border border-border rounded-lg">
+                    <label className="block mb-2 font-medium text-sm" style={{ color: "#020618" }}>전형절차</label>
+                    <div className="space-y-2">
                       {/* 서류검토 담당자 */}
                       <div>
                         <label className="block mb-1 text-xs font-medium" style={{ color: "#90a1b9" }}>
@@ -3098,7 +2957,7 @@ export default function JobPostingManagement() {
                                     >
                                       <span>{reviewer.name}</span>
                                       <span className="text-xs opacity-70">({companyName === "전체" ? "전체" : companyName} · {reviewer.department})</span>
-                                      <button
+                                      <button data-intent="quiet" aria-label="닫기"
                                         type="button"
                                         onClick={() => removeReviewer(index, "screening")}
                                         className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
@@ -3161,7 +3020,7 @@ export default function JobPostingManagement() {
                                     >
                                       <span>{reviewer.name}</span>
                                       <span className="text-xs opacity-70">({companyName === "전체" ? "전체" : companyName} · {reviewer.department})</span>
-                                      <button
+                                      <button data-intent="quiet" aria-label="닫기"
                                         type="button"
                                         onClick={() => removeReviewer(index, "first")}
                                         className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
@@ -3224,7 +3083,7 @@ export default function JobPostingManagement() {
                                     >
                                       <span>{reviewer.name}</span>
                                       <span className="text-xs opacity-70">({companyName === "전체" ? "전체" : companyName} · {reviewer.department})</span>
-                                      <button
+                                      <button data-intent="quiet" aria-label="닫기"
                                         type="button"
                                         onClick={() => removeReviewer(index, "second")}
                                         className="hover:bg-primary/20 rounded-full p-0.5 transition-colors"
@@ -3283,7 +3142,7 @@ export default function JobPostingManagement() {
                                 : "cursor-not-allowed"
                             }`}
                           />
-                          <span className="text-xs" style={{ color: "#283038" }}>
+                          <span className="text-xs" style={{ color: "#020618" }}>
                             채용 프로세스 알람 에이전트 활성화
                           </span>
                         </label>
@@ -3297,7 +3156,7 @@ export default function JobPostingManagement() {
 
                     {isEditing && (
                       <div className="mt-2 flex gap-2">
-                        <button
+                        <button data-intent="secondary"
                           type="button"
                           onClick={() => void handleCancelEdit()}
                           disabled={isSaving}
@@ -3312,7 +3171,7 @@ export default function JobPostingManagement() {
                         >
                           취소
                         </button>
-                        <button
+                        <button data-intent="primary"
                           onClick={() => void handleSave()}
                           disabled={isSaving}
                           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -3335,7 +3194,7 @@ export default function JobPostingManagement() {
                         </button>
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
               </>
             ) : (
@@ -3367,7 +3226,7 @@ export default function JobPostingManagement() {
                     AI로 JD 생성
                   </h3>
                   {!generatingAI && (
-                    <button
+                    <button data-intent="quiet" aria-label="닫기"
                       onClick={() => setShowAIModal(false)}
                       className="p-2 hover:bg-muted rounded-lg transition-colors"
                     >
@@ -3402,13 +3261,13 @@ export default function JobPostingManagement() {
                     </div>
                   ) : (
                     <div className="flex gap-2">
-                      <button
+                      <button data-intent="secondary"
                         onClick={() => setShowAIModal(false)}
                         className="flex-1 px-5 py-2.5 border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium"
                       >
                         취소
                       </button>
-                      <button
+                      <button data-intent="secondary"
                         onClick={() => void handleGenerateAI()}
                         disabled={!aiPrompt.trim() || generatingAI}
                         className="flex-1 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -3459,7 +3318,7 @@ export default function JobPostingManagement() {
                       {selectedApplicantIds.length}명 발송
                     </span>
                   </div>
-                  <button
+                  <button data-intent="quiet" aria-label="닫기"
                     type="button"
                     onClick={closeBulkRejectModal}
                     disabled={isBulkRejectSubmitting}
@@ -3553,7 +3412,7 @@ export default function JobPostingManagement() {
                   className="flex border-t border-border shrink-0"
                   style={{ gap: "8px", padding: "12px 16px" }}
                 >
-                  <button
+                  <button data-intent="secondary"
                     type="button"
                     onClick={closeBulkRejectModal}
                     disabled={isBulkRejectSubmitting}
@@ -3580,7 +3439,7 @@ export default function JobPostingManagement() {
                   >
                     취소
                   </button>
-                  <button
+                  <button data-intent="secondary"
                     type="button"
                     onClick={() => void confirmBulkReject()}
                     disabled={
@@ -3674,14 +3533,14 @@ export default function JobPostingManagement() {
                 </p>
 
                 <div className="flex gap-2">
-                  <button
+                  <button data-intent="secondary"
                     onClick={() => setShowDeactivateModal(false)}
                     disabled={isViewStatusUpdating}
                     className="flex-1 px-5 py-2.5 border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     취소
                   </button>
-                  <button
+                  <button data-intent="primary"
                     onClick={() => void confirmDeactivate()}
                     disabled={isViewStatusUpdating}
                     className="flex-1 px-5 py-2.5 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -3724,7 +3583,7 @@ export default function JobPostingManagement() {
               <span>지원서를 불러오는 중...</span>
             </div>
           ) : applicationPanelDisplayData ? (
-            <ApplicationDetailContent data={applicationPanelDisplayData} />
+            <ApplicationDetailContent data={applicationPanelDisplayData} profileLayout="summary" contentLayout="table" />
           ) : (
             <div className="p-4 text-sm text-muted-foreground">
               지원서 정보가 없습니다.
@@ -3734,7 +3593,7 @@ export default function JobPostingManagement() {
 
         {/* 템플릿 피커 모달 (pub_src와 동일 UI, document.body 포털) */}
         {createPortal(
-          <AnimatePresence>
+          <div className="interview-design jobs-design jobs-design-portal"><AnimatePresence>
             {templatePickerType && selectedJob && (() => {
               const isBenefits = templatePickerType === "benefits";
               const title = isBenefits ? "복리후생 템플릿" : "유의사항 템플릿";
@@ -3748,7 +3607,7 @@ export default function JobPostingManagement() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="ats-admin-dialog fixed inset-0 z-50 flex items-center justify-center p-4"
+                  className="fixed inset-0 z-50 flex items-center justify-center p-4"
                   style={{ backgroundColor: "rgba(2,6,24,0.45)" }}
                   onClick={closeTemplatePicker}
                 >
@@ -3781,11 +3640,11 @@ export default function JobPostingManagement() {
                       }}
                     >
                       <div>
-                        <div
+                        <div className="jobs-template-title"
                           style={{
                             fontSize: "0.875rem",
                             fontWeight: 600,
-                            color: "#283038",
+                            color: "#020618",
                           }}
                         >
                           {title} 불러오기
@@ -3800,7 +3659,7 @@ export default function JobPostingManagement() {
                           선택한 템플릿 내용이 필드에 덮어쓰기됩니다.
                         </div>
                       </div>
-                      <button
+                      <button data-intent="quiet" aria-label="닫기"
                         type="button"
                         onClick={closeTemplatePicker}
                         style={{
@@ -3865,7 +3724,7 @@ export default function JobPostingManagement() {
                         </div>
                       ) : (
                         templateLoadItems.map((tpl, idx) => (
-                          <button
+                          <button data-intent="secondary"
                             key={tpl.tmplId}
                             type="button"
                             onClick={() => onSelect(tpl)}
@@ -3896,7 +3755,7 @@ export default function JobPostingManagement() {
                                 style={{
                                   fontSize: "0.8125rem",
                                   fontWeight: 600,
-                                  color: "#283038",
+                                  color: "#020618",
                                 }}
                               >
                                 {tpl.title}
@@ -3950,7 +3809,7 @@ export default function JobPostingManagement() {
                         justifyContent: "flex-end",
                       }}
                     >
-                      <button
+                      <button data-intent="secondary"
                         type="button"
                         onClick={closeTemplatePicker}
                         style={{
@@ -3972,7 +3831,7 @@ export default function JobPostingManagement() {
                 </motion.div>
               );
             })()}
-          </AnimatePresence>,
+          </AnimatePresence></div>,
           document.body,
         )}
 
@@ -3996,7 +3855,7 @@ export default function JobPostingManagement() {
                   <h3 className="font-display text-base text-primary">
                     새 공고 등록 방식 선택
                   </h3>
-                  <button
+                  <button data-intent="quiet" aria-label="닫기"
                     type="button"
                     onClick={() => setShowCreationTypeModal(false)}
                     className="p-1 hover:bg-muted rounded-lg transition-colors"
@@ -4010,7 +3869,7 @@ export default function JobPostingManagement() {
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <button
+                  <button data-intent="choice"
                     type="button"
                     onClick={() => handleStartCreation("legacy")}
                     className="p-3 border-2 border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left group"
@@ -4034,7 +3893,7 @@ export default function JobPostingManagement() {
                     </ul>
                   </button>
 
-                  <button
+                  <button data-intent="choice"
                     type="button"
                     onClick={() => handleStartCreation("direct")}
                     className="p-3 border-2 border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left group"
@@ -4060,7 +3919,7 @@ export default function JobPostingManagement() {
                 </div>
 
                 <div className="mt-3 flex justify-end">
-                  <button
+                  <button data-intent="secondary"
                     type="button"
                     onClick={() => setShowCreationTypeModal(false)}
                     className="border border-border hover:bg-muted/50 transition-colors font-medium"

@@ -1,5 +1,5 @@
-import CustomSelect from "./CustomSelect";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import FilterSelect from "./InterviewFilterSelect";
 import type { CompFieldResponse } from "../../api/offers";
 import type { OfferPackageFormValues } from "../../types/admin/offer";
 import type { CommonCodeOption } from "../../utils/codes/commonCode";
@@ -18,7 +18,6 @@ interface OfferPackageFormProps {
   selectedJobGradeName?: string;
   selectedPosGradeName?: string;
   compact?: boolean;
-  columns?: 2 | 4;
   /**
    * resend: 퍼블 재발송 팝업 — 연봉 / 입사 예정일 / 복리후생 / 특이사항만 표시
    */
@@ -32,20 +31,6 @@ interface OfferPackageFormProps {
 const CAREER_YEAR_OPTIONS = Array.from({ length: 20 }, (_, i) => i + 1);
 
 const BENEFITS_PLACEHOLDER = "4대 보험, 연차 15일, 재택근무 주 2회 등";
-
-/** pub_src v3 OfferForm selSm */
-const OFFER_SELECT_STYLE: CSSProperties = {
-  height: "28px",
-  padding: "0 8px",
-  fontSize: "0.75rem",
-  borderRadius: "5px",
-  border: "1px solid var(--border)",
-  backgroundColor: "var(--input-background)",
-  color: "var(--foreground)",
-  width: "100%",
-  outline: "none",
-  cursor: "pointer",
-};
 
 function formatSalaryDisplay(value: number | ""): string {
   if (value === "" || !Number.isFinite(value)) return "";
@@ -70,46 +55,6 @@ function parseBenefitsText(raw: string): string[] {
     .filter(Boolean);
 }
 
-function resolveOfferSelectStyle(
-  compact: boolean,
-  disabled = false,
-): CSSProperties {
-  if (compact) {
-    return {
-      ...OFFER_SELECT_STYLE,
-      ...(disabled
-        ? {
-            backgroundColor: "#EBF0F5",
-            color: "#90a1b9",
-            opacity: 0.5,
-            cursor: "not-allowed",
-          }
-        : {}),
-    };
-  }
-
-  return {
-    height: "auto",
-    minHeight: "48px",
-    padding: "12px 16px",
-    fontSize: "0.875rem",
-    borderRadius: "8px",
-    border: "1px solid var(--border)",
-    backgroundColor: "var(--input-background)",
-    color: "var(--foreground)",
-    width: "100%",
-    outline: "none",
-    cursor: disabled ? "not-allowed" : "pointer",
-    ...(disabled
-      ? {
-          backgroundColor: "#EBF0F5",
-          color: "#90a1b9",
-          opacity: 0.5,
-        }
-      : {}),
-  };
-}
-
 export default function OfferPackageForm({
   values,
   jobGradeOptions,
@@ -118,7 +63,6 @@ export default function OfferPackageForm({
   selectedJobGradeName,
   selectedPosGradeName,
   compact = false,
-  columns = 2,
   mode = "default",
   activeFields = [],
   onChange,
@@ -204,6 +148,9 @@ export default function OfferPackageForm({
       >
         {children}
         <span
+          className="offer-required-mark"
+          role="img"
+          aria-label="필수"
           style={{ color: "#e7000b", fontSize: "0.625rem", lineHeight: 1 }}
         >
           *
@@ -241,7 +188,7 @@ export default function OfferPackageForm({
   };
 
   return (
-    <div className={compact ? `ats-offer-fields grid grid-cols-2 gap-x-3 gap-y-2.5${columns === 4 && !isResend ? " ats-offer-four-column" : ""}` : "ats-offer-fields space-y-4"}>
+    <div className={`offer-package-form ${compact ? "grid grid-cols-2 gap-x-3 gap-y-2.5" : "space-y-4"}`}>
       <div className={compact || isResend ? "col-span-2" : undefined}>
         <FieldLabel required={requiredByKey.baseSalary}>연봉 (원)</FieldLabel>
         <div className="space-y-1">
@@ -280,20 +227,13 @@ export default function OfferPackageForm({
         <>
           <div>
             <FieldLabel required={requiredByKey.jobGrade}>직급</FieldLabel>
-            <CustomSelect
-              aria-label="직급"
+            <FilterSelect
+              label="직급"
               value={values.jobGradeCd}
-              onChange={(e) => onChange({ jobGradeCd: e.target.value })}
+              onChange={(value) => onChange({ jobGradeCd: value })}
               disabled={isJobGradeOptionsLoading}
-              style={resolveOfferSelectStyle(compact, isJobGradeOptionsLoading)}
-            >
-              <option value="">선택</option>
-              {jobGradeOptions.map((option) => (
-                <option key={`grade-${option.value}`} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </CustomSelect>
+              options={[{value: "", label: "선택"}, ...jobGradeOptions]}
+            />
             {jobGradeHelperText ? (
               <p className="mt-1 text-xs text-muted-foreground">
                 {jobGradeHelperText}
@@ -303,20 +243,13 @@ export default function OfferPackageForm({
 
           <div>
             <FieldLabel required={requiredByKey.posGrade}>직책</FieldLabel>
-            <CustomSelect
-              aria-label="직책"
+            <FilterSelect
+              label="직책"
               value={values.posGrade}
-              onChange={(e) => onChange({ posGrade: e.target.value })}
+              onChange={(value) => onChange({ posGrade: value })}
               disabled={isJobGradeOptionsLoading}
-              style={resolveOfferSelectStyle(compact, isJobGradeOptionsLoading)}
-            >
-              <option value="">선택</option>
-              {posGradeOptions.map((option) => (
-                <option key={`pos-${option.value}`} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </CustomSelect>
+              options={[{value: "", label: "선택"}, ...posGradeOptions]}
+            />
             {posGradeHelperText ? (
               <p className="mt-1 text-xs text-muted-foreground">
                 {posGradeHelperText}
@@ -326,24 +259,12 @@ export default function OfferPackageForm({
 
           <div>
             <FieldLabel required={requiredByKey.careerYears}>연차</FieldLabel>
-            <CustomSelect
-              aria-label="연차"
+            <FilterSelect
+              label="연차"
               value={values.careerYears === "" ? "" : String(values.careerYears)}
-              onChange={(e) => {
-                const raw = e.target.value;
-                onChange({
-                  careerYears: raw === "" ? "" : Number(raw),
-                });
-              }}
-              style={resolveOfferSelectStyle(compact)}
-            >
-              <option value="">선택</option>
-              {CAREER_YEAR_OPTIONS.map((year) => (
-                <option key={year} value={year}>
-                  {year}년차
-                </option>
-              ))}
-            </CustomSelect>
+              onChange={(raw) => onChange({careerYears: raw === "" ? "" : Number(raw)})}
+              options={[{value: "", label: "선택"}, ...CAREER_YEAR_OPTIONS.map(year => ({value: String(year), label: `${year}년차`}))]}
+            />
           </div>
 
           <div>

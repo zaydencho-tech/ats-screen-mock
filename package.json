@@ -8,7 +8,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "vite build && node scripts/prepare-static.mjs",
+    "build": "vite build && node scripts/export-static.mjs",
+    "build:pages": "npm run build",
     "start": "node server.mjs",
     "dev": "npm run build && npm start",
     "test": "node scripts/smoke.mjs"

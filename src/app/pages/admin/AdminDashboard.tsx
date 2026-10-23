@@ -1,9 +1,6 @@
-import "./admin-spacing.css";
-import "./dashboard.css";
-import "./admin-palette.css";
 import { Link } from "react-router";
 import type { LucideIcon } from "lucide-react";
-import { FileText, Calendar, CheckCircle, Briefcase, Sparkles, Bell, ExternalLink, MessageSquare, HelpCircle, Loader2 } from "lucide-react";
+import { FileText, Calendar, CheckCircle, Briefcase, Sparkles, ChevronRight, Bell, ExternalLink, MessageSquare, HelpCircle, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useMemo } from "react";
 import { AGENT_CD } from "../../api/agent";
@@ -21,20 +18,9 @@ import type {
   DashboardStepPassChartItem,
 } from "../../types/admin/dashboard";
 import type { AgentUsageDashboardItem } from "../../utils/mapper/agentGo";
-import DashboardFilters from "./DashboardFilters";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import ManagedCorpSelect from "../../components/admin/ManagedCorpSelect";
+import DashboardDatePicker from "../../components/admin/DashboardDatePicker";
+import { DashboardMonthlyChart, DashboardStageChart } from "../../components/admin/DashboardCharts";
 import AgentGoHistoryDrawer from "../../components/admin/AgentGoHistoryDrawer";
 import InterviewerStatsTable, {
   sortInterviewerStats,
@@ -172,6 +158,10 @@ export default function AdminDashboard() {
     handleDashboardCorpChange,
     appliedDateFrom,
     appliedDateTo,
+    dateFromInput,
+    dateToInput,
+    dateFromFilter,
+    dateToFilter,
   } = useDashboard();
   const [showAgentGoDrawer, setShowAgentGoDrawer] = useState(false);
   const [statsData, setStatsData] = useState<DashboardProcessStatCard[]>([]);
@@ -621,12 +611,9 @@ export default function AdminDashboard() {
 
   const pieChartData = useMemo(
     () =>
-      applicationsByStatus
-        .filter((item) => !item.name.includes("불합격"))
-        .map((item, index) => ({
-          ...item,
-          color: ["#0066FF", "#2277FF", "#63AAFF", "#88DDFF"][index % 4],
-        })),
+      applicationsByStatus.filter(
+        (item) => !item.name.includes("불합격"),
+      ),
     [applicationsByStatus],
   );
 
@@ -651,11 +638,10 @@ export default function AdminDashboard() {
 
   const renderAgentGoCard = (agent: (typeof agentGoItems)[number]) => (
     <div
-      className={`dashboard-metric border border-border rounded-lg bg-gradient-to-br ${agent.bg} to-transparent ${agent.hover} transition-all`}
-      style={{ height: "100px", padding: "14px", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "space-between", minWidth: 0 }}
+      className={`dashboard-agent-card border border-border rounded-lg bg-gradient-to-br ${agent.bg} to-transparent ${agent.hover} transition-all`}
+      style={{ height: "70px", padding: "8px 10px", boxSizing: "border-box", display: "flex", flexDirection: "column", justifyContent: "space-between", minWidth: 0 }}
     >
       <div className="flex items-center" style={{ gap: "4px", overflow: "hidden" }}>
-        <agent.icon className={`w-3.5 h-3.5 ${agent.color} shrink-0`} />
         <span className="font-medium text-foreground" style={{ fontSize: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>{agent.label}</span>
       </div>
       <div className="flex items-baseline" style={{ gap: "2px" }}>
@@ -670,10 +656,11 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="dashboard-content ats-spacing" style={{ paddingTop: "20px", paddingBottom: "24px" }}>
+    <div className="interview-design dashboard-design py-1.5">
       <AnimatePresence>
         {showAgentGoDrawer && (
           <AgentGoHistoryDrawer
+            designSystem
             onClose={() => setShowAgentGoDrawer(false)}
             initialCorpId={selectedDashboardCorpId ?? "all"}
             initialDateFrom={appliedDateFrom}
@@ -686,11 +673,86 @@ export default function AdminDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div>
+        <div className="dashboard-heading" style={{ margin: '8px 0' }}>
+          {/* 진행 현황 — corpId로 계열사 필터 (미선택=전체). 채용평가자는 '평가 진행 현황' */}
+          <div className="dashboard-process-section" style={{ marginBottom: '12px', paddingTop: '12px', paddingBottom: '12px', backgroundColor: '#F0F5FA', border: '1px solid #D0DEEB', borderRadius: '8px', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+            <span style={{ fontSize: '16px', color: '#020618', paddingLeft: '14px', whiteSpace: 'nowrap', flexShrink: 0 }}>{processStatsSectionLabel}</span>
+            <div className="dashboard-process-grid" style={{ marginLeft: '30px', paddingRight: '24px', flex: 1, display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', minWidth: 0 }}>
+              {isProcessStatsLoading ? (
+                <div className="flex items-center justify-center gap-2 w-full py-2 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">{processStatsLoadingLabel}</span>
+                </div>
+              ) : processStatsError ? (
+                <div className="w-full py-2 text-center text-sm text-destructive">
+                  {processStatsError}
+                </div>
+              ) : (
+              processStatsCards.map((stat, index) => {
+                const CardContent = (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className="dashboard-process-card border rounded-lg bg-card cursor-pointer"
+                    style={{
+                      padding: '0 12px',
+                      height: '52px',
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      borderColor: '#CCCDD1',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                      transition: 'border-color 0.18s ease',
+                      minWidth: 0,
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#94A3B8'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#CCCDD1'; }}
+                  >
+                    <div
+                      className={`rounded-lg ${stat.color} bg-current/10 flex items-center justify-center`}
+                      style={{ width: '28px', height: '28px', flexShrink: 0 }}
+                    >
+                      <stat.icon className={stat.color} style={{ width: '16px', height: '16px' }} />
+                    </div>
+                    <div className="flex items-center" style={{ gap: '4px', minWidth: 0, overflow: 'hidden' }}>
+                      <div className="text-xs font-medium text-muted-foreground" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{stat.label}</div>
+                      <div className="font-display text-base" style={{ flexShrink: 0 }}>
+                        {stat.value}
+                        {stat.total != null && (
+                          <span className="text-sm text-muted-foreground">
+                            /{stat.total}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight style={{ width: '14px', height: '14px', color: '#020618', marginLeft: '4px', flexShrink: 0 }} />
+                  </motion.div>
+                );
+
+                return (
+                  <Link
+                    key={stat.label}
+                    to={stat.link}
+                    state={
+                      stat.link === "/admin/applicants"
+                        ? applicantsFilterState
+                        : undefined
+                    }
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    {CardContent}
+                  </Link>
+                );
+              })
+              )}
+            </div>
+          </div>
 
           <div
-            className={`dashboard-title-row flex items-end ${isInterviewer ? "justify-end" : "justify-between"}`}
-            style={{ marginBottom: '20px', gap: '8px', minWidth: 0 }}
+            className={`dashboard-toolbar flex items-center ${isInterviewer ? "justify-end" : "justify-between"}`}
+            style={{ marginBottom: '10px', gap: '8px', minWidth: 0 }}
           >
             {!isInterviewer && (
               <div style={{ minWidth: 0, flex: '1 1 auto', overflow: 'hidden' }}>
@@ -701,7 +763,7 @@ export default function AdminDashboard() {
                     fontWeight: 700,
                     lineHeight: 1.3,
                     letterSpacing: '-0.01em',
-                    color: '#292b2e',
+                    color: '#020618',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -712,95 +774,40 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <DashboardFilters />
-          </div>
+            <div className="flex items-center" style={{ gap: '8px', minWidth: 0, flex: '0 1 auto' }}>
+              <ManagedCorpSelect
+                customUI
+                variant="filter"
+                value={selectedDashboardCorpId}
+                onChange={handleDashboardCorpChange}
+                showLabel={false}
+                minWidth="0"
+                style={{ minWidth: 0, flex: '1 1 120px', maxWidth: '260px' }}
+                selectStyle={{
+                  height: "34px",
+                  borderRadius: "6px",
+                  padding: "0 28px 0 10px",
+                  fontSize: "0.8125rem",
+                  fontWeight: 400,
+                  width: "100%",
+                  minWidth: 0,
+                  maxWidth: "100%",
+                }}
+              />
 
-          {/* 진행 현황 — 회사 선택에 따라 기존 집계와 이동 경로를 유지합니다. */}
-          <section className="dashboard-process" aria-labelledby="dashboard-process-heading">
-            <h2 id="dashboard-process-heading" className="dashboard-process-title">
-              {processStatsSectionLabel}
-            </h2>
-            <div className="dashboard-process-grid">
-              {isProcessStatsLoading ? (
-                <div className="dashboard-process-message flex items-center justify-center gap-2 py-8 text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">{processStatsLoadingLabel}</span>
-                </div>
-              ) : processStatsError ? (
-                <div className="dashboard-process-message py-8 text-center text-sm text-destructive">
-                  {processStatsError}
-                </div>
-              ) : (
-                processStatsCards.map((stat, index) => {
-                  const maxValue = Math.max(1, ...processStatsCards.map((item) => item.value));
-                  const progressPercent = stat.total != null && stat.total > 0
-                    ? Math.round((stat.value / stat.total) * 100)
-                    : 0;
-                  const chartDescription = processStatsCards
-                    .map((item) => `${item.label} ${item.value}`)
-                    .join(", ");
-
-                  return (
-                    <Link
-                      key={stat.label}
-                      to={stat.link}
-                      state={stat.link === "/admin/applicants" ? applicantsFilterState : undefined}
-                      className="dashboard-stat-link"
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="dashboard-stat"
-                      >
-                        <div className="dashboard-stat-header">
-                          <span>{stat.label}</span>
-                          <stat.icon aria-hidden="true" />
-                        </div>
-                        <div className="dashboard-stat-body">
-                          <div className="dashboard-stat-info">
-                            <div className="dashboard-stat-value">
-                              {stat.value.toLocaleString()}
-                              {stat.total != null && (
-                                <span className="dashboard-stat-total"> / {stat.total.toLocaleString()}</span>
-                              )}
-                            </div>
-                            <div className="dashboard-stat-caption">
-                              <span className="dashboard-stat-accent">
-                                {stat.total != null ? `${progressPercent}%` : "누적"}
-                              </span>
-                              <span>{stat.total != null ? "진행 비율" : "지원자 수"}</span>
-                            </div>
-                          </div>
-                          <div
-                            className="dashboard-stat-bars"
-                            role="img"
-                            aria-label={`현황 수치 비교: ${chartDescription}. 강조된 막대는 ${stat.label}.`}
-                            title={`현황 수치 비교: ${chartDescription}`}
-                          >
-                            {processStatsCards.map((item, barIndex) => (
-                              <span
-                                key={item.label}
-                                className={barIndex === index ? "is-current" : undefined}
-                                style={{ height: `${item.value > 0 ? Math.max(8, (item.value / maxValue) * 56) : 3}px` }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </motion.div>
-                    </Link>
-                  );
-                })
-              )}
+              <div className="flex items-center" style={{ gap: '6px', minWidth: 0, flex: '1 1 auto' }}>
+                <DashboardDatePicker label="조회 시작일" value={dateFromInput} onChange={dateFromFilter.commitValue} />
+                <span style={{ fontSize: '12px', color: '#90a1b9', flexShrink: 0 }}>~</span>
+                <DashboardDatePicker label="조회 종료일" value={dateToInput} onChange={dateToFilter.commitValue} />
+              </div>
             </div>
-          </section>
-
+          </div>
         </div>
 
         {isInterviewer ? (
           /* ── 채용 평가자 레이아웃 — AgentGo 사용 현황 미표시 ── */
           <div style={{ marginBottom: '12px' }}>
-            <div className="dashboard-panel border border-border rounded-lg bg-card" style={{ padding: '20px', boxSizing: 'border-box' }}>
+            <div className="dashboard-surface border border-border rounded-lg bg-card" style={{ padding: '12px 20px', boxSizing: 'border-box' }}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center" style={{ gap: '6px' }}>
                   <h2 className="font-display text-foreground" style={{ fontSize: '16px' }}>초대받은 채용공고</h2>
@@ -851,15 +858,15 @@ export default function AdminDashboard() {
           </div>
         ) : (
           /* ── 인사/시스템 관리자 레이아웃 ── */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '20px', marginBottom: '20px' }}>
+          <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '12px', marginBottom: '12px' }}>
 
             {/* row 1, col 1 — AgentGo 사용 현황 */}
             <div style={{ minWidth: 0 }}>
-              <div className="dashboard-panel border border-border rounded-lg bg-card" style={{ padding: '20px', height: '100%', boxSizing: 'border-box' }}>
+              <div className="dashboard-surface border border-border rounded-lg bg-card" style={{ padding: '12px 14px', height: '100%', boxSizing: 'border-box' }}>
                 <div className="flex items-center" style={{ gap: '6px', marginBottom: '12px' }}>
                   <Sparkles className="w-4 h-4 text-accent" />
                   <h2 className="font-display text-foreground" style={{ fontSize: '16px' }}>AgentGo 사용 현황</h2>
-                  <button
+                  <button data-intent="quiet" aria-label="AgentGO 활동 이력 보기"
                     type="button"
                     onClick={() => setShowAgentGoDrawer(true)}
                     className="p-1 hover:bg-muted rounded transition-colors"
@@ -879,7 +886,7 @@ export default function AdminDashboard() {
                     {agentUsageError}
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px', minWidth: 0 }}>
+                  <div className="dashboard-agents-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '6px', minWidth: 0 }}>
                     {agentGoItems.map((agent) => (
                       <div key={agent.key} style={{ minWidth: 0 }}>
                         {renderAgentGoCard(agent)}
@@ -892,7 +899,7 @@ export default function AdminDashboard() {
 
             {/* row 1, col 2 — 월별 지원자 현황 */}
             <div style={{ minWidth: 0 }}>
-              <div className="dashboard-panel border border-border rounded-lg bg-card" key={`bar-card-${selectedCompany}`} style={{ padding: '20px', height: '100%', boxSizing: 'border-box' }}>
+              <div className="dashboard-surface border border-border rounded-lg bg-card" key={`bar-card-${selectedCompany}`} style={{ padding: '12px 14px', height: '100%', boxSizing: 'border-box' }}>
                 <h2 className="font-display text-foreground" style={{ fontSize: '16px', marginBottom: '12px' }}>월별 지원자 현황</h2>
                 {isChartsLoading ? (
                   <div className="flex items-center justify-center gap-2" style={{ height: 220 }}>
@@ -908,39 +915,14 @@ export default function AdminDashboard() {
                     표시할 데이터가 없습니다
                   </div>
                 ) : (
-                <ResponsiveContainer width="100%" height={220} key={`bar-resp-${selectedCompany}`}>
-                  <BarChart data={applicationsByMonth} key={`bar-chart-${selectedCompany}`}>
-                    <defs>
-                      <linearGradient id="ats-monthly-blue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#88DDFF" />
-                        <stop offset="100%" stopColor="#0066FF" />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e7e7e7" />
-                    <XAxis dataKey="month" stroke="#616161" style={{ fontSize: '12px' }} tick={{ fontSize: 12 }} />
-                    <YAxis stroke="#616161" style={{ fontSize: '12px' }} tick={{ fontSize: 12 }} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#ffffff",
-                        border: "1px solid #dedede",
-                        borderRadius: "8px",
-                        fontSize: "12px"
-                      }}
-                    />
-                    <Bar dataKey="count" fill="url(#ats-monthly-blue)" radius={[8, 8, 0, 0]} isAnimationActive={false} barSize={32}>
-                      {applicationsByMonth.map((entry, index) => (
-                        <Cell key={`cell-${entry.id || index}`} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                <DashboardMonthlyChart data={applicationsByMonth} key={`monthly-chart-${selectedCompany}`} />
                 )}
               </div>
             </div>
 
             {/* row 1, col 3 — 전형 단계별 현황 */}
             <div style={{ minWidth: 0 }}>
-              <div className="dashboard-panel border border-border rounded-lg bg-card" key={`pie-card-${selectedCompany}`} style={{ padding: '20px', height: '100%', boxSizing: 'border-box' }}>
+              <div className="dashboard-surface border border-border rounded-lg bg-card" key={`pie-card-${selectedCompany}`} style={{ padding: '12px 14px', height: '100%', boxSizing: 'border-box' }}>
                 <h2 className="font-display text-foreground" style={{ fontSize: '16px', marginBottom: '12px' }}>전형 단계별 합격자 현황</h2>
                 {isChartsLoading ? (
                   <div className="flex items-center justify-center gap-2" style={{ height: 220 }}>
@@ -959,39 +941,7 @@ export default function AdminDashboard() {
                     선택된 기간에는 표시할 데이터가 없습니다. 기간을 다시 선택해주세요.
                   </div>
                 ) : (
-                <ResponsiveContainer width="100%" height={220} key={`pie-resp-${selectedCompany}`}>
-                  <PieChart key={`pie-chart-${selectedCompany}`}>
-                    <Pie
-                      data={pieChartData}
-                      cx="38%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#2277FF"
-                      dataKey="value"
-                      nameKey="name"
-                      isAnimationActive={false}
-                    >
-                      {pieChartData.map((entry) => (
-                        <Cell key={entry.id} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Legend
-                      layout="vertical"
-                      align="right"
-                      verticalAlign="middle"
-                      iconType="circle"
-                      iconSize={10}
-                      wrapperStyle={{ fontSize: '14px', paddingLeft: '10px', lineHeight: '28px' }}
-                      formatter={(value, entry) => {
-                        const itemId = (entry.payload as DashboardStepPassChartItem).id;
-                        const percentage = pieChartPercentById.get(itemId) ?? 0;
-                        return `${value} ${percentage}%`;
-                      }}
-                    />
-                    <Tooltip contentStyle={{ fontSize: '12px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
+                <DashboardStageChart data={pieChartData} percentages={pieChartPercentById} key={`stage-chart-${selectedCompany}`} />
                 )}
               </div>
             </div>
@@ -999,7 +949,7 @@ export default function AdminDashboard() {
             {/* row 2, col 1 — 최근 지원자 */}
             {canViewCompanyData && (
               <div style={{ minWidth: 0 }}>
-                <div className="dashboard-panel border border-border rounded-lg bg-card" style={{ padding: '20px', height: '100%', boxSizing: 'border-box' }}>
+                <div className="dashboard-surface border border-border rounded-lg bg-card" style={{ padding: '12px 20px', height: '100%', boxSizing: 'border-box' }}>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center" style={{ gap: '6px' }}>
                       <h2 className="font-display text-foreground" style={{ fontSize: '16px' }}>최근 지원자</h2>
@@ -1031,7 +981,7 @@ export default function AdminDashboard() {
                       {recentApplications.map((application) => (
                         <div
                           key={application.id}
-                          className="dashboard-list-item flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                          className="dashboard-applicant-row flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
                           style={{ gap: '8px', minWidth: 0 }}
                         >
                           <div style={{ flex: '1 1 0', minWidth: 0 }}>
@@ -1049,7 +999,7 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div
-                            className={`rounded-full font-medium ${getRecentApplicantStageBadgeClass(application.currentStage)}`}
+                            className={`dashboard-stage-badge rounded-full font-medium ${getRecentApplicantStageBadgeClass(application.currentStage)}`}
                             style={{
                               padding: '2px 8px',
                               fontSize: '0.75rem',
@@ -1060,7 +1010,7 @@ export default function AdminDashboard() {
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                               ...(isRecentApplicantInterviewStage(application.currentStage)
-                                ? { color: "#333333" }
+                                ? { color: "#4F39F6" }
                                 : {}),
                             }}
                           >
@@ -1076,8 +1026,8 @@ export default function AdminDashboard() {
 
             {/* row 2, col 2-3 — 면접관별 활동 통계 */}
             {canViewCompanyData && (
-              <div style={{ gridColumn: 'span 2', minWidth: 0, overflow: 'hidden' }}>
-                <div className="dashboard-panel border border-border rounded-lg bg-card" style={{ padding: '20px', height: '100%', boxSizing: 'border-box' }}>
+              <div className="dashboard-stats-section" style={{ gridColumn: 'span 2', minWidth: 0, overflow: 'hidden' }}>
+                <div className="dashboard-surface border border-border rounded-lg bg-card" style={{ padding: '12px 20px', height: '100%', boxSizing: 'border-box' }}>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center" style={{ gap: '6px' }}>
                       <h2 className="font-display text-foreground" style={{ fontSize: '16px' }}>면접관별 활동 통계</h2>

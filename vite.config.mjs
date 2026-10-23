@@ -37,7 +37,7 @@ const sourceStates = {
 };
 
 export default defineConfig({
-  root, envDir: false, envPrefix: 'UNUSED_ATS_MOCK_', base: '/', publicDir: false,
+  root, envDir: false, envPrefix: 'UNUSED_ATS_MOCK_', base: process.env.ATS_BASE_PATH || '/', publicDir: false,
   plugins: [sourceStates, {
     name: 'original-figma-assets',
     resolveId(id) { if (id.startsWith('figma:asset/')) return path.join(root, 'src/assets', id.slice(12)); },

@@ -5,3 +5,6 @@ artifacts/
 .env
 .env.*
 .DS_Store
+work/
+outputs/*
+!outputs/interview-design-system.md

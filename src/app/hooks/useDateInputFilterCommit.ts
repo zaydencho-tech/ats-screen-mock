@@ -145,6 +145,7 @@ export function useDateInputFilterCommit(
   );
 
   return {
+    commitValue: commitNormalized,
     handleFocus,
     handleBlur,
     handleChange,

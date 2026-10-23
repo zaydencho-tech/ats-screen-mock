@@ -3,6 +3,7 @@ import type { CommonCodeOption } from "../../utils/codes/commonCode";
 import Utils from "../../utils";
 
 interface OfferPackageSummaryProps {
+  layout?: "default" | "table";
   offer: Pick<
     OfferPackage,
     | "baseSalary"
@@ -36,7 +37,6 @@ function SummaryRow({
   return (
     <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
       <span
-        className="ats-offer-field-label"
         style={{
           fontSize: "0.6875rem",
           color: "#90a1b9",
@@ -47,7 +47,6 @@ function SummaryRow({
         {label}
       </span>
       <span
-        className="ats-offer-field-value"
         style={{ fontSize: "0.75rem", color: "#334155", fontWeight: 500 }}
       >
         {trimmed}
@@ -57,6 +56,7 @@ function SummaryRow({
 }
 
 export default function OfferPackageSummary({
+  layout = "default",
   offer,
   jobGradeOptions = [],
   posGradeOptions = [],
@@ -78,11 +78,11 @@ export default function OfferPackageSummary({
   const notes = offer.notes?.trim() || "";
 
   return (
-    <div className="space-y-3">
-      <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
+    <div className="offer-package-summary space-y-3">
+      <div className="offer-salary-summary p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
         <div>
           <div className="text-xs text-muted-foreground mb-0.5">연봉</div>
-          <div className="ats-offer-field-value font-semibold text-primary text-sm">
+          <div className="font-semibold text-primary text-sm">
             {Number.isFinite(offer.baseSalary)
               ? `${(offer.baseSalary / 10000).toLocaleString()}만원`
               : ""}
@@ -102,7 +102,22 @@ export default function OfferPackageSummary({
         </span>
       </div>
 
-      <div
+      {layout === "table" ? (
+        <table className="application-detail-table offer-detail-table" aria-label="처우 조건">
+          <tbody>
+            {[
+              ["부서", offer.deptName],
+              ["직급", jobGradeLabel],
+              ["직책", posGradeLabel],
+              ["연차", careerYearsLabel],
+              ["입사일", offer.startDate],
+              ["근무지", offer.workLocation],
+            ].filter(([, value]) => value?.trim()).map(([label, value]) => (
+              <tr key={label}><th scope="row">{label}</th><td>{value?.trim()}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      ) : <div
         style={{
           display: "flex",
           flexDirection: "column",
@@ -119,7 +134,7 @@ export default function OfferPackageSummary({
         <SummaryRow label="연차" value={careerYearsLabel} />
         <SummaryRow label="입사일" value={offer.startDate} />
         <SummaryRow label="근무지" value={offer.workLocation} />
-      </div>
+      </div>}
 
       {benefits.length > 0 ? (
         <div>
@@ -130,7 +145,7 @@ export default function OfferPackageSummary({
             {benefits.map((benefit, index) => (
               <span
                 key={`${benefit}-${index}`}
-                className="ats-offer-field-value px-2 py-0.5 bg-muted/40 rounded text-xs"
+                className="px-2 py-0.5 bg-muted/40 rounded text-xs"
               >
                 {benefit}
               </span>

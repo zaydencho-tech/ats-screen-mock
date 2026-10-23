@@ -77,3 +77,9 @@ Latest job-tab density override: read-only job sections and applicant cards use 
 Dashboard overview surface override: simplify recruitment progress cards to a single white surface without the diagonal gray pattern. The inner `.dashboard-stat-body` is only a two-column layout wrapper, with no border, background, shadow, radius or padding. Outer cards retain their 16px corners and 20px padding/gap. Preserve all counts, labels, blue mini bars, navigation, responsive grid, header/sidebar and other screens' inset card designs.
 
 Dashboard overview density: remove the body's 112px minimum height and center the mini graph vertically beside the information column. Keep its right alignment and original bar sizes/colors, eliminating the unused space below the progress caption.
+
+## Current local design uploaded on 2026-10-23
+
+The user's latest accepted local project supersedes the earlier UI specifications above where they differ. Preserve the current implementation in `interview-design.css`, `offer-design.css`, and `dashboard-jobs-design.css`; the current design guide is `outputs/interview-design-system.md`. This upload intentionally retains the accepted 6/8/12px radius hierarchy, compact tables and neutral selection states. Dashboard charts use a stepped area and thin separated ring with Atlassian categorical colors. Do not revert these to the older dashboard/card/segmented designs above. Preserve existing behavior and data.
+
+Hosting uses a configurable Vite base path, static screen entry points, and the GitHub Pages workflow. Both root hosting and repository subpath hosting must retain screen/state URLs, iframe rendering, assets, and same-origin isolation. Do not publish dependency folders, temporary work, credentials, or screenshots.

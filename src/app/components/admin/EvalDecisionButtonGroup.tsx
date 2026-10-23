@@ -38,7 +38,7 @@ export default function EvalDecisionButtonGroup({
 
   if (variant === "card") {
     return (
-      <div className="flex gap-2">
+      <div className="eval-decision-group flex gap-2" role="group" aria-label="평가 결정">
         {options.map((option) => {
           const selected = value === option.value;
           const tone = resolveVariant(option.value, options);
@@ -46,6 +46,8 @@ export default function EvalDecisionButtonGroup({
           return (
             <button
               key={option.value}
+              aria-pressed={selected}
+              data-eval-tone={tone}
               type="button"
               disabled={disabled}
               onClick={() => onChange(option.value)}
@@ -70,20 +72,22 @@ export default function EvalDecisionButtonGroup({
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="eval-decision-group flex gap-2" role="group" aria-label="평가 결정">
       {options.map((option) => {
         const selected = value === option.value;
         const tone = resolveVariant(option.value, options);
         const selectedBg =
-          tone === "pass" ? "#3182F6" : tone === "reject" ? "#EF4444" : "#CA8A04";
+          tone === "pass" ? "var(--int-primary, #3182F6)" : tone === "reject" ? "#EF4444" : "#CA8A04";
         const selectedColor = "#FFF";
         const idleBg = "#FFF";
-        const idleColor = "#374151";
-        const idleBorder = "1px solid #D1D5DB";
+        const idleColor = "var(--int-text-secondary, #374151)";
+        const idleBorder = "1px solid var(--int-border, #D1D5DB)";
 
         return (
           <button
             key={option.value}
+              aria-pressed={selected}
+              data-eval-tone={tone}
             type="button"
             disabled={disabled}
             onClick={() => onChange(option.value)}

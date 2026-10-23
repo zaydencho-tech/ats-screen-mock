@@ -1,5 +1,5 @@
-import CustomSelect from "./CustomSelect";
 import type { CSSProperties } from "react";
+import FilterSelect from "./InterviewFilterSelect";
 import { useManagedCorpSelect } from "../../hooks";
 import Utils from "../../utils";
 import type {
@@ -20,7 +20,8 @@ const BASE_SELECT_STYLE: CSSProperties = {
 };
 
 export interface ManagedCorpSelectProps {
-  custom?: boolean;
+  customUI?: boolean;
+  menuZIndex?: number;
   value: string | null;
   onChange: (corpId: string | null) => void;
   /** filter(기본): 전체 계열사 · settings: 계열사 1개 필수 */
@@ -43,7 +44,8 @@ export interface ManagedCorpSelectProps {
  * - settings: 1개 고정 · 2개 이상 첫 계열사 기본(전체 없음)
  */
 export default function ManagedCorpSelect({
-  custom = false,
+  customUI = false,
+  menuZIndex,
   value,
   onChange,
   variant = "filter",
@@ -62,7 +64,6 @@ export default function ManagedCorpSelect({
   const { selectOptions, isSelectDisabled } = useManagedCorpSelect(mergedConfig);
 
   if (selectOptions.length === 0) return null;
-  const SelectControl = custom ? CustomSelect : "select";
 
   return (
     <div
@@ -77,9 +78,18 @@ export default function ManagedCorpSelect({
           {label}
         </label>
       )}
-      <SelectControl
+      {customUI ? <FilterSelect
+        label={label}
+        value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(value)}
+        onChange={(nextValue) => {
+          if (isSelectDisabled) return;
+          onChange(Utils.Mapper.managedCorpSelect.parseManagedCorpSelectValue(nextValue));
+        }}
+        disabled={isSelectDisabled}
+        menuZIndex={menuZIndex}
+        options={selectOptions.map(corp => ({value: corp.corpId, label: corp.corpName}))}
+      /> : <select
         id={id}
-        aria-label={label}
         value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(value)}
         onChange={(e) => {
           // 담당 계열사 1개: 활성 스타일 유지, 변경만 차단
@@ -112,7 +122,7 @@ export default function ManagedCorpSelect({
             {corp.corpName}
           </option>
         ))}
-      </SelectControl>
+      </select>}
     </div>
   );
 }

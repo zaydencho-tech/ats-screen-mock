@@ -2,6 +2,7 @@ import type { ReviewerEvaluation } from "../../types/admin/interview";
 import Utils from "../../utils";
 
 type ApplicationStageEvalSectionProps = {
+  layout?: "default" | "summary";
   title: string;
   reviews: ReviewerEvaluation[];
   emptyText: string;
@@ -9,6 +10,7 @@ type ApplicationStageEvalSectionProps = {
 
 /** [OFR-02] 지원서 원문보기 서류·면접 평가 목록 표시. */
 export default function ApplicationStageEvalSection({
+  layout = "default",
   title,
   reviews,
   emptyText,
@@ -20,7 +22,26 @@ export default function ApplicationStageEvalSection({
       </h3>
       {reviews.length > 0 ? (
         <div className="space-y-2">
-          {reviews.map((review, idx) => (
+          {reviews.map((review, idx) => layout === "summary" ? (
+            <article key={`${review.reviewerId}-${idx}`} className="reviewer-summary-card">
+              <div className="reviewer-summary-header">
+                <div className="reviewer-summary-identity">
+                  <span className="reviewer-summary-label">평가자</span>
+                  <h4 className="reviewer-summary-name">{review.reviewerName}</h4>
+                </div>
+                <span className="reviewer-summary-status" data-status={review.status}>
+                  <span className="reviewer-status-dot" aria-hidden="true" />
+                  {Utils.Mapper.documentScreening.resolveReviewerStatusLabel(review)}
+                </span>
+              </div>
+              <dl className="reviewer-summary-metadata">
+                <div className="reviewer-summary-field"><dt>소속</dt><dd>{review.department}</dd></div>
+                {review.decision?.trim() && <div className="reviewer-summary-field reviewer-summary-decision"><dt>평가 결정</dt><dd data-decision={review.decision}>{review.decision}</dd></div>}
+                {review.updatedAt && review.status !== "pending" && <div className="reviewer-summary-field reviewer-summary-updated"><dt>수정 일시</dt><dd><time>{review.updatedAt}</time></dd></div>}
+              </dl>
+              {review.comment && <div className="reviewer-summary-comment"><span className="reviewer-summary-label">평가 코멘트</span><p>{review.comment}</p></div>}
+            </article>
+          ) : (
             <div
               key={`${review.reviewerId}-${idx}`}
               className="p-2 border border-border rounded-lg bg-muted/30"

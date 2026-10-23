@@ -7,13 +7,16 @@ import './style.css';
 
 type Screen = (typeof screens)[number];
 const pageFor = (screen: Screen) => manifest.pages.find(page => page.component === screen.component)!;
+const basePath = import.meta.env.BASE_URL;
+const publicPath = (path: string) => basePath + path.replace(/^\//, '');
 const readLocation = () => {
-  const screen = screens.find(screen => location.pathname.replace(/\/$/, '') === `/screens/${screen.slug}`) ?? screens[0];
+  const pathname = '/' + location.pathname.slice(basePath.length).replace(/\/$/, '');
+  const screen = screens.find(screen => pathname === `/screens/${screen.slug}`) ?? screens[0];
   const state = new URLSearchParams(location.search).get('state');
   return { screen, preset: screen.presets.find(preset => preset.id === state) ?? screen.presets[0] };
 };
 function renderUrl(screen: Screen, stateId: string, route = screen.route) {
-  return '/render/?' + new URLSearchParams({ route, page: pageFor(screen).id, state: stateId });
+  return publicPath('/render/?') + new URLSearchParams({ route, page: pageFor(screen).id, state: stateId });
 }
 
 function Demo() {
@@ -32,7 +35,7 @@ function Demo() {
     const nextPreset = next.presets.find(preset => preset.id === presetId) ?? next.presets[0];
     setScreen(next); setStateId(nextPreset.stateId); setReady(false); setNotice('');
     setEntry(current => ({ url: renderUrl(next, nextPreset.stateId), revision: current.revision + 1 }));
-    if (updateHistory) history.pushState(null, '', `/screens/${next.slug}${nextPreset.id === 'initial' ? '' : '?state=' + encodeURIComponent(nextPreset.id)}`);
+    if (updateHistory) history.pushState(null, '', publicPath(`/screens/${next.slug}${nextPreset.id === 'initial' ? '' : '?state=' + encodeURIComponent(nextPreset.id)}`));
   }
   useEffect(() => {
     const pop = () => { const current = readLocation(); open(current.screen, current.preset.id, false); };
@@ -56,7 +59,7 @@ function Demo() {
       const nextPreset = next.presets.find(preset => preset.stateId === message.stateId);
       // Native interactions stay inside the running app; update the address
       // without replacing the iframe and discarding form input.
-      history.replaceState(null, '', `/screens/${next.slug}${nextPreset && nextPreset.id !== 'initial' ? '?state=' + encodeURIComponent(nextPreset.id) : ''}`);
+      history.replaceState(null, '', publicPath(`/screens/${next.slug}${nextPreset && nextPreset.id !== 'initial' ? '?state=' + encodeURIComponent(nextPreset.id) : ''}`));
     };
     addEventListener('popstate', pop); addEventListener('message', receive);
     return () => { removeEventListener('popstate', pop); removeEventListener('message', receive); };
@@ -65,7 +68,7 @@ function Demo() {
 
   return <div className="demo">
     <header className="toolbar">
-      <a className="brand" href="/" onClick={event => { event.preventDefault(); open(screens[0]); }}>ATS <span>화면 목업</span></a>
+      <a className="brand" href={basePath} onClick={event => { event.preventDefault(); open(screens[0]); }}>ATS <span>화면 목업</span></a>
       <span className="divider" />
       <select aria-label="화면 선택" value={screen.slug} onChange={event => open(screens.find(screen => screen.slug === event.target.value)!)}>
         {screens.map(screen => <option key={screen.slug} value={screen.slug}>{screen.title}</option>)}

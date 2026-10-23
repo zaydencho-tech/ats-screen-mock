@@ -2,3 +2,7 @@
 @import './tailwind.css';
 @import './theme.css';
 @import './sonner-toast.css';
+
+@import './interview-design.css';
+@import './offer-design.css';
+@import './dashboard-jobs-design.css';

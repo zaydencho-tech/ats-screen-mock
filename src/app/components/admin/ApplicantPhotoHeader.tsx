@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { resolveApplicantPhotoUrl } from "../../utils/mapper/applicantPhoto";
+import { UserRound } from "lucide-react";
+import { buildApplicantPhotoPlaceholderUrl, resolveApplicantPhotoUrl } from "../../utils/mapper/applicantPhoto";
 
 export interface ApplicantPhotoHeaderProps {
+  layout?: "default" | "summary";
   name: string;
   email?: string;
   phone?: string;
@@ -47,6 +49,7 @@ function useResolvedPhotoUrl(
 }
 
 export default function ApplicantPhotoHeader({
+  layout = "default",
   name,
   email,
   phone,
@@ -55,16 +58,18 @@ export default function ApplicantPhotoHeader({
   photoFileDtlId,
 }: ApplicantPhotoHeaderProps) {
   const resolvedPhotoUrl = useResolvedPhotoUrl(name, photoUrl, photoFileDtlId);
+  const showLinePlaceholder = layout === "summary" &&
+    (!resolvedPhotoUrl || resolvedPhotoUrl === buildApplicantPhotoPlaceholderUrl(name));
 
   return (
-    <div
+    <div className="applicant-photo-header" data-layout={layout}
       style={{
         display: "flex",
         alignItems: "flex-start",
         gap: "16px",
         marginBottom: "14px",
         paddingBottom: "14px",
-        borderBottom: "1px solid #F1F5F9",
+        borderBottom: "1px solid var(--int-border-subtle, #F1F5F9)",
       }}
     >
       <div style={{ flexShrink: 0 }}>
@@ -81,15 +86,23 @@ export default function ApplicantPhotoHeader({
             justifyContent: "center",
           }}
         >
-          {resolvedPhotoUrl ? (
+          {showLinePlaceholder ? (
+            <div className="applicant-photo-placeholder">
+              <UserRound className="applicant-photo-placeholder-icon" size={40} strokeWidth={1.5} aria-hidden="true" />
+              <span className="applicant-photo-caption">증명사진</span>
+            </div>
+          ) : resolvedPhotoUrl ? (
             <img
               src={resolvedPhotoUrl}
               alt="증명사진"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           ) : null}
+          {layout === "summary" && !showLinePlaceholder && (
+            <span className="applicant-photo-caption">증명사진</span>
+          )}
         </div>
-        <p
+        {layout !== "summary" && <p
           style={{
             fontSize: "0.6rem",
             color: "#94A3B8",
@@ -98,33 +111,45 @@ export default function ApplicantPhotoHeader({
           }}
         >
           증명사진
-        </p>
+        </p>}
       </div>
-      <div style={{ flex: 1, paddingTop: "4px" }}>
-        <div
-          style={{
-            fontSize: "1rem",
-            fontWeight: 700,
-            color: "#020618",
-            marginBottom: "6px",
-          }}
-        >
-          {name}
+      {layout === "summary" ? (
+        <div className="applicant-profile-summary">
+          <span className="applicant-profile-eyebrow">지원자</span>
+          <h4 className="applicant-profile-name">{name}</h4>
+          <dl className="applicant-profile-fields">
+            {email ? <div className="applicant-profile-field applicant-profile-email"><dt>이메일</dt><dd>{email}</dd></div> : null}
+            {phone ? <div className="applicant-profile-field applicant-profile-phone"><dt>연락처</dt><dd>{phone}</dd></div> : null}
+            {birthdate ? <div className="applicant-profile-field"><dt>생년월일</dt><dd>{birthdate}</dd></div> : null}
+          </dl>
         </div>
-        {email ? (
-          <div style={{ fontSize: "0.75rem", color: "#64748B", marginBottom: "2px" }}>
-            {email}
+      ) : (
+        <div style={{ flex: 1, paddingTop: "4px" }}>
+          <div
+            style={{
+              fontSize: "1rem",
+              fontWeight: 700,
+              color: "var(--int-text, #020618)",
+              marginBottom: "6px",
+            }}
+          >
+            {name}
           </div>
-        ) : null}
-        {phone ? (
-          <div style={{ fontSize: "0.75rem", color: "#64748B", marginBottom: "2px" }}>
-            {phone}
-          </div>
-        ) : null}
-        {birthdate ? (
-          <div style={{ fontSize: "0.75rem", color: "#64748B" }}>{birthdate}</div>
-        ) : null}
-      </div>
+          {email ? (
+            <div style={{ fontSize: "0.75rem", color: "#64748B", marginBottom: "2px" }}>
+              {email}
+            </div>
+          ) : null}
+          {phone ? (
+            <div style={{ fontSize: "0.75rem", color: "#64748B", marginBottom: "2px" }}>
+              {phone}
+            </div>
+          ) : null}
+          {birthdate ? (
+            <div style={{ fontSize: "0.75rem", color: "#64748B" }}>{birthdate}</div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }
