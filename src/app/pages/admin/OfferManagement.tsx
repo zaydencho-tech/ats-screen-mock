@@ -1455,83 +1455,83 @@ export default function OfferManagement() {
           </div>
         </div>
 
-        {/* 기존 옵션·변경 핸들러를 사용하는 공통 커스텀 필터 */}
-        <div className="offer-filters">
-          {corpSelect.selectOptions.length > 0 && <FilterSelect
-            label="계열사"
-            value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(selectedCorpId)}
-            onChange={(value) => handleCorpChange(Utils.Mapper.managedCorpSelect.parseManagedCorpSelectValue(value))}
-            disabled={isSelectDisabled}
-            options={corpSelect.selectOptions.map(corp => ({value: corp.corpId, label: corp.corpName}))}
-          />}
-          <FilterSelect label="공고" value={selectedJobPostId} onChange={setSelectedJobPostId}
-            disabled={isJobOptionsLoading}
-            options={[{value: "all", label: "전체 공고"}, ...jobOptions.map(job => ({value: job.jobPostId, label: job.jobTitle}))]}
-          />
-          <FilterSelect label="협의 상태" value={statusFilter} onChange={setStatusFilter}
-            disabled={isStatusOptionsLoading}
-            options={[{value: "all", label: "전체 상태"}, ...statusFilterOptions]}
-          />
-        </div>
 
         <div className="offer-workspace grid grid-cols-3 gap-4" style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <div
-            ref={listScrollRef}
-            className="offer-list-panel col-span-1 space-y-2 overflow-y-auto"
+            className="offer-list-panel col-span-1"
             style={{ height: '100%', boxSizing: 'border-box' }}
           >
-            <AdminListFetchState
-              isReady={isListFiltersReady && isDeepLinkFiltersReady}
-              isLoading={isListLoading}
-              error={listError}
-              isEmpty={offers.length === 0}
-              loadingMessage="처우 협의 목록을 불러오는 중..."
-              emptyMessage={
-                corpOptions.length === 0
-                  ? "담당 법인이 없습니다."
-                  : "조회된 처우 협의 대상자가 없습니다."
-              }
-            >
-            {offers.map((offer) => (
-              <button
-                key={offer.id}
-                type="button"
-                data-list-item-id={offer.id}
-                aria-pressed={selectedOffer?.id === offer.id}
-                onClick={() => setSelectedOffer(offer)}
-                className={`offer-candidate w-full text-left p-3 border rounded-lg transition-all ${
-                  selectedOffer?.id === offer.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-card hover:bg-muted/30"
-                }`}
+            <div className="offer-filters">
+              {corpSelect.selectOptions.length > 0 && <FilterSelect
+                label="계열사"
+                value={Utils.Mapper.managedCorpSelect.managedCorpSelectValue(selectedCorpId)}
+                onChange={(value) => handleCorpChange(Utils.Mapper.managedCorpSelect.parseManagedCorpSelectValue(value))}
+                disabled={isSelectDisabled}
+                options={corpSelect.selectOptions.map(corp => ({value: corp.corpId, label: corp.corpName}))}
+              />}
+              <FilterSelect label="공고" value={selectedJobPostId} onChange={setSelectedJobPostId}
+                disabled={isJobOptionsLoading}
+                options={[{value: "all", label: "전체 공고"}, ...jobOptions.map(job => ({value: job.jobPostId, label: job.jobTitle}))]}
+              />
+              <FilterSelect label="협의 상태" value={statusFilter} onChange={setStatusFilter}
+                disabled={isStatusOptionsLoading}
+                options={[{value: "all", label: "전체 상태"}, ...statusFilterOptions]}
+              />
+            </div>
+            <div ref={listScrollRef} className="offer-list-scroll">
+              <AdminListFetchState
+                isReady={isListFiltersReady && isDeepLinkFiltersReady}
+                isLoading={isListLoading}
+                error={listError}
+                isEmpty={offers.length === 0}
+                loadingMessage="처우 협의 목록을 불러오는 중..."
+                emptyMessage={
+                  corpOptions.length === 0
+                    ? "담당 법인이 없습니다."
+                    : "조회된 처우 협의 대상자가 없습니다."
+                }
               >
-                <div className="candidate-summary-header">
-                  <div className="candidate-summary-identity">
-                    <span className="candidate-summary-label">지원자</span>
-                    <span className="candidate-summary-name">{offer.applicantName}</span>
+              {offers.map((offer) => (
+                <button
+                  key={offer.id}
+                  type="button"
+                  data-list-item-id={offer.id}
+                  aria-pressed={selectedOffer?.id === offer.id}
+                  onClick={() => setSelectedOffer(offer)}
+                  className={`offer-candidate w-full text-left p-3 border rounded-lg transition-all ${
+                    selectedOffer?.id === offer.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-card hover:bg-muted/30"
+                  }`}
+                >
+                  <div className="candidate-summary-header">
+                    <div className="candidate-summary-identity">
+                      <span className="candidate-summary-label">지원자</span>
+                      <span className="candidate-summary-name">{offer.applicantName}</span>
+                    </div>
+                    <div className="candidate-summary-statuses">
+                      <span className={`offer-status ${getStatusStyle(offer.status, offer.statusName).className}`}>
+                        {getOfferStatusLabel(offer)}
+                      </span>
+                      {(() => {
+                        const endReasonCd = resolveOfferEndReasonCd(offer);
+                        const endReasonLabel = resolveOfferEndReasonLabel(offer);
+                        const rs = getEndReasonStyleByCd(endReasonCd);
+                        return endReasonLabel && rs ? (
+                          <span className="offer-status" style={{backgroundColor: rs.bg, color: rs.color}}>{endReasonLabel}</span>
+                        ) : null;
+                      })()}
+                    </div>
                   </div>
-                  <div className="candidate-summary-statuses">
-                    <span className={`offer-status ${getStatusStyle(offer.status, offer.statusName).className}`}>
-                      {getOfferStatusLabel(offer)}
-                    </span>
-                    {(() => {
-                      const endReasonCd = resolveOfferEndReasonCd(offer);
-                      const endReasonLabel = resolveOfferEndReasonLabel(offer);
-                      const rs = getEndReasonStyleByCd(endReasonCd);
-                      return endReasonLabel && rs ? (
-                        <span className="offer-status" style={{backgroundColor: rs.bg, color: rs.color}}>{endReasonLabel}</span>
-                      ) : null;
-                    })()}
+                  <span className="candidate-summary-position">{offer.position}</span>
+                  <div className="offer-candidate-contact">
+                    <div><span className="candidate-summary-label">이메일</span><span className="candidate-summary-value">{offer.email}</span></div>
+                    <div><span className="candidate-summary-label">연락처</span><span className="candidate-summary-value">{offer.phone}</span></div>
                   </div>
-                </div>
-                <span className="candidate-summary-position">{offer.position}</span>
-                <div className="offer-candidate-contact">
-                  <div><span className="candidate-summary-label">이메일</span><span className="candidate-summary-value">{offer.email}</span></div>
-                  <div><span className="candidate-summary-label">연락처</span><span className="candidate-summary-value">{offer.phone}</span></div>
-                </div>
-              </button>
-            ))}
-            </AdminListFetchState>
+                </button>
+              ))}
+              </AdminListFetchState>
+            </div>
           </div>
 
           {selectedOffer ? (

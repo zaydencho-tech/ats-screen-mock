@@ -1871,98 +1871,99 @@ export default function JobPostingManagement() {
           </div>
         </div>
 
-        <div className="jobs-filters mb-3 flex items-center" style={{ gap: "6px" }}>
-          {!isInterviewer && (
-            <ManagedCorpSelect
-              customUI
-              value={selectedCorpId}
-              onChange={(corpId) => {
-                setSelectedCorpId(corpId);
-                setSelectedJob(null);
-              }}
-              showLabel={false}
-              selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
-              className="flex items-center"
-            />
-          )}
-          <FilterSelect label="공고 상태" value={filterStatus} onChange={(value) => setFilterStatus(value as JobPostingFilterStatus)} options={[{value:"all",label:"전체 상태"},{value:"active",label:"진행중"},{value:"scheduled",label:"진행예정"},{value:"inactive",label:"비활성"},{value:"closed",label:"마감"}]} />
-        </div>
 
         <div
           className="jobs-workspace grid grid-cols-3 gap-3"
           style={{ flex: 1, minHeight: 0, overflow: "hidden" }}
         >
           <div
-            ref={jobListScrollRef}
-            className="jobs-list-panel col-span-1 space-y-1.5 overflow-y-auto"
+            className="jobs-list-panel col-span-1"
             style={{ height: "100%", boxSizing: "border-box" }}
           >
-            <AdminListFetchState
-              isLoading={isListLoading}
-              error={listError}
-              isEmpty={jobPostings.length === 0}
-              loadingMessage="채용공고를 불러오는 중..."
-              emptyMessage={
-                corpOptions.length === 0
-                  ? "담당 법인이 없습니다."
-                  : "등록된 채용공고가 없습니다."
-              }
-              variant="compact"
-            >
-            {jobPostings.map((job) => {
-              const counts =
-                Utils.Mapper.jobPostAdmin.resolveJobPostingListApplicantCounts(
-                  job,
-                );
-
-              return (
-                <button
-                  key={job.id}
-                  type="button"
-                  data-job-id={job.id}
-                  aria-pressed={selectedJob?.id === job.id}
-                  onClick={() => {
-                    void handleSelectJob(job);
+            <div className="jobs-filters" style={{ gap: "6px" }}>
+              {!isInterviewer && (
+                <ManagedCorpSelect
+                  customUI
+                  value={selectedCorpId}
+                  onChange={(corpId) => {
+                    setSelectedCorpId(corpId);
+                    setSelectedJob(null);
                   }}
-                  className={`jobs-list-card w-full text-left p-2.5 border rounded-lg transition-all ${
-                    selectedJob?.id === job.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border bg-card hover:bg-muted/30"
-                  }`}
-                >
-                  <span className="candidate-summary-header">
-                    <span className="candidate-summary-identity">
-                      <span className="candidate-summary-label">채용공고</span>
-                      <span className="candidate-summary-name">{job.title}</span>
-                    </span>
-                    <span className="candidate-summary-statuses">
-                      <span className={`candidate-summary-status ${Utils.Mapper.jobPostAdmin.resolveJobPostStatusBadgeClass(job.status)}`}>
-                        {Utils.Mapper.jobPostAdmin.resolveJobPostStatusLabel(job.status)}
+                  showLabel={false}
+                  selectStyle={resolveFilterSelectStyle(isSelectDisabled)}
+                  className="flex items-center"
+                />
+              )}
+              <FilterSelect label="공고 상태" value={filterStatus} onChange={(value) => setFilterStatus(value as JobPostingFilterStatus)} options={[{value:"all",label:"전체 상태"},{value:"active",label:"진행중"},{value:"scheduled",label:"진행예정"},{value:"inactive",label:"비활성"},{value:"closed",label:"마감"}]} />
+            </div>
+            <div ref={jobListScrollRef} className="jobs-list-scroll">
+              <AdminListFetchState
+                isLoading={isListLoading}
+                error={listError}
+                isEmpty={jobPostings.length === 0}
+                loadingMessage="채용공고를 불러오는 중..."
+                emptyMessage={
+                  corpOptions.length === 0
+                    ? "담당 법인이 없습니다."
+                    : "등록된 채용공고가 없습니다."
+                }
+                variant="compact"
+              >
+              {jobPostings.map((job) => {
+                const counts =
+                  Utils.Mapper.jobPostAdmin.resolveJobPostingListApplicantCounts(
+                    job,
+                  );
+
+                return (
+                  <button
+                    key={job.id}
+                    type="button"
+                    data-job-id={job.id}
+                    aria-pressed={selectedJob?.id === job.id}
+                    onClick={() => {
+                      void handleSelectJob(job);
+                    }}
+                    className={`jobs-list-card w-full text-left p-2.5 border rounded-lg transition-all ${
+                      selectedJob?.id === job.id
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:bg-muted/30"
+                    }`}
+                  >
+                    <span className="candidate-summary-header">
+                      <span className="candidate-summary-identity">
+                        <span className="candidate-summary-label">채용공고</span>
+                        <span className="candidate-summary-name">{job.title}</span>
+                      </span>
+                      <span className="candidate-summary-statuses">
+                        <span className={`candidate-summary-status ${Utils.Mapper.jobPostAdmin.resolveJobPostStatusBadgeClass(job.status)}`}>
+                          {Utils.Mapper.jobPostAdmin.resolveJobPostStatusLabel(job.status)}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                  <span className="candidate-summary-position">
-                    기간: {job.startDate} ~ {job.deadline}
-                  </span>
-                  <span className="candidate-summary-metadata jobs-card-metadata">
-                    <span className="candidate-summary-field">
-                      <span className="candidate-summary-label">총 지원자</span>
-                      <span className="candidate-summary-value jobs-applicant-total">{counts.total}<span className="jobs-applicant-total-unit">명</span></span>
+                    <span className="candidate-summary-position">
+                      기간: {job.startDate} ~ {job.deadline}
                     </span>
-                    <span className="candidate-summary-field">
-                      <span className="candidate-summary-label">전형별 지원자</span>
-                      <span className="candidate-summary-value jobs-stage-counts">
-                        <span><span>서류</span> {counts.document}</span>
-                        <span><span>1차</span> {counts.firstInterview}</span>
-                        <span><span>2차</span> {counts.secondInterview}</span>
-                        <span><span>처우</span> {counts.offer}</span>
+                    <span className="candidate-summary-metadata jobs-card-metadata">
+                      <span className="candidate-summary-field">
+                        <span className="candidate-summary-label">총 지원자</span>
+                        <span className="candidate-summary-value jobs-applicant-total">{counts.total}<span className="jobs-applicant-total-unit">명</span></span>
+                      </span>
+                      <span className="candidate-summary-field">
+                        <span className="candidate-summary-label">전형별 지원자</span>
+                        <span className="candidate-summary-value jobs-stage-counts">
+                          <span><span>서류</span> {counts.document}</span>
+                          <span><span>1차</span> {counts.firstInterview}</span>
+                          <span><span>2차</span> {counts.secondInterview}</span>
+                          <span><span>처우</span> {counts.offer}</span>
+                        </span>
                       </span>
                     </span>
-                  </span>
-                </button>
-              );
-            })}
-            </AdminListFetchState>
+                  </button>
+                );
+              })}
+              </AdminListFetchState>
+            </div>
           </div>
 
           <div className="jobs-detail-panel col-span-2 border border-border rounded-lg p-3 bg-card overflow-y-auto" style={{ height: "100%", boxSizing: "border-box" }}>
